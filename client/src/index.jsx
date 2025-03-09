@@ -5,7 +5,7 @@ import Skeleton from "./components/pages/Skeleton";
 import NotFound from "./components/pages/NotFound";
 import Clubs from "./components/pages/Clubs";
 import SavedClubs from "./components/pages/SavedClubs";
-
+import ClubDetails from "./components/pages/ClubDetails";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -22,6 +22,7 @@ const router = createBrowserRouter(
     <Route errorElement={<NotFound />} element={<App />}>
       <Route path="/" element={<Clubs />}/>
       <Route path="/saved-clubs" element={<SavedClubs />}/>
+      <Route path="/clubs/:clubId" element={<ClubDetails />}/>
     </Route>
   )
 )

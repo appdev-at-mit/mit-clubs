@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getID } from "../api/clubs";
+import { getID } from "../../api/clubs";
 
 const ClubDetails = () => {
     const { id } = useParams();
