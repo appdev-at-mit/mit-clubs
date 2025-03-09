@@ -27,6 +27,7 @@ const express = require("express"); // backend framework for our node server.
 const session = require("express-session"); // library that stores info about each connected user
 const mongoose = require("mongoose"); // library to connect to MongoDB
 const path = require("path"); // provide utilities for working with file and directory paths
+const cors = require("cors");
 
 const api = require("./api");
 const auth = require("./auth");
@@ -63,18 +64,24 @@ app.use(express.json());
 // set up a session, which will persist login data across requests
 app.use(
   session({
-    // TODO: add a SESSION_SECRET string in your .env file, and replace the secret with process.env.SESSION_SECRET
-    secret: "session-secret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   })
 );
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
 
 // this checks if the user is logged in, and populates "req.user"
 app.use(auth.populateCurrentUser);
 
 // connect user-defined routes
 app.use("/api", api);
+// app.use("/api", clubs.router);
 
 // load the compiled react files, which will serve /index.html and /bundle.js
 const reactPath = path.resolve(__dirname, "..", "client", "dist");
