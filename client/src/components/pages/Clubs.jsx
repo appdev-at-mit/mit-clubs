@@ -18,12 +18,7 @@ const Clubs = () => {
     "Application and Interview Required",
   ];
 
-  const sizes = [
-    "less than 20 members",
-    "20 to 50 members",
-    "50 to 100 members",
-    "more than 100",
-  ];
+  const sizes = ["less than 20 members", "20 to 50 members", "50 to 100 members", "more than 100"];
 
   const recruitingCycles = ["Unknown", "Fall Semester", "Spring Semester"];
 
@@ -88,18 +83,14 @@ const Clubs = () => {
         const { min, max } = parseSizeRange(club.type);
         return filters.sizes.some((size) => {
           const range = parseSizeRange(size);
-          return (
-            club.membersRange >= range.min && club.membersRange <= range.max
-          );
+          return club.membersRange >= range.min && club.membersRange <= range.max;
         });
       });
     }
 
     // filter by recruiting cycle
     if (filters.recruiting_cycle && filters.recruiting_cycle.length > 0) {
-      result = result.filter((club) =>
-        filters.recruiting_cycle.includes(club.recruiting_cycle)
-      );
+      result = result.filter((club) => filters.recruiting_cycle.includes(club.recruiting_cycle));
     }
 
     // filter by accepting members
@@ -154,9 +145,7 @@ const Clubs = () => {
               <div key={process} className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={
-                    filters.membership_process?.includes(process) || false
-                  }
+                  checked={filters.membership_process?.includes(process) || false}
                   onChange={() => toggleFilter("membership_process", process)}
                 />
                 <label>{process}</label>
@@ -209,16 +198,10 @@ const Clubs = () => {
 
           {/* Action Buttons */}
           <div className="flex gap-4">
-            <button
-              onClick={resetFilters}
-              className="px-4 py-2 bg-gray-300 rounded-md"
-            >
+            <button onClick={resetFilters} className="px-4 py-2 bg-gray-300 rounded-md">
               Reset
             </button>
-            <button
-              onClick={applyFilters}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md"
-            >
+            <button onClick={applyFilters} className="px-4 py-2 bg-blue-500 text-white rounded-md">
               Apply
             </button>
           </div>
@@ -228,17 +211,23 @@ const Clubs = () => {
         <div className="flex-grow overflow-y-auto p-6 w-full bg-gray-50">
           <h1 className="text-3xl font-bold pt-2 pb-4">Browse Clubs</h1>
           {/* Search Bar */}
-          <div className="relative mb-6">
-            <input
-              type="text"
-              placeholder="Search clubs..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            />
-            <FaSearch className="absolute top-2.5 right-4 text-gray-400" />
-          </div>
-
+          {/* <div className="relative mb-6">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                applyFilters();
+              }}
+            >
+              <input
+                type="text"
+                placeholder="Search clubs..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              />
+              <FaSearch className="absolute top-2.5 right-4 text-gray-400" />
+            </form>
+          </div> */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredClubs.map((club) => (
               <ClubCard
