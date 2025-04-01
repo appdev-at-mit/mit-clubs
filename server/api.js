@@ -78,7 +78,7 @@ router.get("/clubs", async (req, res) => {
 router.get("/clubs/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const club = await db.collection("clubs").findOne({ _id: new ObjectId(id) });
+    const club = await db.collection("clubs").findOne({ club_id: id });
     if (!club) {
       return res.status(404).json({ error: "club not found" });
     }

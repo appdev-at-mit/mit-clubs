@@ -50,12 +50,23 @@ const Clubs = () => {
 
     // fetch saved clubs for the user
     fetch("http://localhost:3000/api/saved-clubs", { credentials: "include" })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          // If response is not OK (e.g., 401 Unauthorized), just return empty array
+          return [];
+        }
+        return response.json();
+      })
       .then((data) => {
-        const savedClubIds = new Set(data.map((club) => club.club_id));
+        // Ensure data is an array before calling map
+        const savedClubIds = new Set(Array.isArray(data) ? data.map((club) => club.club_id) : []);
         setSavedClubs(savedClubIds);
       })
-      .catch((error) => console.error("Error fetching saved clubs:", error));
+      .catch((error) => {
+        console.error("Error fetching saved clubs:", error);
+        // Set empty set on error
+        setSavedClubs(new Set());
+      });
   }, []);
 
   const applyFilters = () => {
@@ -211,7 +222,7 @@ const Clubs = () => {
         <div className="flex-grow overflow-y-auto p-6 w-full bg-gray-50">
           <h1 className="text-3xl font-bold pt-2 pb-4">Browse Clubs</h1>
           {/* Search Bar */}
-          {/* <div className="relative mb-6">
+          <div className="relative mb-6">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -227,7 +238,7 @@ const Clubs = () => {
               />
               <FaSearch className="absolute top-2.5 right-4 text-gray-400" />
             </form>
-          </div> */}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredClubs.map((club) => (
               <ClubCard

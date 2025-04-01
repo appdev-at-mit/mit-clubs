@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getID } from "../../api/clubs";
 
 const ClubDetails = () => {
-    const { id } = useParams();
+    const { clubId } = useParams();
     const navigate = useNavigate();
     const [club, setClub] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -11,7 +11,7 @@ const ClubDetails = () => {
     useEffect(() => {
         const fetchClubDetails = async () => {
             try {
-                const response = await getID(id);
+                const response = await getID(clubId);
                 setClub(response.data);
                 setLoading(false);
             } catch (error) {
@@ -21,7 +21,7 @@ const ClubDetails = () => {
         };
 
         fetchClubDetails();
-    }, [id]);
+    }, [clubId]);
 
     if (loading) {
         return <p className="text-center text-xl mt-10 text-cyan-600">Loading...</p>;
