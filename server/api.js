@@ -11,6 +11,8 @@ const express = require("express");
 
 // import models so we can interact with the database
 const User = require("./models/user");
+const Club = require("./models/club");
+const SavedClub = require("./models/savedClub");
 
 // import authentication library
 const auth = require("./auth");
@@ -64,7 +66,7 @@ router.post("/initsocket", (req, res) => {
 
 router.get("/clubs", async (req, res) => {
   try {
-    const clubs = await db.collection("clubs").find({}).toArray();
+    const clubs = await Club.find({});
     if (clubs.length === 0) {
       return res.status(404).json({ error: "clubs not found" });
     }
@@ -78,7 +80,7 @@ router.get("/clubs", async (req, res) => {
 router.get("/clubs/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const club = await db.collection("clubs").findOne({ club_id: id });
+    const club = await Club.findOne({ club_id: id });
     if (!club) {
       return res.status(404).json({ error: "club not found" });
     }
@@ -91,10 +93,10 @@ router.get("/clubs/:id", async (req, res) => {
 
 router.post("/club", async (req, res) => {
   try {
-    const result = await db.collection("clubs").insertOne(req.body);
+    const newClub = await Club.create(req.body);
     res.status(201).json({ 
       message: "club added successfully", 
-      club_id: result.insertedId 
+      club_id: newClub.club_id 
     });
   } catch (error) {
     console.error("error adding club:", error);
@@ -103,10 +105,10 @@ router.post("/club", async (req, res) => {
 });
 
 router.put("/club", async (req, res) => {
-  const { _id, ...updateData } = req.body;
+  const { club_id, ...updateData } = req.body;
   try {
-    const result = await db.collection("clubs").updateOne(
-      { _id: new ObjectId(_id) },
+    const result = await Club.updateOne(
+      { club_id },
       { $set: updateData }
     );
     
@@ -122,9 +124,9 @@ router.put("/club", async (req, res) => {
 });
 
 router.delete("/club", async (req, res) => {
-  const { id } = req.body;
+  const { club_id } = req.body;
   try {
-    const result = await db.collection("clubs").deleteOne({ _id: new ObjectId(id) });
+    const result = await Club.deleteOne({ club_id });
     
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: "club not found" });
@@ -147,21 +149,21 @@ router.post("/save-club", auth.ensureLoggedIn, async (req, res) => {
   }
 
   try {
+    // check if club exists
+    const club = await Club.findOne({ club_id });
+    if (!club) {
+      return res.status(404).json({ error: "club not found" });
+    }
+
     // check if already saved
-    const existing = await db.collection("user_saved_clubs").findOne({
-      user_id,
-      club_id
-    });
+    const existing = await SavedClub.findOne({ user_id, club_id });
 
     if (existing) {
       return res.status(400).json({ error: "club already saved" });
     }
 
     // save the club
-    await db.collection("user_saved_clubs").insertOne({
-      user_id,
-      club_id
-    });
+    await SavedClub.create({ user_id, club_id });
 
     res.status(201).json({ message: "club saved successfully" });
   } catch (error) {
@@ -173,30 +175,23 @@ router.post("/save-club", auth.ensureLoggedIn, async (req, res) => {
 router.get("/saved-clubs", auth.ensureLoggedIn, async (req, res) => {
   const user_id = req.user?._id; // adjust property name if needed
 
+  if (!user_id) {
+    return res.status(401).json({ error: "unauthorized" });
+  }
+
   try {
     // find all saved club ids for this user
-    const savedClubEntries = await db.collection("user_saved_clubs")
-      .find({ user_id })
-      .toArray();
+    const savedClubEntries = await SavedClub.find({ user_id });
     
     if (savedClubEntries.length === 0) {
-      return res.status(404).json({ error: "no saved clubs found for this user" });
+      return res.json([]); // Return empty array instead of 404
     }
     
     // extract club_ids
     const clubIds = savedClubEntries.map(entry => entry.club_id);
     
     // get the actual club documents
-    const clubs = await db.collection("clubs").find({ 
-      $or: clubIds.map(id => {
-        // handle both string ids and objectid
-        try {
-          return { _id: new ObjectId(id) };
-        } catch {
-          return { _id: id };
-        }
-      })
-    }).toArray();
+    const clubs = await Club.find({ club_id: { $in: clubIds } });
 
     res.status(200).json(clubs);
   } catch (error) {
@@ -209,9 +204,13 @@ router.delete("/unsave-club/:id", auth.ensureLoggedIn, async (req, res) => {
   const user_id = req.user?._id;
   const { id: club_id } = req.params;
 
+  if (!user_id) {
+    return res.status(401).json({ error: "unauthorized" });
+  }
+
   try {
     // check if the club is saved by the user
-    const existing = await db.collection("user_saved_clubs").findOne({
+    const existing = await SavedClub.findOne({
       user_id,
       club_id,
     });
@@ -221,7 +220,7 @@ router.delete("/unsave-club/:id", auth.ensureLoggedIn, async (req, res) => {
     }
 
     // remove the saved club
-    await db.collection("user_saved_clubs").deleteOne({
+    await SavedClub.deleteOne({
       user_id,
       club_id,
     });
