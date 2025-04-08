@@ -48,7 +48,7 @@ function Saved() {
     <Layout>
       <div className="p-8">
         <h1 className="text-3xl font-bold mb-6">My Saved Clubs</h1>
-        
+
         {savedClubs.length === 0 ? (
           <div className="bg-gray-100 p-8 rounded-lg text-center">
             <p className="text-xl text-gray-600">You haven't saved any clubs yet.</p>

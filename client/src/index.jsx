@@ -6,6 +6,8 @@ import NotFound from "./components/pages/NotFound";
 import Clubs from "./components/pages/Clubs";
 import SavedClubs from "./components/pages/SavedClubs";
 import ClubDetails from "./components/pages/ClubDetails";
+import Profile from "./components/pages/Profile";
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -23,6 +25,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<Clubs />}/>
       <Route path="/saved-clubs" element={<SavedClubs />}/>
       <Route path="/clubs/:clubId" element={<ClubDetails />}/>
+      <Route path="/profile" element={<Profile />}/>
     </Route>
   )
 )
