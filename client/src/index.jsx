@@ -7,6 +7,7 @@ import Clubs from "./components/pages/Clubs";
 import SavedClubs from "./components/pages/SavedClubs";
 import ClubDetails from "./components/pages/ClubDetails";
 import AdminPanel from "./components/pages/AdminPanel";
+import Calendar from "./components/pages/Calendar";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
       <Route path="/saved-clubs" element={<SavedClubs />}/>
       <Route path="/clubs/:clubId" element={<ClubDetails />}/>
       <Route path="/admin" element={<AdminPanel />} />
+      <Route path="/calendar" element={<Calendar />}/>
     </Route>
   )
 )
