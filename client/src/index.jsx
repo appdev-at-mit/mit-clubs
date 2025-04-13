@@ -10,6 +10,7 @@ import AdminPanel from "./components/pages/AdminPanel";
 import Calendar from "./components/pages/Calendar";
 import Profile from "./components/pages/Profile";
 
+import InterestSurvey from "./components/pages/InterestSurvey";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -30,6 +31,7 @@ const router = createBrowserRouter(
       <Route path="/admin" element={<AdminPanel />} />
       <Route path="/calendar" element={<Calendar />}/>
       <Route path="/profile" element={<Profile />}/>
+      <Route path="/survey" element={<InterestSurvey />}/>
     </Route>
   )
 )
