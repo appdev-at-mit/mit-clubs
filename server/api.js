@@ -243,6 +243,201 @@ router.delete("/unsave-club/:id", auth.ensureLoggedIn, async (req, res) => {
   }
 });
 
+// |------------------------------|
+// | Event API  Methods            |
+// |------------------------------|
+
+// Get all events (optionally filtered by date range)
+router.get("/events", async (req, res) => {
+  try {
+    const { start_date, end_date } = req.query;
+    let query = {};
+
+    // Add date range filter if provided
+    if (start_date || end_date) {
+      query.date = {};
+      if (start_date) {
+        query.date.$gte = new Date(start_date);
+      }
+      if (end_date) {
+        query.date.$lte = new Date(end_date);
+      }
+    }
+
+    const events = await Event.find(query).sort({ date: 1 });
+    res.json(events);
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    res.status(500).json({ error: "Error fetching events" });
+  }
+});
+
+// Get events for a specific club
+router.get("/clubs/:id/events", async (req, res) => {
+  const { id } = req.params;
+  const { start_date, end_date } = req.query;
+
+  try {
+    let query = { club_id: id };
+
+    // Add date range filter if provided
+    if (start_date || end_date) {
+      query.date = {};
+      if (start_date) {
+        query.date.$gte = new Date(start_date);
+      }
+      if (end_date) {
+        query.date.$lte = new Date(end_date);
+      }
+    }
+
+    const events = await Event.find(query).sort({ date: 1 });
+
+    res.json({ events });
+  } catch (error) {
+    console.error("Error fetching club events:", error);
+    res.status(500).json({ error: "Error fetching club events" });
+  }
+});
+
+// Get events for all saved clubs of the logged-in user
+router.get("/user/saved-clubs/events", auth.ensureLoggedIn, async (req, res) => {
+  const user_id = req.user?._id;
+  const { start_date, end_date } = req.query;
+
+  if (!user_id) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    // First, get all saved club IDs for this user
+    const savedClubEntries = await SavedClub.find({ user_id });
+
+    if (savedClubEntries.length === 0) {
+      return res.json({ events: [] }); // Return empty array if no saved clubs
+    }
+
+    // Extract club IDs
+    const clubIds = savedClubEntries.map(entry => entry.club_id);
+
+    // Query for events from these clubs
+    let query = { club_id: { $in: clubIds } };
+
+    // Add date range filter if provided
+    if (start_date || end_date) {
+      query.date = {};
+      if (start_date) {
+        query.date.$gte = new Date(start_date);
+      }
+      if (end_date) {
+        query.date.$lte = new Date(end_date);
+      }
+    }
+
+    // Find events and populate with club details
+    const events = await Event.find(query).sort({ date: 1 });
+
+    // Get club details for each event
+    const clubsDetails = await Club.find({ club_id: { $in: clubIds } });
+
+    // Map club details to each event
+    const eventsWithClubInfo = events.map(event => {
+      const club = clubsDetails.find(c => c.club_id === event.club_id) || {};
+      return {
+        ...event.toObject(),
+        clubName: club.name || "Unknown Club",
+        clubColor: club.color || "#808080" // Default gray if no color specified
+      };
+    });
+
+    res.json({ events: eventsWithClubInfo });
+  } catch (error) {
+    console.error("Error fetching saved clubs events:", error);
+    res.status(500).json({ error: "Error fetching saved clubs events" });
+  }
+});
+
+// Get a specific event by ID
+router.get("/events/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const event = await Event.findOne({ event_id: id });
+
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    res.json(event);
+  } catch (error) {
+    console.error("Error fetching event:", error);
+    res.status(500).json({ error: "Error fetching event" });
+  }
+});
+
+// Create a new event
+router.post("/events", auth.ensureLoggedIn, async (req, res) => {
+  try {
+    // Create event with the provided data
+    const newEvent = await Event.create(req.body);
+
+    res.status(201).json({
+      message: "Event created successfully",
+      event_id: newEvent.event_id
+    });
+  } catch (error) {
+    console.error("Error creating event:", error);
+    res.status(500).json({ error: "Error creating event" });
+  }
+});
+
+// Update an event
+router.put("/events/:id", auth.ensureLoggedIn, async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  // Remove the event_id from update data if it exists
+  delete updateData.event_id;
+
+  try {
+    // Set the updated_at timestamp
+    updateData.updated_at = new Date();
+
+    const result = await Event.updateOne(
+      { event_id: id },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    res.json({ message: "Event updated successfully" });
+  } catch (error) {
+    console.error("Error updating event:", error);
+    res.status(500).json({ error: "Error updating event" });
+  }
+});
+
+// Delete an event
+router.delete("/events/:id", auth.ensureLoggedIn, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await Event.deleteOne({ event_id: id });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    res.json({ message: "Event deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    res.status(500).json({ error: "Error deleting event" });
+  }
+});
+
+
 // anything else falls to this "not found" case
 router.all("*", (req, res) => {
   console.log(`API route not found: ${req.method} ${req.url}`);
