@@ -30,6 +30,14 @@ const Navbar = () => {
                 >
                   Saved
                 </NavLink>
+                <NavLink
+                  to="/profile"
+                  className={({ isActive }) =>
+                    `text-gray-700 hover:text-gray-900 ${isActive ? "font-semibold" : ""}`
+                  }
+                >
+                  Profile
+                </NavLink>
                 <button
                   onClick={() => {
                     googleLogout();
