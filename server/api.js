@@ -13,7 +13,8 @@ const express = require("express");
 const User = require("./models/user");
 const Club = require("./models/club");
 const SavedClub = require("./models/savedClub");
-
+const ClubOfficer = require("./models/clubOfficer");
+// const ClubOfficer = require("./models/clubOfficer");
 // import authentication library
 const auth = require("./auth");
 
@@ -22,6 +23,14 @@ const { MongoClient, ObjectId } = require("mongodb");
 const mongoURI = process.env.MONGO_SRV;
 const dbName = "Cluster0";
 let db;
+
+// function to ensure user is admin
+function ensureAdmin(req, res, next) {
+  if (!req.user || !req.user.isAdmin) {
+    return res.status(403).json({ error: "Admin privileges required" });
+  }
+  next();
+}
 
 async function connectToMongo() {
   try {
@@ -94,9 +103,9 @@ router.get("/clubs/:id", async (req, res) => {
 router.post("/club", async (req, res) => {
   try {
     const newClub = await Club.create(req.body);
-    res.status(201).json({ 
-      message: "club added successfully", 
-      club_id: newClub.club_id 
+    res.status(201).json({
+      message: "club added successfully",
+      club_id: newClub.club_id,
     });
   } catch (error) {
     console.error("error adding club:", error);
@@ -107,15 +116,12 @@ router.post("/club", async (req, res) => {
 router.put("/club", async (req, res) => {
   const { club_id, ...updateData } = req.body;
   try {
-    const result = await Club.updateOne(
-      { club_id },
-      { $set: updateData }
-    );
-    
+    const result = await Club.updateOne({ club_id }, { $set: updateData });
+
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: "club not found" });
     }
-    
+
     res.json({ message: "club updated successfully" });
   } catch (error) {
     console.error("error updating club:", error);
@@ -127,11 +133,11 @@ router.delete("/club", async (req, res) => {
   const { club_id } = req.body;
   try {
     const result = await Club.deleteOne({ club_id });
-    
+
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: "club not found" });
     }
-    
+
     res.json({ message: "club deleted successfully" });
   } catch (error) {
     console.error("error deleting club:", error);
@@ -182,14 +188,14 @@ router.get("/saved-clubs", auth.ensureLoggedIn, async (req, res) => {
   try {
     // find all saved club ids for this user
     const savedClubEntries = await SavedClub.find({ user_id });
-    
+
     if (savedClubEntries.length === 0) {
       return res.json([]); // Return empty array instead of 404
     }
-    
+
     // extract club_ids
-    const clubIds = savedClubEntries.map(entry => entry.club_id);
-    
+    const clubIds = savedClubEntries.map((entry) => entry.club_id);
+
     // get the actual club documents
     const clubs = await Club.find({ club_id: { $in: clubIds } });
 
@@ -229,6 +235,137 @@ router.delete("/unsave-club/:id", auth.ensureLoggedIn, async (req, res) => {
   } catch (error) {
     console.error("error unsaving club:", error);
     res.status(500).json({ error: "error unsaving the club" });
+  }
+});
+
+// |------------------------------|
+// | Admin API  Methods            |
+// |------------------------------|
+
+// admin: add an officer to a club
+router.post("/admin/club-officer", auth.ensureLoggedIn, ensureAdmin, async (req, res) => {
+  const { club_id, user_email, role = "officer" } = req.body;
+
+  try {
+    // find user by email
+    const user = await User.findOne({ email: user_email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // create officer relationship
+    await ClubOfficer.create({ club_id, user_id: user._id, role });
+
+    res.status(201).json({ message: "Officer added successfully" });
+  } catch (error) {
+    console.error("Error adding officer:", error);
+    res.status(500).json({ error: "Error adding officer" });
+  }
+});
+
+// officer: add another officer (officers can add other officers)
+router.post("/club-officer", auth.ensureLoggedIn, async (req, res) => {
+  const { club_id, user_email, role = "officer" } = req.body;
+  const currentUserId = req.user._id;
+
+  try {
+    // check if current user is an officer
+    const isOfficer = await ClubOfficer.findOne({ club_id, user_id: currentUserId });
+
+    if (!isOfficer) {
+      return res.status(403).json({ error: "Officer privileges required" });
+    }
+
+    // find user by email
+    const user = await User.findOne({ email: user_email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // create officer relationship
+    await ClubOfficer.create({ club_id, user_id: user._id, role });
+
+    res.status(201).json({ message: "Officer added successfully" });
+  } catch (error) {
+    console.error("Error adding officer:", error);
+    res.status(500).json({ error: "Error adding officer" });
+  }
+});
+
+// remove an officer
+router.delete("/club-officer", auth.ensureLoggedIn, async (req, res) => {
+  const { club_id, user_id } = req.body;
+  const currentUserId = req.user._id;
+
+  try {
+    // check if current user is an officer or admin
+    const isOfficer = await ClubOfficer.findOne({ club_id, user_id: currentUserId });
+    const isAdmin = req.user.isAdmin;
+
+    if (!isOfficer && !isAdmin) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    await ClubOfficer.deleteOne({ club_id, user_id });
+
+    res.status(200).json({ message: "Officer removed successfully" });
+  } catch (error) {
+    console.error("Error removing officer:", error);
+    res.status(500).json({ error: "Error removing officer" });
+  }
+});
+
+// get all officers for a club
+router.get("/club-officers/:club_id", async (req, res) => {
+  const { club_id } = req.params;
+
+  try {
+    const officers = await ClubOfficer.find({ club_id }).populate("user_id", "name");
+    res.json(officers);
+  } catch (error) {
+    console.error("Error fetching officers:", error);
+    res.status(500).json({ error: "Error fetching officers" });
+  }
+});
+
+// check if current user is an officer
+router.get("/is-officer/:club_id", auth.ensureLoggedIn, async (req, res) => {
+  const { club_id } = req.params;
+  const user_id = req.user._id;
+
+  try {
+    const officer = await ClubOfficer.findOne({ club_id, user_id });
+    res.json({ isOfficer: !!officer, role: officer?.role });
+  } catch (error) {
+    console.error("Error checking officer status:", error);
+    res.status(500).json({ error: "Error checking officer status" });
+  }
+});
+
+// modify club update route to check for officer permissions
+router.put("/club", auth.ensureLoggedIn, async (req, res) => {
+  const { club_id, ...updateData } = req.body;
+  const user_id = req.user._id;
+
+  try {
+    // check if user is an officer or admin
+    const officer = await ClubOfficer.findOne({ club_id, user_id });
+    const isAdmin = req.user.isAdmin;
+
+    if (!officer && !isAdmin) {
+      return res.status(403).json({ error: "Not authorized to edit this club" });
+    }
+
+    const result = await Club.updateOne({ club_id }, { $set: updateData });
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Club not found" });
+    }
+
+    res.json({ message: "Club updated successfully" });
+  } catch (error) {
+    console.error("Error updating club:", error);
+    res.status(500).json({ error: "Error updating club" });
   }
 });
 
