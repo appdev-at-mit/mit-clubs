@@ -16,6 +16,7 @@ export const UserContext = createContext(null);
  */
 const App = () => {
   const [userId, setUserId] = useState(undefined);
+  const [googleUser, setGoogleUser] = useState(null);
 
   useEffect(() => {
     get("/api/whoami").then((user) => {
@@ -30,6 +31,8 @@ const App = () => {
     const userToken = credentialResponse.credential;
     const decodedCredential = jwt_decode(userToken);
     console.log(`Logged in as ${decodedCredential.name}`);
+    setGoogleUser(decodedCredential);
+
     post("/api/login", { token: userToken }).then((user) => {
       setUserId(user._id);
       post("/api/initsocket", { socketid: socket.id });
@@ -38,11 +41,13 @@ const App = () => {
 
   const handleLogout = () => {
     setUserId(undefined);
+    setGoogleUser(null);
     post("/api/logout");
   };
 
   const authContextValue = {
     userId,
+    googleUser,
     handleLogin,
     handleLogout,
   };

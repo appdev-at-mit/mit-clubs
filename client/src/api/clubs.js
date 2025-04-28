@@ -25,3 +25,15 @@ export async function unsaveClub(clubId) {
       withCredentials: true,
   });
 }
+
+export async function getProfile() {
+  return await axios.get("http://localhost:3000/api/profile", {
+    withCredentials: true,
+  });
+}
+
+export async function saveProfile(profileData) {
+  return await axios.post("http://localhost:3000/api/profile", profileData, {
+    withCredentials: true,
+  });
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getID } from "../../api/clubs";
-import { Mail, Globe, Users, CheckCircle, XCircle, RefreshCw, ClipboardList } from "lucide-react";
+// import { Mail, Globe, Users, CheckCircle, XCircle, RefreshCw, ClipboardList } from "lucide-react";
 import {
   FaTags, // For "Type"
   FaCheckCircle, // For "Active: Yes"
