@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaFilter, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaSearch, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { SlidersHorizontal } from "lucide-react";
 import ClubCard from "../modules/ClubCard";
 import Navbar from "../modules/Navbar";
 
@@ -229,7 +230,10 @@ const Clubs = () => {
       <div className="flex flex-grow overflow-hidden border-t border-gray-300">
         <div className="flex-shrink-0 w-full max-w-xs bg-white border-r border-gray-300 overflow-y-auto p-4 pl-8 pt-6 flex flex-col">
           <div className="flex justify-between items-center mb-1 flex-shrink-0">
-            <h3 className="text-lg font-bold">Filters</h3>
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal size={18} className="text-gray-600"/>
+              <span className="text-lg font-bold">Filters</span>
+            </div>
             <button
               onClick={resetFilters}
               className="px-3 py-1 bg-gray-300 rounded-md text-xs hover:bg-gray-400"
