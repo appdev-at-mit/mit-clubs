@@ -43,6 +43,17 @@ function ClubCard({
 
   const tagList = typeof tags === 'string' ? tags.split(/,\s*/).filter(tag => tag) : (Array.isArray(tags) ? tags : []);
 
+  // create full image URL by appending the image_url to the base URL
+  let fullImageUrl = defaultImage;
+  if (typeof image_url === 'string') {
+    if (image_url.startsWith('/')) {
+      fullImageUrl = `https://engage.mit.edu${image_url}`;
+    } else if (image_url) {
+      // assume it's already a full URL if it doesn't start with /
+      fullImageUrl = image_url;
+    }
+  }
+
   return (
     <div
       onClick={handleCardClick}
@@ -66,7 +77,7 @@ function ClubCard({
           </div>
         </div>
         <img
-          src={image_url || defaultImage}
+          src={fullImageUrl}
           alt={name}
           className="h-14 w-14 object-contain ml-2 flex-shrink-0"
         />
