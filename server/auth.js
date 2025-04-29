@@ -21,31 +21,48 @@ function getOrCreateUser(user) {
   // the "sub" field means "subject", which is a unique identifier for each user
   return User.findOne({ googleid: user.sub }).then((existingUser) => {
     if (existingUser) {
+      let updated = false;
       // update email if it changed
       if (existingUser.email !== user.email) {
         existingUser.email = user.email;
-        return existingUser.save();
+        updated = true;
       }
-      return existingUser;
+      // update name if it changed (optional, but good practice)
+      if (existingUser.name !== user.name) {
+        existingUser.name = user.name;
+        updated = true;
+      }
+      // Only save if something actually changed
+      const savePromise = updated ? existingUser.save() : Promise.resolve(existingUser);
+      return savePromise.then(savedUser => {
+        console.log(`Existing user found/updated: ${savedUser.email}, isNewUser: false`);
+        return { user: savedUser, isNewUser: false };
+      });
     }
 
+    // User doesn't exist, create new one
     const newUser = new User({
       name: user.name,
       googleid: user.sub,
       email: user.email,
     });
 
-    return newUser.save();
+    return newUser.save().then(savedUser => {
+      console.log(`New user created: ${savedUser.email}, isNewUser: true`);
+      return { user: savedUser, isNewUser: true };
+    });
   });
 }
 
 function login(req, res) {
   verify(req.body.token)
-    .then((user) => getOrCreateUser(user))
-    .then((user) => {
-      // persist user in the session
-      req.session.user = user;
-      res.send(user);
+    .then((googleUser) => getOrCreateUser(googleUser)) // googleUser is the raw payload
+    .then((result) => { // result is { user: UserDocument, isNewUser: boolean }
+      console.log("Login result being sent to frontend:", result);
+      // persist user document in the session
+      req.session.user = result.user;
+      // Send back the user document AND the isNewUser flag
+      res.send({ user: result.user, isNewUser: result.isNewUser });
     })
     .catch((err) => {
       console.log(`Failed to log in: ${err}`);
