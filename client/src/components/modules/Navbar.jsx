@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import React, { useContext } from "react";
 import { UserContext } from "../App";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
+import beaverLogo from "../../assets/beaver.png";
 
 const Navbar = () => {
   const { userId, handleLogin, handleLogout } = useContext(UserContext);
@@ -12,11 +13,10 @@ const Navbar = () => {
       <div className="max-w-full px-10 text-md">
         <div className="flex justify-between items-center h-16">
           {/* Left Side - Home Link */}
-          <div>
-            <NavLink to="/">
-              <span className="text-xl font-bold text-gray-800">MIT Clubs</span>
-            </NavLink>
-          </div>
+          <NavLink to="/" className="flex items-center no-underline">
+            <img src={beaverLogo} alt="MIT Clubs Logo" className="h-8 w-auto mr-2" />
+            <span className="text-xl font-bold text-gray-800">MIT Clubs</span>
+          </NavLink>
 
           {/* Right Side - Authenticated Links or Login/Register */}
           <div className="flex items-center space-x-10">
@@ -25,7 +25,7 @@ const Navbar = () => {
                 <NavLink
                   to="/saved-clubs"
                   className={({ isActive }) =>
-                    `text-gray-700 hover:text-gray-900 ${isActive ? "font-semibold" : ""}`
+                    `text-gray-700 hover:text-gray-900 no-underline ${isActive ? "font-semibold" : ""}`
                   }
                 >
                   Saved
@@ -33,7 +33,7 @@ const Navbar = () => {
                 <NavLink
                   to="/profile"
                   className={({ isActive }) =>
-                    `text-gray-700 hover:text-gray-900 ${isActive ? "font-semibold" : ""}`
+                    `text-gray-700 hover:text-gray-900 no-underline ${isActive ? "font-semibold" : ""}`
                   }
                 >
                   Profile
@@ -43,7 +43,7 @@ const Navbar = () => {
                     googleLogout();
                     handleLogout();
                   }}
-                  className="text-gray-700 hover:text-gray-900"
+                  className="text-gray-700 hover:text-gray-900 no-underline"
                 >
                   Logout
                 </button>
