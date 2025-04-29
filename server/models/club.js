@@ -7,11 +7,14 @@ const ClubSchema = new mongoose.Schema({
   is_accepting: { type: Boolean, default: false },
   recruiting_cycle: { type: String, default: "Unknown" },
   membership_process: { type: String, default: "Open Membership" },
-  type: { type: String, required: true },
+  tags: { type: String },
   email: { type: String },
+  instagram: { type: String },
+  linkedin: { type: String },
+  facebook: { type: String },
   website: { type: String },
   mission: { type: String },
-  picture_url: { type: String }
+  image_url: { type: String }
 });
 
 // compile model from schema
