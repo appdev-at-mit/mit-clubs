@@ -60,7 +60,7 @@ const Clubs = () => {
     membership_process: [],
     recruiting_cycle: [],
     is_accepting: false,
-    include_inactive: false,
+    is_active: true,
     selected_tags: [],
   });
   const [openSections, setOpenSections] = useState({ 
@@ -155,7 +155,7 @@ const Clubs = () => {
       result = result.filter((club) => club.is_accepting === true);
     }
 
-    if (!currentFilters.include_inactive) {
+    if (currentFilters.is_active) {
       result = result.filter((club) => club.is_active === true);
     }
 
@@ -167,7 +167,7 @@ const Clubs = () => {
       membership_process: [],
       recruiting_cycle: [],
       is_accepting: false,
-      include_inactive: false,
+      is_active: true,
       selected_tags: [],
     };
     setFilters(defaultFilters);
@@ -206,8 +206,8 @@ const Clubs = () => {
     setFilters((prev) => ({ ...prev, is_accepting: !prev.is_accepting }));
   };
 
-  const toggleIncludeInactive = () => {
-    setFilters((prev) => ({ ...prev, include_inactive: !prev.include_inactive }));
+  const toggleActiveClubs = () => {
+    setFilters((prev) => ({ ...prev, is_active: !prev.is_active }));
   };
 
   const toggleSubSection = (sectionName) => {
@@ -228,7 +228,7 @@ const Clubs = () => {
       <Navbar />
       <div className="flex flex-grow overflow-hidden border-t border-gray-300">
         <div className="flex-shrink-0 w-full max-w-xs bg-white border-r border-gray-300 overflow-y-auto p-4 pl-8 pt-6 flex flex-col">
-          <div className="flex justify-between items-center mb-4 flex-shrink-0">
+          <div className="flex justify-between items-center mb-1 flex-shrink-0">
             <h3 className="text-lg font-bold">Filters</h3>
             <button
               onClick={resetFilters}
@@ -237,6 +237,9 @@ const Clubs = () => {
                 Reset All
             </button>
           </div>
+          <p className="text-xs text-gray-500 mb-3 flex-shrink-0">
+            Showing {filteredClubs.length} of {clubs.length} clubs
+          </p>
           <div className="flex-grow overflow-y-auto space-y-1 pr-2">
             <div className="border-b border-gray-200 pb-2 mb-2">
               <button 
@@ -371,16 +374,16 @@ const Clubs = () => {
                   <div className={`flex items-center gap-2`}>
                     <input
                       type="checkbox"
-                      id="include_inactive_filter"
-                      checked={filters.include_inactive}
-                      onChange={toggleIncludeInactive}
+                      id="is_active_filter"
+                      checked={filters.is_active}
+                      onChange={toggleActiveClubs}
                       className="h-3.5 w-3.5"
                     />
                     <label 
-                      htmlFor="include_inactive_filter" 
+                      htmlFor="is_active_filter" 
                       className={`text-sm`}
                     >
-                      Include Inactive Clubs
+                      Active Clubs Only
                     </label>
                   </div>
                 </div>
@@ -412,6 +415,7 @@ const Clubs = () => {
                   image_url={club.image_url}
                   description={club.mission}
                   recruitmentProcess={club.membership_process}
+                  recruitingCycle={club.recruiting_cycle}
                   isSavedInitially={savedClubs.has(club.club_id)}
                 />
               ))}

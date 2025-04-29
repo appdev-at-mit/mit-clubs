@@ -4,6 +4,8 @@ import {
   FaBookmark,
   FaUsers,
   FaClipboardCheck,
+  FaCheckCircle,
+  FaTimesCircle,
 } from "react-icons/fa";
 import { saveClub, unsaveClub } from "../../api/clubs.js";
 import defaultImage from "../../assets/default.png";
@@ -65,7 +67,7 @@ function ClubCard({
           <h2 className="text-xl font-semibold text-gray-900 break-words">
             {name}
           </h2>
-          <div className="mt-2 flex flex-wrap gap-2 min-h-[28px]">
+          <div className="mt-3 flex flex-wrap gap-2 min-h-[28px]">
             {tagList.map((tag, index) => (
               <span
                 key={index}
@@ -79,26 +81,26 @@ function ClubCard({
         <img
           src={fullImageUrl}
           alt={name}
-          className="h-14 w-14 object-contain ml-2 flex-shrink-0"
+          className="h-16 w-16 object-contain ml-2 flex-shrink-0 rounded-md"
         />
       </div>
 
       {/* Club Description */}
-      <p className="text-gray-600 mt-2 text-sm flex-grow line-clamp-3 min-h-[3rem]">
+      <p className="text-gray-600 mt-1 text-sm flex-grow line-clamp-3 min-h-[3rem]">
         {description}
       </p>
 
       {/* Club Details */}
-      <div className="mt-4 flex justify-between items-center text-gray-500 text-sm">
-        <div className="flex items-center gap-3">
+      <div className="mt-2 flex justify-between items-center text-gray-500 text-sm">
+        <div className="flex items-center flex-wrap gap-x-3 gap-y-1">
           {membersRange && (
             <span className="flex items-center gap-1">
               <FaUsers className="text-gray-500" />
               {membersRange}
             </span>
           )}
-          <span className="flex items-center gap-1">
-            <FaClipboardCheck className="text-gray-500" />
+          <span className={`flex items-center gap-1`}>
+            <FaClipboardCheck className={`text-gray-500`} />
             {recruitmentProcess}
           </span>
           <span
@@ -106,12 +108,17 @@ function ClubCard({
               isAccepting ? "text-green-600" : "text-red-600"
             }`}
           >
-            {isAccepting ? "Taking Members" : "Not Taking Members"}
+            {isAccepting ? (
+              <FaCheckCircle />
+            ) : (
+              <FaTimesCircle />
+            )}
+            {isAccepting ? "Accepting Members" : "Not Accepting Members"}
           </span>
         </div>
         <button
           onClick={toggleSave}
-          className="text-blue-500 hover:text-blue-700 transition-colors"
+          className="text-blue-500 hover:text-blue-700 transition-colors flex-shrink-0 ml-2"
         >
           {isSaved ? (
             <FaBookmark className="text-blue-500 text-2xl" />
