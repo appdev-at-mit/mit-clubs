@@ -76,8 +76,8 @@ const Clubs = () => {
     if (searchTerm) {
       result = result.filter(
         (club) =>
-          club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          club.mission.toLowerCase().includes(searchTerm.toLowerCase())
+          (club.name && club.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (club.mission && club.mission.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -86,17 +86,6 @@ const Clubs = () => {
       result = result.filter((club) =>
         filters.membership_process.includes(club.membership_process)
       );
-    }
-
-    // filter by size
-    if (filters.sizes && filters.sizes.length > 0) {
-      result = result.filter((club) => {
-        const { min, max } = parseSizeRange(club.type);
-        return filters.sizes.some((size) => {
-          const range = parseSizeRange(size);
-          return club.membersRange >= range.min && club.membersRange <= range.max;
-        });
-      });
     }
 
     // filter by recruiting cycle
