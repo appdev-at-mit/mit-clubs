@@ -231,7 +231,7 @@ const Clubs = () => {
         <div className="flex-shrink-0 w-full max-w-xs bg-white border-r border-gray-300 overflow-y-auto p-4 pl-8 pt-6 flex flex-col">
           <div className="flex justify-between items-center mb-1 flex-shrink-0">
             <div className="flex items-center gap-2">
-              <SlidersHorizontal size={18} className="text-gray-600"/>
+              <SlidersHorizontal size={18} className="text-brand-blue-dark"/>
               <span className="text-lg font-bold">Filters</span>
             </div>
             <button
@@ -277,7 +277,7 @@ const Clubs = () => {
                                 id={`tag-${tag}`}
                                 checked={filters.selected_tags?.includes(tag) || false}
                                 onChange={() => handleTagCheckboxChange(tag)}
-                                className="h-3 w-3"
+                                className="h-3 w-3 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
                               />
                               <label htmlFor={`tag-${tag}`} className="text-xs">
                                 {tag}
@@ -312,7 +312,7 @@ const Clubs = () => {
                         id={`membership-${process}`}
                         checked={filters.membership_process?.includes(process) || false}
                         onChange={() => toggleFilter("membership_process", process)}
-                        className="h-3.5 w-3.5"
+                        className="h-3.5 w-3.5 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
                       />
                       <label htmlFor={`membership-${process}`} className="text-sm">
                         {process}
@@ -343,7 +343,7 @@ const Clubs = () => {
                         id={`recruiting-${cycle}`}
                         checked={filters.recruiting_cycle?.includes(cycle) || false}
                         onChange={() => toggleFilter("recruiting_cycle", cycle)}
-                        className="h-3.5 w-3.5"
+                        className="h-3.5 w-3.5 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
                       />
                       <label htmlFor={`recruiting-${cycle}`} className="text-sm">
                         {cycle}
@@ -369,7 +369,7 @@ const Clubs = () => {
                       id="is_accepting_filter"
                       checked={filters.is_accepting || false}
                       onChange={toggleAcceptingMembers}
-                      className="h-3.5 w-3.5"
+                      className="h-3.5 w-3.5 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
                     />
                     <label htmlFor="is_accepting_filter" className="text-sm">
                       Accepting Members
@@ -381,7 +381,7 @@ const Clubs = () => {
                       id="is_active_filter"
                       checked={filters.is_active}
                       onChange={toggleActiveClubs}
-                      className="h-3.5 w-3.5"
+                      className="h-3.5 w-3.5 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
                     />
                     <label 
                       htmlFor="is_active_filter" 
@@ -402,7 +402,7 @@ const Clubs = () => {
               placeholder="Search clubs by name or mission..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-blue-dark focus:border-brand-blue-dark"
             />
             <FaSearch className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400" />
           </div>
@@ -419,7 +419,6 @@ const Clubs = () => {
                   image_url={club.image_url}
                   description={club.mission}
                   recruitmentProcess={club.membership_process}
-                  recruitingCycle={club.recruiting_cycle}
                   isSavedInitially={savedClubs.has(club.club_id)}
                 />
               ))}

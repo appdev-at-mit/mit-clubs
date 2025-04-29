@@ -10,12 +10,12 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white z-10">
-      <div className="max-w-full px-10 text-md">
+      <div className="max-w-full pl-8 pr-8 text-md">
         <div className="flex justify-between items-center h-16">
           {/* Left Side - Home Link */}
           <NavLink to="/" className="flex items-center no-underline">
             <img src={beaverLogo} alt="MIT Clubs Logo" className="h-8 w-auto mr-2" />
-            <span className="text-xl font-bold text-gray-800">MIT Clubs</span>
+            <span className="text-xl font-bold text-brand-blue-dark">MIT Clubs</span>
           </NavLink>
 
           {/* Right Side - Authenticated Links or Login/Register */}

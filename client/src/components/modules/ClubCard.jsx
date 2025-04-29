@@ -23,6 +23,7 @@ function ClubCard({
   isSavedInitially = false,
 }) {
   const [isSaved, setIsSaved] = useState(isSavedInitially);
+  const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
 
   const toggleSave = async (e) => {
@@ -45,13 +46,11 @@ function ClubCard({
 
   const tagList = typeof tags === 'string' ? tags.split(/,\s*/).filter(tag => tag) : (Array.isArray(tags) ? tags : []);
 
-  // create full image URL by appending the image_url to the base URL
   let fullImageUrl = defaultImage;
   if (typeof image_url === 'string') {
     if (image_url.startsWith('/')) {
       fullImageUrl = `https://engage.mit.edu${image_url}`;
     } else if (image_url) {
-      // assume it's already a full URL if it doesn't start with /
       fullImageUrl = image_url;
     }
   }
@@ -71,7 +70,7 @@ function ClubCard({
             {tagList.map((tag, index) => (
               <span
                 key={index}
-                className="text-xs bg-cyan-100 text-cyan-900 rounded-full px-2 py-1"
+                className="text-xs bg-brand-blue/20 text-brand-blue-dark font-medium rounded-full px-2.5 py-1"
               >
                 {tag}
               </span>
@@ -105,25 +104,39 @@ function ClubCard({
           </span>
           <span
             className={`flex items-center gap-1 ${
-              isAccepting ? "text-green-600" : "text-red-600"
+              isAccepting ? "text-brand-green-dark" : "text-red-600"
             }`}
           >
             {isAccepting ? (
-              <FaCheckCircle />
+              <FaCheckCircle className="text-brand-green-dark" />
             ) : (
-              <FaTimesCircle />
+              <FaTimesCircle className="text-red-600" />
             )}
             {isAccepting ? "Accepting Members" : "Not Accepting Members"}
           </span>
         </div>
         <button
           onClick={toggleSave}
-          className="text-blue-500 hover:text-blue-700 transition-colors flex-shrink-0 ml-2"
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+          className="flex-shrink-0 ml-2"
         >
           {isSaved ? (
-            <FaBookmark className="text-blue-500 text-2xl" />
+            <FaBookmark
+              className={`text-2xl transition-colors duration-300 ease-in-out ${
+                isHovering ? "text-brand-blue-dark" : "text-brand-blue"
+              }`}
+            />
           ) : (
-            <FaRegBookmark className="text-gray-500 text-2xl" />
+            isHovering ? (
+              <FaBookmark
+                className="text-brand-blue text-2xl transition-colors duration-300 ease-in-out"
+              />
+            ) : (
+              <FaRegBookmark
+                className="text-brand-blue-dark text-2xl transition-colors duration-300 ease-in-out"
+              />
+            )
           )}
         </button>
       </div>
