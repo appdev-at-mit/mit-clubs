@@ -245,9 +245,9 @@ const Clubs = () => {
                 key={club.club_id}
                 id={club.club_id}
                 name={club.name}
-                type={club.type}
+                tags={club.tags}
                 isAccepting={club.is_accepting}
-                pictureUrl={club.picture_url}
+                image_url={club.image_url}
                 description={club.mission}
                 recruitmentProcess={club.membership_process}
                 membersRange={club.membersRange}

@@ -14,10 +14,10 @@ function ClubCard({
   name,
   description,
   isAccepting,
-  type,
+  tags,
   membersRange,
   recruitmentProcess,
-  pictureUrl,
+  image_url,
   isSavedInitially = false,
 }) {
   const [isSaved, setIsSaved] = useState(isSavedInitially);
@@ -41,6 +41,8 @@ function ClubCard({
     navigate(`/clubs/${id}`);
   };
 
+  const tagList = typeof tags === 'string' ? tags.split(/,\s*/).filter(tag => tag) : (Array.isArray(tags) ? tags : []);
+
   return (
     <div
       onClick={handleCardClick}
@@ -53,18 +55,18 @@ function ClubCard({
             {name}
           </h2>
           <div className="mt-2 flex flex-wrap gap-2 min-h-[28px]">
-            {(Array.isArray(type) ? type : [type]).map((t, index) => (
+            {tagList.map((tag, index) => (
               <span
                 key={index}
                 className="text-xs bg-cyan-100 text-cyan-900 rounded-full px-2 py-1"
               >
-                {t}
+                {tag}
               </span>
             ))}
           </div>
         </div>
         <img
-          src={pictureUrl || defaultImage}
+          src={image_url || defaultImage}
           alt={name}
           className="h-14 w-14 object-contain ml-2 flex-shrink-0"
         />
@@ -78,10 +80,12 @@ function ClubCard({
       {/* Club Details */}
       <div className="mt-4 flex justify-between items-center text-gray-500 text-sm">
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1">
-            <FaUsers className="text-gray-500" />
-            {membersRange}
-          </span>
+          {membersRange && (
+            <span className="flex items-center gap-1">
+              <FaUsers className="text-gray-500" />
+              {membersRange}
+            </span>
+          )}
           <span className="flex items-center gap-1">
             <FaClipboardCheck className="text-gray-500" />
             {recruitmentProcess}
