@@ -9,7 +9,7 @@ const Navbar = () => {
   const isAuth = Boolean(userId);
 
   return (
-    <nav className="bg-white shadow shadow-md z-10">
+    <nav className="bg-white z-10">
       <div className="max-w-full px-10 text-md">
         <div className="flex justify-between items-center h-16">
           {/* Left Side - Home Link */}

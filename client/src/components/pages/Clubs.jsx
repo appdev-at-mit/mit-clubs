@@ -1,14 +1,80 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaFilter } from "react-icons/fa";
+import { FaSearch, FaFilter, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import ClubCard from "../modules/ClubCard";
 import Navbar from "../modules/Navbar";
 
+const tagCategories = {
+  "Academic & Professional": [
+    "Academic",
+    "Pre-Professional",
+    "Education",
+    "Research",
+    "Technology",
+    "Entrepreneurship",
+    "Engineering",
+  ],
+  "Arts & Performance": [
+    "Performing Arts",
+    "Music",
+    "Visual Arts",
+    "Literary Arts",
+    "Media / Publication",
+    "Arts",
+  ],
+  "Cultural & Identity": [
+    "Cultural",
+    "International Student",
+    "Religious / Spiritual",
+    "LGBTQ+",
+    "Gender-Based",
+    "Diversity & Inclusion",
+    "Gender and Sexuality",
+  ],
+  "Service & Activism": [
+    "Community Service / Volunteering",
+    "Activism/Advocacy",
+    "Political",
+    "Fundraising / Philanthropy",
+  ],
+  "Sports & Recreation": [
+    "Club Sports",
+    "Intramural Sports",
+    "Recreational",
+    "Athletics and Outdoors",
+  ],
+  "Hobbies & Interests": [
+    "Hobby",
+    "Gaming",
+    "Food / Cooking",
+    "Food",
+    "Games and Puzzles",
+  ],
+  Social: ["Greek Life"],
+  Other: [
+    // catch-all for tags not easily categorized above
+  ],
+};
+
 const Clubs = () => {
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({
+    membership_process: [],
+    recruiting_cycle: [],
+    is_accepting: false,
+    include_inactive: false,
+    selected_tags: [],
+  });
+  const [openSections, setOpenSections] = useState({ 
+      membership: true,
+      recruiting: true,
+      status: true,
+  });
+  const [isCategorySectionOpen, setIsCategorySectionOpen] = useState(true);
+
   const [clubs, setClubs] = useState([]);
   const [savedClubs, setSavedClubs] = useState(new Set());
   const [filteredClubs, setFilteredClubs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const membershipProcesses = [
     "Open Membership",
@@ -16,237 +82,348 @@ const Clubs = () => {
     "Audition Required",
     "Application Required",
     "Application and Interview Required",
+    "Invite-only",
   ];
 
-  const sizes = ["less than 20 members", "20 to 50 members", "50 to 100 members", "more than 100"];
-
-  const recruitingCycles = ["Unknown", "Fall Semester", "Spring Semester"];
-
-  // parse size range
-  const parseSizeRange = (range) => {
-    switch (range) {
-      case "less than 20 members":
-        return { min: 0, max: 19 };
-      case "20 to 50 members":
-        return { min: 20, max: 50 };
-      case "50 to 100 members":
-        return { min: 51, max: 100 };
-      case "more than 100":
-        return { min: 101, max: Infinity };
-      default:
-        return { min: 0, max: Infinity };
-    }
-  };
+  const recruitingCycles = ["Open", "Fall Semester", "Spring Semester", "IAP"];
 
   useEffect(() => {
-    // fetch all clubs
+    setLoading(true);
     fetch("http://localhost:3000/api/clubs")
       .then((response) => response.json())
       .then((data) => {
         setClubs(data);
-        setFilteredClubs(data);
+        applyFilters(data, filters);
+        setLoading(false);
       })
-      .catch((error) => console.error("Error fetching clubs:", error));
+      .catch((error) => {
+        console.error("Error fetching clubs:", error);
+        setLoading(false);
+      });
 
-    // fetch saved clubs for the user
     fetch("http://localhost:3000/api/saved-clubs", { credentials: "include" })
-      .then((response) => {
-        if (!response.ok) {
-          // If response is not OK (e.g., 401 Unauthorized), just return empty array
-          return [];
-        }
-        return response.json();
-      })
+      .then((response) => (response.ok ? response.json() : []))
       .then((data) => {
-        // Ensure data is an array before calling map
         const savedClubIds = new Set(Array.isArray(data) ? data.map((club) => club.club_id) : []);
         setSavedClubs(savedClubIds);
       })
       .catch((error) => {
         console.error("Error fetching saved clubs:", error);
-        // Set empty set on error
         setSavedClubs(new Set());
       });
   }, []);
 
-  const applyFilters = () => {
-    let result = [...clubs];
+  const applyFilters = (
+    clubsList = clubs,
+    currentFilters = filters,
+    currentSearchTerm = searchTerm
+  ) => {
+    let result = [...clubsList];
 
-    // filter by search term
-    if (searchTerm) {
+    if (currentSearchTerm) {
+      const lowerSearchTerm = currentSearchTerm.toLowerCase();
       result = result.filter(
         (club) =>
-          (club.name && club.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (club.mission && club.mission.toLowerCase().includes(searchTerm.toLowerCase()))
+          (club.name && club.name.toLowerCase().includes(lowerSearchTerm)) ||
+          (club.mission && club.mission.toLowerCase().includes(lowerSearchTerm))
       );
     }
 
-    // filter by membership process
-    if (filters.membership_process && filters.membership_process.length > 0) {
+    if (currentFilters.selected_tags && currentFilters.selected_tags.length > 0) {
+      result = result.filter((club) => {
+        if (!club.tags || typeof club.tags !== "string") return false;
+        const clubTags = club.tags.toLowerCase().split(/,\s*/);
+        return currentFilters.selected_tags.every((selectedTag) =>
+          clubTags.includes(selectedTag.toLowerCase())
+        );
+      });
+    }
+
+    if (currentFilters.membership_process && currentFilters.membership_process.length > 0) {
       result = result.filter((club) =>
-        filters.membership_process.includes(club.membership_process)
+        currentFilters.membership_process.includes(club.membership_process)
       );
     }
 
-    // filter by recruiting cycle
-    if (filters.recruiting_cycle && filters.recruiting_cycle.length > 0) {
-      result = result.filter((club) => filters.recruiting_cycle.includes(club.recruiting_cycle));
+    if (currentFilters.recruiting_cycle && currentFilters.recruiting_cycle.length > 0) {
+      result = result.filter((club) =>
+        currentFilters.recruiting_cycle.includes(club.recruiting_cycle)
+      );
     }
 
-    // filter by accepting members
-    if (filters.is_accepting) {
+    if (currentFilters.is_accepting) {
       result = result.filter((club) => club.is_accepting === true);
+    }
+
+    if (!currentFilters.include_inactive) {
+      result = result.filter((club) => club.is_active === true);
     }
 
     setFilteredClubs(result);
   };
 
   const resetFilters = () => {
-    setFilters({});
-    setFilteredClubs(clubs);
+    const defaultFilters = {
+      membership_process: [],
+      recruiting_cycle: [],
+      is_accepting: false,
+      include_inactive: false,
+      selected_tags: [],
+    };
+    setFilters(defaultFilters);
+    setSearchTerm("");
+    applyFilters(clubs, defaultFilters, "");
   };
 
   const toggleFilter = (key, value) => {
     setFilters((prev) => {
       const updated = { ...prev };
       if (!updated[key]) updated[key] = [];
-      if (updated[key].includes(value)) {
-        updated[key] = updated[key].filter((item) => item !== value);
+      const currentIndex = updated[key].indexOf(value);
+      if (currentIndex === -1) {
+        updated[key] = [...updated[key], value];
       } else {
-        updated[key].push(value);
+        updated[key] = updated[key].filter((item) => item !== value);
       }
       return updated;
     });
   };
 
+  const handleTagCheckboxChange = (tag) => {
+    setFilters((prev) => {
+      const currentTags = prev.selected_tags || [];
+      let newTags;
+      if (currentTags.includes(tag)) {
+        newTags = currentTags.filter((t) => t !== tag);
+      } else {
+        newTags = [...currentTags, tag];
+      }
+      return { ...prev, selected_tags: newTags };
+    });
+  };
+
   const toggleAcceptingMembers = () => {
-    setFilters((prev) => ({
+    setFilters((prev) => ({ ...prev, is_accepting: !prev.is_accepting }));
+  };
+
+  const toggleIncludeInactive = () => {
+    setFilters((prev) => ({ ...prev, include_inactive: !prev.include_inactive }));
+  };
+
+  const toggleSubSection = (sectionName) => {
+    setOpenSections((prev) => ({
       ...prev,
-      is_accepting: !prev.is_accepting,
+      [sectionName]: !prev[sectionName],
     }));
   };
 
   useEffect(() => {
-    applyFilters();
-  }, [filters, searchTerm]);
+    if (clubs.length > 0) {
+      applyFilters(clubs, filters, searchTerm);
+    }
+  }, [filters, searchTerm, clubs]);
 
   return (
-    <>
+    <div className="flex flex-col h-screen bg-gray-50">
       <Navbar />
-      <div className="flex h-screen overflow-hidden border-t border-gray-300">
-        {/* Sidebar */}
-        <div className="w-full max-w-96 bg-white border-r border-gray-300 overflow-y-auto p-4 pl-10 pt-6">
-          <h3 className="text-lg font-bold mb-4">Filters</h3>
-
-          {/* Membership Process */}
-          <div className="mb-6 text-md border-b border-gray-300 pb-6">
-            <h4 className="font-bold text-gray-500 mb-2">Membership Process</h4>
-            {membershipProcesses.map((process) => (
-              <div key={process} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={filters.membership_process?.includes(process) || false}
-                  onChange={() => toggleFilter("membership_process", process)}
-                />
-                <label>{process}</label>
-              </div>
-            ))}
+      <div className="flex flex-grow overflow-hidden border-t border-gray-300">
+        <div className="flex-shrink-0 w-full max-w-xs bg-white border-r border-gray-300 overflow-y-auto p-4 pl-8 pt-6 flex flex-col">
+          <div className="flex justify-between items-center mb-4 flex-shrink-0">
+            <h3 className="text-lg font-bold">Filters</h3>
+            <button
+              onClick={resetFilters}
+              className="px-3 py-1 bg-gray-300 rounded-md text-xs hover:bg-gray-400"
+            >
+                Reset All
+            </button>
           </div>
-
-          {/* Sizes */}
-          <div className="mb-6 text-md border-b border-gray-300 pb-6">
-            <h4 className="font-bold text-gray-500 mb-2">Sizes</h4>
-            {sizes.map((size) => (
-              <div key={size} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={filters.sizes?.includes(size) || false}
-                  onChange={() => toggleFilter("sizes", size)}
-                />
-                <label>{size}</label>
-              </div>
-            ))}
-          </div>
-
-          {/* Recruiting Cycle */}
-          <div className="mb-6 text-md border-b border-gray-300 pb-6">
-            <h4 className="font-bold text-gray-500 mb-2">Recruiting Cycle</h4>
-            {recruitingCycles.map((cycle) => (
-              <div key={cycle} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={filters.recruiting_cycle?.includes(cycle) || false}
-                  onChange={() => toggleFilter("recruiting_cycle", cycle)}
-                />
-                <label>{cycle}</label>
-              </div>
-            ))}
-          </div>
-
-          {/* Accepting Members */}
-          <div className="mb-6 text-md">
-            <h4 className="font-bold text-gray-500 mb-2">Accepting Members</h4>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={filters.is_accepting || false}
-                onChange={toggleAcceptingMembers}
-              />
-              <label>Is Accepting Members</label>
+          <div className="flex-grow overflow-y-auto space-y-1 pr-2">
+            <div className="border-b border-gray-200 pb-2 mb-2">
+              <button 
+                onClick={() => setIsCategorySectionOpen(!isCategorySectionOpen)} 
+                className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
+              >
+                <span>Category</span>
+                {isCategorySectionOpen ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
+              </button>
+              {isCategorySectionOpen && (
+                <div className="mt-2 pl-3 space-y-1">
+                  {Object.entries(tagCategories).map(([category, tags]) => (
+                    <div key={category} className="pb-1">
+                      <button 
+                        onClick={() => toggleSubSection(category)} 
+                        className="flex justify-between items-center w-full py-1 text-left font-medium text-sm text-gray-500 hover:text-gray-700"
+                      >
+                        <span>{category}</span>
+                        {openSections[category] ? (
+                          <FaChevronUp size={10} />
+                        ) : (
+                          <FaChevronDown size={10} />
+                        )}
+                      </button>
+                      {openSections[category] && (
+                        <div className="mt-1 pl-3 space-y-0.5">
+                          {tags.map((tag) => (
+                            <div key={tag} className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                id={`tag-${tag}`}
+                                checked={filters.selected_tags?.includes(tag) || false}
+                                onChange={() => handleTagCheckboxChange(tag)}
+                                className="h-3 w-3"
+                              />
+                              <label htmlFor={`tag-${tag}`} className="text-xs">
+                                {tag}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="border-b border-gray-200 pb-2 mb-2">
+              <button 
+                onClick={() => toggleSubSection("membership")} 
+                className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
+              >
+                <span>Membership Process</span>
+                {openSections["membership"] ? (
+                  <FaChevronUp size={12} />
+                ) : (
+                  <FaChevronDown size={12} />
+                )}
+              </button>
+              {openSections["membership"] && (
+                <div className="mt-2 pl-3 space-y-1">
+                  {membershipProcesses.map((process) => (
+                    <div key={process} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id={`membership-${process}`}
+                        checked={filters.membership_process?.includes(process) || false}
+                        onChange={() => toggleFilter("membership_process", process)}
+                        className="h-3.5 w-3.5"
+                      />
+                      <label htmlFor={`membership-${process}`} className="text-sm">
+                        {process}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="border-b border-gray-200 pb-2 mb-2">
+              <button 
+                onClick={() => toggleSubSection("recruiting")} 
+                className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
+              >
+                <span>Recruiting Cycle</span>
+                {openSections["recruiting"] ? (
+                  <FaChevronUp size={12} />
+                ) : (
+                  <FaChevronDown size={12} />
+                )}
+              </button>
+              {openSections["recruiting"] && (
+                <div className="mt-2 pl-3 space-y-1">
+                  {recruitingCycles.map((cycle) => (
+                    <div key={cycle} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id={`recruiting-${cycle}`}
+                        checked={filters.recruiting_cycle?.includes(cycle) || false}
+                        onChange={() => toggleFilter("recruiting_cycle", cycle)}
+                        className="h-3.5 w-3.5"
+                      />
+                      <label htmlFor={`recruiting-${cycle}`} className="text-sm">
+                        {cycle}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="pb-2 mb-2">
+              <button 
+                onClick={() => toggleSubSection("status")} 
+                className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
+              >
+                <span>Status</span>
+                {openSections["status"] ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
+              </button>
+              {openSections["status"] && (
+                <div className="mt-2 pl-3 space-y-1">
+                   <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="is_accepting_filter"
+                      checked={filters.is_accepting || false}
+                      onChange={toggleAcceptingMembers}
+                      className="h-3.5 w-3.5"
+                    />
+                    <label htmlFor="is_accepting_filter" className="text-sm">
+                      Accepting Members
+                    </label>
+                  </div>
+                  <div className={`flex items-center gap-2`}>
+                    <input
+                      type="checkbox"
+                      id="include_inactive_filter"
+                      checked={filters.include_inactive}
+                      onChange={toggleIncludeInactive}
+                      className="h-3.5 w-3.5"
+                    />
+                    <label 
+                      htmlFor="include_inactive_filter" 
+                      className={`text-sm`}
+                    >
+                      Include Inactive Clubs
+                    </label>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-4">
-            <button onClick={resetFilters} className="px-4 py-2 bg-gray-300 rounded-md">
-              Reset
-            </button>
-            <button onClick={applyFilters} className="px-4 py-2 bg-blue-500 text-white rounded-md">
-              Apply
-            </button>
-          </div>
         </div>
-
-        {/* Club Grid */}
         <div className="flex-grow overflow-y-auto p-6 w-full bg-gray-50">
-          <h1 className="text-3xl font-bold pt-2 pb-4">Browse Clubs</h1>
-          {/* Search Bar */}
           <div className="relative mb-6">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                applyFilters();
-              }}
-            >
-              <input
-                type="text"
-                placeholder="Search clubs..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-              />
-              <FaSearch className="absolute top-2.5 right-4 text-gray-400" />
-            </form>
+            <input
+              type="text"
+              placeholder="Search clubs by name or mission..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            />
+            <FaSearch className="absolute top-2.5 right-4 text-gray-400" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredClubs.map((club) => (
-              <ClubCard
-                key={club.club_id}
-                id={club.club_id}
-                name={club.name}
-                tags={club.tags}
-                isAccepting={club.is_accepting}
-                image_url={club.image_url}
-                description={club.mission}
-                recruitmentProcess={club.membership_process}
-                membersRange={club.membersRange}
-                isSavedInitially={savedClubs.has(club.club_id)}
-              />
-            ))}
+            {filteredClubs
+              .filter((club) => club && club.club_id)
+              .map((club) => (
+                <ClubCard
+                  key={club.club_id} 
+                  id={club.club_id}
+                  name={club.name}
+                  tags={club.tags}
+                  isAccepting={club.is_accepting}
+                  image_url={club.image_url}
+                  description={club.mission}
+                  recruitmentProcess={club.membership_process}
+                  isSavedInitially={savedClubs.has(club.club_id)}
+                />
+              ))}
+             {filteredClubs.length === 0 && !loading && (
+                <p className="col-span-1 md:col-span-2 text-center text-gray-500 mt-10">
+                  No clubs match your current filters. Try adjusting your search or filters.
+                </p>
+            )}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
