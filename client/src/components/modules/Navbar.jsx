@@ -9,13 +9,13 @@ const Navbar = () => {
   const isAuth = Boolean(userId);
 
   return (
-    <nav className="bg-white z-10">
+    <nav className="bg-white z-10 border-b border-gray-300">
       <div className="max-w-full pl-8 pr-8 text-md">
         <div className="flex justify-between items-center h-16">
           {/* Left Side - Home Link */}
           <NavLink to="/" className="flex items-center no-underline">
             <img src={beaverLogo} alt="MIT Clubs Logo" className="h-8 w-auto mr-2" />
-            <span className="text-xl font-bold text-brand-blue-dark">MIT Clubs</span>
+            <span className="text-xl font-bold text-brand-blue-dark">Beaver Clubs</span>
           </NavLink>
 
           {/* Right Side - Authenticated Links or Login/Register */}

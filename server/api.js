@@ -105,9 +105,9 @@ router.get("/clubs/:id", async (req, res) => {
 router.post("/club", async (req, res) => {
   try {
     const newClub = await Club.create(req.body);
-    res.status(201).json({ 
-      message: "club added successfully", 
-      club_id: newClub.club_id 
+    res.status(201).json({
+      message: "club added successfully",
+      club_id: newClub.club_id,
     });
   } catch (error) {
     console.error("error adding club:", error);
@@ -118,11 +118,8 @@ router.post("/club", async (req, res) => {
 router.put("/club", async (req, res) => {
   const { club_id, ...updateData } = req.body;
   try {
-    const result = await Club.updateOne(
-      { club_id },
-      { $set: updateData }
-    );
-    
+    const result = await Club.updateOne({ club_id }, { $set: updateData });
+
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: "club not found" });
     }
@@ -160,23 +157,42 @@ router.post("/save-club", auth.ensureLoggedIn, async (req, res) => {
   }
 
   try {
-    // check if club exists
+    // check if already saved in SavedClub collection (for current status)
+    const existing = await SavedClub.findOne({ user_id, club_id });
+    if (existing) {
+      // if already marked as saved for the user, return current club data without changes
+      // this prevents errors if frontend allows clicking save again when already saved
+      const currentClub = await Club.findOne({ club_id });
+      return res.status(200).json(currentClub);
+    }
+
+    // check if user has previously contributed to save count
     const club = await Club.findOne({ club_id });
     if (!club) {
-      return res.status(404).json({ error: "club not found" });
+      return res.status(404).json({ error: "Club not found" });
     }
 
-    // check if already saved
-    const existing = await SavedClub.findOne({ user_id, club_id });
+    let updateOperation = {};
+    const userHasSavedBefore = club.savedByUsers.some((id) => id.equals(user_id));
 
-    if (existing) {
-      return res.status(400).json({ error: "club already saved" });
-    }
+    if (!userHasSavedBefore) {
+      // user saving for the first time: increment count and add user to set
+      updateOperation = {
+        $inc: { saveCount: 1 },
+        $addToSet: { savedByUsers: user_id },
+      };
+    } // else: user has saved before, no changes needed for count/savedByUsers list
 
-    // save the club
+    // perform the update (if any) and get the potentially updated club
+    const updatedClub = await Club.findOneAndUpdate({ club_id: club_id }, updateOperation, {
+      new: true,
+    });
+
+    // create entry in SavedClub collection to mark as currently saved
     await SavedClub.create({ user_id, club_id });
 
-    res.status(201).json({ message: "club saved successfully" });
+    // return the latest club data (with potentially updated count)
+    res.status(201).json(updatedClub);
   } catch (error) {
     console.error("error saving club:", error);
     res.status(500).json({ error: "error saving club" });
@@ -199,8 +215,8 @@ router.get("/saved-clubs", auth.ensureLoggedIn, async (req, res) => {
     }
 
     // extract club_ids
-    const clubIds = savedClubEntries.map(entry => entry.club_id);
-    
+    const clubIds = savedClubEntries.map((entry) => entry.club_id);
+
     // get the actual club documents
     const clubs = await Club.find({ club_id: { $in: clubIds } });
 
@@ -208,6 +224,25 @@ router.get("/saved-clubs", auth.ensureLoggedIn, async (req, res) => {
   } catch (error) {
     console.error("error fetching saved clubs:", error);
     res.status(500).json({ error: "error fetching saved clubs" });
+  }
+});
+
+// Added route to get just the IDs of saved clubs
+router.get("/saved-club-ids", auth.ensureLoggedIn, async (req, res) => {
+  const user_id = req.user?._id;
+
+  if (!user_id) {
+    return res.status(401).json({ error: "unauthorized" });
+  }
+
+  try {
+    // find all saved club entries for this user, selecting only the club_id field
+    const savedClubEntries = await SavedClub.find({ user_id }).select("club_id -_id");
+
+    res.status(200).json(savedClubEntries);
+  } catch (error) {
+    console.error("error fetching saved club ids:", error);
+    res.status(500).json({ error: "error fetching saved club ids" });
   }
 });
 
@@ -236,7 +271,10 @@ router.delete("/unsave-club/:id", auth.ensureLoggedIn, async (req, res) => {
       club_id,
     });
 
-    res.status(200).json({ message: "club unsaved successfully" });
+    // Fetch the current club data (saveCount is NOT decremented)
+    const currentClub = await Club.findOne({ club_id: club_id });
+
+    res.status(200).json(currentClub); // Return current club data
   } catch (error) {
     console.error("error unsaving club:", error);
     res.status(500).json({ error: "error unsaving the club" });
@@ -318,7 +356,7 @@ router.get("/user/saved-clubs/events", auth.ensureLoggedIn, async (req, res) => 
     }
 
     // Extract club IDs
-    const clubIds = savedClubEntries.map(entry => entry.club_id);
+    const clubIds = savedClubEntries.map((entry) => entry.club_id);
 
     // Query for events from these clubs
     let query = { club_id: { $in: clubIds } };
@@ -341,12 +379,12 @@ router.get("/user/saved-clubs/events", auth.ensureLoggedIn, async (req, res) => 
     const clubsDetails = await Club.find({ club_id: { $in: clubIds } });
 
     // Map club details to each event
-    const eventsWithClubInfo = events.map(event => {
-      const club = clubsDetails.find(c => c.club_id === event.club_id) || {};
+    const eventsWithClubInfo = events.map((event) => {
+      const club = clubsDetails.find((c) => c.club_id === event.club_id) || {};
       return {
         ...event.toObject(),
         clubName: club.name || "Unknown Club",
-        clubColor: club.color || "#808080" // Default gray if no color specified
+        clubColor: club.color || "#808080", // Default gray if no color specified
       };
     });
 
@@ -383,7 +421,7 @@ router.post("/events", auth.ensureLoggedIn, async (req, res) => {
 
     res.status(201).json({
       message: "Event created successfully",
-      event_id: newEvent.event_id
+      event_id: newEvent.event_id,
     });
   } catch (error) {
     console.error("Error creating event:", error);
@@ -403,10 +441,7 @@ router.put("/events/:id", auth.ensureLoggedIn, async (req, res) => {
     // Set the updated_at timestamp
     updateData.updated_at = new Date();
 
-    const result = await Event.updateOne(
-      { event_id: id },
-      { $set: updateData }
-    );
+    const result = await Event.updateOne({ event_id: id }, { $set: updateData });
 
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: "Event not found" });
@@ -436,7 +471,6 @@ router.delete("/events/:id", auth.ensureLoggedIn, async (req, res) => {
     res.status(500).json({ error: "Error deleting event" });
   }
 });
-
 
 // anything else falls to this "not found" case
 router.all("*", (req, res) => {

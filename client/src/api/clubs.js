@@ -20,8 +20,14 @@ export async function getSavedClubs() {
   });
 }
 
+export async function getSavedClubIds() {
+  return await axios.get("http://localhost:3000/api/saved-club-ids", {
+    withCredentials: true,
+  });
+}
+
 export async function unsaveClub(clubId) {
   return await axios.delete(`http://localhost:3000/api/unsave-club/${clubId}`, {
-      withCredentials: true,
+    withCredentials: true,
   });
 }

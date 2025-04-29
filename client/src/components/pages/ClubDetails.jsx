@@ -1,110 +1,306 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getID } from "../../api/clubs";
-import { Mail, Globe, Users, CheckCircle, XCircle, RefreshCw, ClipboardList } from "lucide-react";
+import React, { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router-dom";
+import { getID, saveClub, unsaveClub, getSavedClubIds } from "../../api/clubs";
+import { UserContext } from "../App";
+import Navbar from "../modules/Navbar";
+import defaultImage from "../../assets/default.png";
+
 import {
-  FaTags, // For "Type"
-  FaCheckCircle, // For "Active: Yes"
-  FaTimesCircle, // For "Active: No"
-  FaSyncAlt, // For "Recruitment Cycle"
-  FaClipboardCheck, // For "Membership Process"
-  FaEnvelope,
-  FaGlobe,
-} from "react-icons/fa";
+  Mail,
+  Globe,
+  Users,
+  CheckCircle,
+  XCircle,
+  RefreshCw,
+  ClipboardList,
+  Pencil,
+  Settings,
+  Bookmark,
+  Bell,
+  MessageSquare,
+  Facebook,
+  Zap,
+  ZapOff,
+} from "lucide-react";
+import { FaFacebookF, FaRegBookmark, FaBookmark } from "react-icons/fa";
 
 const ClubDetails = () => {
   const { clubId } = useParams();
-  const navigate = useNavigate();
+  const { userId, login } = useContext(UserContext);
   const [club, setClub] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isHoveringSave, setIsHoveringSave] = useState(false);
+  const [saveCount, setSaveCount] = useState(243);
 
   useEffect(() => {
-    const fetchClubDetails = async () => {
+    const fetchAllDetails = async () => {
+      setLoading(true);
       try {
-        const response = await getID(clubId);
-        setClub(response.data);
-        setLoading(false);
+        // fetch main club details
+        const clubResponse = await getID(clubId);
+        setClub(clubResponse.data);
+
+        // fetch user's saved clubs IF logged in
+        if (userId) {
+          const savedIdsResponse = await getSavedClubIds();
+          if (savedIdsResponse && Array.isArray(savedIdsResponse.data)) {
+            setIsSaved(savedIdsResponse.data.some((saved) => saved.club_id === clubId));
+          }
+        } else {
+          setIsSaved(false);
+        }
       } catch (error) {
-        console.error("Error fetching club details:", error);
+        console.error("Error fetching club details or save status:", error);
+        setClub(null);
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchClubDetails();
-  }, [clubId]);
+    fetchAllDetails();
+  }, [clubId, userId]);
+
+  // function to handle image errors
+  const handleImageError = (e) => {
+    e.target.src = defaultImage;
+  };
+
+  // toggle save function
+  const handleToggleSave = async () => {
+    if (!userId) {
+      login();
+      return;
+    }
+
+    try {
+      let response;
+      if (!isSaved) {
+        response = await saveClub(clubId);
+      } else {
+        response = await unsaveClub(clubId);
+      }
+      // update state based on response
+      if (response && response.data) {
+        setClub(response.data); // update club data (contains new saveCount)
+        setIsSaved(!isSaved); // toggle save status
+      } else {
+        // fallback if API doesn't return data
+        setIsSaved(!isSaved);
+        setClub((prev) => ({
+          ...prev,
+          saveCount: isSaved ? prev.saveCount - 1 : prev.saveCount + 1,
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to toggle save status:", error);
+      alert(error.response?.data?.error || "Failed to update save status.");
+    }
+  };
+
+  // process tags
+  const tagList =
+    typeof club?.tags === "string"
+      ? club.tags.split(/,\s*/).filter((tag) => tag)
+      : Array.isArray(club?.tags)
+      ? club.tags
+      : [];
+
+  // construct image URL
+  let fullImageUrl = defaultImage;
+  if (typeof club?.image_url === "string") {
+    if (club.image_url.startsWith("/")) {
+      fullImageUrl = `https://engage.mit.edu${club.image_url}`;
+    } else if (club.image_url) {
+      fullImageUrl = club.image_url;
+    }
+  }
 
   if (loading) {
-    return <p className="text-center text-xl mt-10 text-cyan-600">Loading...</p>;
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <div className="flex-grow flex items-center justify-center">
+          <p className="text-center text-xl text-brand-blue-dark">Loading club details...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!club) {
-    return <p className="text-center text-xl mt-10 text-red-500">Club not found.</p>;
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <div className="flex-grow flex items-center justify-center">
+          <p className="text-center text-xl text-red-600">Could not load club details.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-8">
-      <div className="w-full max-w-4xl">
-        {/* Back Button */}
-        <button
-          className="mb-6 px-6 py-3 bg-white text-black text-md font-medium rounded-full border hover:bg-gray-100 transition-all"
-          onClick={() => navigate("/")}
-        >
-          ← Back to All Clubs
-        </button>
-        <div className="bg-white shadow-2xl rounded-lg overflow-hidden">
-          {/* Club Header */}
-          <div className="bg-cyan-100 text-black text-center py-8 px-6">
-            <h1 className="text-4xl font-extrabold">{club.name}</h1>
-            <div className="mt-4 inline-flex justify-center gap-6 text-lg items-center">
-              <div className="flex items-center gap-2">
-                <FaGlobe size={18} className="text-gray-700" />
-                <a
-                  href={club.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-cyan-700 hover:underline"
-                >
-                  {club.website}
-                </a>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaEnvelope size={18} className="text-gray-700" />
-                <a href={`mailto:${club.email}`} className="text-cyan-700 hover:underline">
-                  {club.email}
-                </a>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="flex-grow container mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left Column */}
+          <div className="w-full lg:w-3/4 space-y-8">
+            {/* Header */}
+            <div className="bg-white p-6 rounded-lg border border-gray-200">
+              <div className="flex flex-col sm:flex-row items-start gap-6">
+                <div className="flex-grow">
+                  <h1 className="text-3xl font-bold text-gray-900">{club.name}</h1>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {tagList.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="text-sm bg-brand-blue/20 text-brand-blue-dark font-medium rounded-full px-3 py-1"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <img
+                  src={fullImageUrl}
+                  alt={`${club.name} logo`}
+                  className="h-24 w-24 object-contain flex-shrink-0 border border-gray-200 rounded-md"
+                  onError={handleImageError}
+                />
               </div>
             </div>
-            <p className="text-base mt-3">{club.mission}</p>
+
+            {/* Club Mission */}
+            <div className="bg-white p-6 rounded-lg border border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-800 mb-1">Club Mission</h2>
+              <h3 className="text-lg font-medium text-gray-600 mb-4">About Us</h3>
+              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                {club.mission || "No mission statement provided."}
+              </p>
+            </div>
           </div>
-          {/* Club Details */}
-          <div className="p-8 space-y-5">
-            <div className="flex items-center gap-2">
-              {club.is_active ? (
-                <FaCheckCircle className="text-green-300 w-5 h-5" />
-              ) : (
-                <FaTimesCircle className="text-red-700 w-5 h-5" />
-              )}
-              <p className="text-lg text-gray-700">
-                <strong className="font-bold">Active:</strong> {club.is_active ? "Yes" : "No"}
-              </p>
+
+          {/* Right Column - Changed width to lg:w-1/4 */}
+          <div className="w-full lg:w-1/4 space-y-6">
+            {/* Save/Bell Buttons */}
+            <div className="flex items-center justify-start gap-3">
+              {/* Save Button/Display */}
+              <button
+                onClick={handleToggleSave}
+                onMouseEnter={() => setIsHoveringSave(true)}
+                onMouseLeave={() => setIsHoveringSave(false)}
+                className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                {isSaved ? (
+                  <FaBookmark
+                    className={`text-xl transition-colors duration-300 ease-in-out ${
+                      isHoveringSave ? "text-brand-blue-dark" : "text-brand-blue"
+                    }`}
+                  />
+                ) : isHoveringSave ? (
+                  <FaBookmark className="text-brand-blue text-xl transition-colors duration-300 ease-in-out" />
+                ) : (
+                  <FaRegBookmark className="text-brand-blue-dark text-xl transition-colors duration-300 ease-in-out" />
+                )}
+                {/* Save count */}
+                <span className="ml-1">{club?.saveCount ?? 0}</span>
+              </button>
+              {/* Bell Button */}
+              <button className="p-2 bg-white border border-gray-300 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors">
+                <Bell size={18} />
+              </button>
             </div>
-            <div className="flex items-center gap-2">
-              <FaTags className="text-gray-500 w-5 h-5" />
-              <p className="text-lg text-gray-700">
-                <strong class="font-bold">Type:</strong> {club.type}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaSyncAlt className="text-gray-500 w-5 h-5" />
-              <p className="text-lg text-gray-700">
-                <strong class="font-bold">Recruitment Cycle:</strong> {club.recruiting_cycle}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaClipboardCheck className="text-gray-500 w-5 h-5" />
-              <p className="text-lg text-gray-700">
-                <strong class="font-bold">Membership Process:</strong> {club.membership_process}
-              </p>
+
+            {/* Info Box */}
+            <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-6">
+              {/* Basic Info */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+                  Basic Info
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                  {/* Active Status */}
+                  <div className="flex items-center gap-3">
+                    {club.is_active ? (
+                      <Zap size={18} className="text-brand-green-dark flex-shrink-0" />
+                    ) : (
+                      <ZapOff size={18} className="text-red-600 flex-shrink-0" />
+                    )}
+                    <span>{club.is_active ? "Active" : "Inactive"}</span>
+                  </div>
+                  {/* Accepting Members */}
+                  <div className="flex items-center gap-3">
+                    {club.is_accepting ? (
+                      <CheckCircle size={18} className="text-brand-green-dark flex-shrink-0" />
+                    ) : (
+                      <XCircle size={18} className="text-red-600 flex-shrink-0" />
+                    )}
+                    <span>
+                      {club.is_accepting
+                        ? "Currently Accepting Members"
+                        : "Not Currently Accepting Members"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <ClipboardList size={18} className="text-gray-500 flex-shrink-0" />
+                    <span>{club.membership_process || "Membership process not specified"}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <RefreshCw size={18} className="text-gray-500 flex-shrink-0" />
+                    <span>{club.recruiting_cycle || "Recruiting cycle not specified"}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Contact</h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                  {club.facebook && (
+                    <div className="flex items-center gap-3">
+                      <FaFacebookF size={18} className="text-blue-600 flex-shrink-0" />
+                      <a
+                        href={
+                          club.facebook.startsWith("http")
+                            ? club.facebook
+                            : `https://${club.facebook}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline break-all"
+                      >
+                        {club.facebook}
+                      </a>
+                    </div>
+                  )}
+                  {club.email && (
+                    <div className="flex items-center gap-3">
+                      <Mail size={18} className="text-gray-500 flex-shrink-0" />
+                      <a href={`mailto:${club.email}`} className="hover:underline break-all">
+                        {club.email}
+                      </a>
+                    </div>
+                  )}
+                  {club.website && (
+                    <div className="flex items-center gap-3">
+                      <Globe size={18} className="text-gray-500 flex-shrink-0" />
+                      <a
+                        href={
+                          club.website.startsWith("http") ? club.website : `https://${club.website}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline break-all"
+                      >
+                        {club.website}
+                      </a>
+                    </div>
+                  )}
+                  {!(club.facebook || club.email || club.website) && (
+                    <p className="text-gray-500 italic">No contact information provided.</p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

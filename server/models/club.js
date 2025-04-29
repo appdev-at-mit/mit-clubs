@@ -14,7 +14,9 @@ const ClubSchema = new mongoose.Schema({
   facebook: { type: String },
   website: { type: String },
   mission: { type: String },
-  image_url: { type: String }
+  image_url: { type: String },
+  saveCount: { type: Number, default: 0 },
+  savedByUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
 
 // compile model from schema

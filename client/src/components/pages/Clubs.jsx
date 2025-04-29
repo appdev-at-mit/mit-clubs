@@ -43,13 +43,7 @@ const tagCategories = {
     "Recreational",
     "Athletics and Outdoors",
   ],
-  "Hobbies & Interests": [
-    "Hobby",
-    "Gaming",
-    "Food / Cooking",
-    "Food",
-    "Games and Puzzles",
-  ],
+  "Hobbies & Interests": ["Hobby", "Gaming", "Food / Cooking", "Food", "Games and Puzzles"],
   Social: ["Greek Life"],
   Other: [
     // catch-all for tags not easily categorized above
@@ -64,10 +58,10 @@ const Clubs = () => {
     is_active: true,
     selected_tags: [],
   });
-  const [openSections, setOpenSections] = useState({ 
-      membership: true,
-      recruiting: true,
-      status: true,
+  const [openSections, setOpenSections] = useState({
+    membership: true,
+    recruiting: true,
+    status: true,
   });
   const [isCategorySectionOpen, setIsCategorySectionOpen] = useState(true);
 
@@ -227,18 +221,18 @@ const Clubs = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <Navbar />
-      <div className="flex flex-grow overflow-hidden border-t border-gray-300">
+      <div className="flex flex-grow overflow-hidden">
         <div className="flex-shrink-0 w-full max-w-xs bg-white border-r border-gray-300 overflow-y-auto p-4 pl-8 pt-6 flex flex-col">
           <div className="flex justify-between items-center mb-1 flex-shrink-0">
             <div className="flex items-center gap-2">
-              <SlidersHorizontal size={18} className="text-brand-blue-dark"/>
+              <SlidersHorizontal size={18} className="text-brand-blue-dark" />
               <span className="text-lg font-bold">Filters</span>
             </div>
             <button
               onClick={resetFilters}
               className="px-3 py-1 bg-gray-300 rounded-md text-xs hover:bg-gray-400"
             >
-                Reset All
+              Reset All
             </button>
           </div>
           <p className="text-xs text-gray-500 mb-3 flex-shrink-0">
@@ -246,8 +240,8 @@ const Clubs = () => {
           </p>
           <div className="flex-grow overflow-y-auto space-y-1 pr-2">
             <div className="border-b border-gray-200 pb-2 mb-2">
-              <button 
-                onClick={() => setIsCategorySectionOpen(!isCategorySectionOpen)} 
+              <button
+                onClick={() => setIsCategorySectionOpen(!isCategorySectionOpen)}
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
               >
                 <span>Category</span>
@@ -257,8 +251,8 @@ const Clubs = () => {
                 <div className="mt-2 pl-3 space-y-1">
                   {Object.entries(tagCategories).map(([category, tags]) => (
                     <div key={category} className="pb-1">
-                      <button 
-                        onClick={() => toggleSubSection(category)} 
+                      <button
+                        onClick={() => toggleSubSection(category)}
                         className="flex justify-between items-center w-full py-1 text-left font-medium text-sm text-gray-500 hover:text-gray-700"
                       >
                         <span>{category}</span>
@@ -292,8 +286,8 @@ const Clubs = () => {
               )}
             </div>
             <div className="border-b border-gray-200 pb-2 mb-2">
-              <button 
-                onClick={() => toggleSubSection("membership")} 
+              <button
+                onClick={() => toggleSubSection("membership")}
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
               >
                 <span>Membership Process</span>
@@ -323,8 +317,8 @@ const Clubs = () => {
               )}
             </div>
             <div className="border-b border-gray-200 pb-2 mb-2">
-              <button 
-                onClick={() => toggleSubSection("recruiting")} 
+              <button
+                onClick={() => toggleSubSection("recruiting")}
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
               >
                 <span>Recruiting Cycle</span>
@@ -354,8 +348,8 @@ const Clubs = () => {
               )}
             </div>
             <div className="pb-2 mb-2">
-              <button 
-                onClick={() => toggleSubSection("status")} 
+              <button
+                onClick={() => toggleSubSection("status")}
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
               >
                 <span>Status</span>
@@ -363,7 +357,7 @@ const Clubs = () => {
               </button>
               {openSections["status"] && (
                 <div className="mt-2 pl-3 space-y-1">
-                   <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
                       id="is_accepting_filter"
@@ -383,10 +377,7 @@ const Clubs = () => {
                       onChange={toggleActiveClubs}
                       className="h-3.5 w-3.5 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
                     />
-                    <label 
-                      htmlFor="is_active_filter" 
-                      className={`text-sm`}
-                    >
+                    <label htmlFor="is_active_filter" className={`text-sm`}>
                       Active Clubs Only
                     </label>
                   </div>
@@ -411,7 +402,7 @@ const Clubs = () => {
               .filter((club) => club && club.club_id)
               .map((club) => (
                 <ClubCard
-                  key={club.club_id} 
+                  key={club.club_id}
                   id={club.club_id}
                   name={club.name}
                   tags={club.tags}
@@ -422,10 +413,10 @@ const Clubs = () => {
                   isSavedInitially={savedClubs.has(club.club_id)}
                 />
               ))}
-             {filteredClubs.length === 0 && !loading && (
-                <p className="col-span-1 md:col-span-2 text-center text-gray-500 mt-10">
-                  No clubs match your current filters. Try adjusting your search or filters.
-                </p>
+            {filteredClubs.length === 0 && !loading && (
+              <p className="col-span-1 md:col-span-2 text-center text-gray-500 mt-10">
+                No clubs match your current filters. Try adjusting your search or filters.
+              </p>
             )}
           </div>
         </div>
