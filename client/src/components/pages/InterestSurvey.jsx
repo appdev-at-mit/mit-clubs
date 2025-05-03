@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import Navbar from "../modules/Navbar";
 import ClubCard from "../modules/ClubCard";
+import beaver from "../../assets/beaver.png";
 
 const tagCategories = {
   "Academic & Professional": [
@@ -90,6 +92,7 @@ const baseQuestions = {
 export default function InterestSurvey() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
+  const [showWelcome, setShowWelcome] = useState(true);
   const [answers, setAnswers] = useState({ category: [], tags: [], membership: [], recruiting: [] });
   const [displayedQuestions, setDisplayedQuestions] = useState([
     baseQuestions.category, 
@@ -268,125 +271,186 @@ export default function InterestSurvey() {
   // get the current question based on the dynamic state
   const currentQuestion = displayedQuestions[step];
 
+  const startSurvey = () => {
+    setShowWelcome(false);
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-white">
       <Navbar />
       <div className="flex-grow flex flex-col items-center px-3 py-6">
         <div className="w-full max-w-7xl flex flex-col h-full">
-          <h1 className="text-2xl font-bold text-center mb-6 text-gray-800 flex-shrink-0">
-            Get Club Recommendations
-          </h1>
           
-          <div className={`flex flex-col flex-grow transition-opacity duration-300 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
-            {!completed ? (
-              <div className="flex flex-col h-full mb-4">
-                <div className="flex mb-6 flex-shrink-0">
-                  {displayedQuestions.map((_, index) => (
-                    <div 
-                      key={index} 
-                      className={`h-2 flex-1 mx-1 rounded-full ${index <= step ? 'bg-brand-blue' : 'bg-gray-200'} transition-all duration-500`}
-                    />
-                  ))}
-                </div>
-                
-                <h2 className="text-xl font-semibold mb-5 text-center text-gray-700 flex-shrink-0">{currentQuestion.question}</h2>
-                
-                <div className="flex-grow overflow-y-auto pr-2">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {currentQuestion.options.map((option) => {
-                      const isChecked = answers[currentQuestion.id]?.includes(option) || false;
-                      return (
-                        <label 
-                          key={option} 
-                          className={`flex items-center w-full py-3 px-4 rounded-lg border transition-all duration-200 cursor-pointer ${isChecked ? 'bg-brand-blue/10 border-brand-blue-dark text-brand-blue-dark' : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'}`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={() => handleSelect(option)}
-                            className="h-4 w-4 rounded text-brand-blue focus:ring-brand-blue mr-3 border-gray-300"
-                            disabled={transitioning}
-                          />
-                          <span className="font-medium">{option}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="text-center mt-6 flex-shrink-0">
-                  <button
-                    onClick={handleNextStep}
-                    className="px-8 py-2 bg-brand-blue text-white rounded-lg hover:bg-brand-blue-dark transition-colors font-semibold disabled:opacity-50"
-                    disabled={transitioning || answers[currentQuestion.id]?.length === 0}
-                  >
-                    {step < displayedQuestions.length - 1 ? 'Next' : 'See Results'} 
-                  </button>
-                </div>
-
-              </div>
-            ) : (
-              <div className="flex flex-col h-full">
-                <h2 className="text-xl font-semibold mb-6 text-gray-700 flex-shrink-0">
-                  {loading 
-                    ? "Finding clubs that match your interests..." 
-                    : filteredClubs.length > 0 
-                      ? "Based on your preferences, check these out!" 
-                      : "We couldn't find exact matches. Try exploring all clubs!"}
-                </h2>
-    
-                {loading ? (
-                  <div className="flex-grow flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-blue"></div>
-                  </div>
-                ) : (
-                  <div className="flex-grow columns-1 md:columns-2 lg:columns-3 gap-6 mb-6 overflow-y-auto pr-2">
-                    {filteredClubs.map((club) => (
-                      <div key={club.club_id} className="mb-6 break-inside-avoid-column">
-                        <ClubCard
-                          id={club.club_id}
-                          name={club.name}
-                          tags={club.tags}
-                          isAccepting={club.is_accepting}
-                          image_url={club.image_url}
-                          description={club.mission}
-                          recruitmentProcess={club.membership_process}
-                          isSavedInitially={savedClubs.has(club.club_id)}
-                        />
-                      </div>
+          {showWelcome ? (
+            // welcome Screen
+            <div className="flex flex-col items-center justify-center h-full text-center max-w-2xl mx-auto py-12">
+              <h1 className="text-4xl font-bold mb-10 text-gray-800">
+                Welcome to Beaver Clubs!
+              </h1>
+              <p className="text-lg text-gray-500 mb-16 max-w-lg">
+                Let's start with a few quick questions about your preferences to help you discover clubs that are perfect for you.
+              </p>
+              <button
+                onClick={startSurvey}
+                className="px-8 py-3 bg-brand-blue text-white rounded-lg hover:bg-brand-blue-dark transition-colors font-semibold text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all"
+              >
+                Get Started
+              </button>
+            </div>
+          ) : (
+            <div className={`flex flex-col flex-grow transition-opacity duration-300 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+              {!completed ? (
+                <div className="flex flex-col h-full mb-4 relative">
+                  <div className="flex mb-6 flex-shrink-0 mt-8">
+                    {displayedQuestions.map((_, index) => (
+                      <div 
+                        key={index} 
+                        className={`h-2 flex-1 mx-1 rounded-full ${index <= step ? 'bg-brand-blue' : 'bg-gray-200'} transition-all duration-500`}
+                      />
                     ))}
                   </div>
-                )}
-                
-                <div className="flex-shrink-0 mt-6 flex justify-center space-x-4">
-                  <button
-                    onClick={() => {
-                      setCompleted(false);
-                      setStep(0);
-                      setAnswers({ category: [], tags: [], membership: [], recruiting: [] });
-                      setDisplayedQuestions([
-                        baseQuestions.category, 
-                        baseQuestions.tags,
-                        baseQuestions.membership, 
-                        baseQuestions.recruiting
-                      ]);
-                    }}
-                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                    disabled={transitioning}
-                  >
-                    Retake Survey
-                  </button>
-                  <button
-                    onClick={() => navigate("/")}
-                    className="px-6 py-2 bg-brand-blue text-white rounded-lg hover:bg-brand-blue-dark transition-colors font-semibold"
-                    disabled={transitioning}
-                  >
-                    Explore All Clubs
-                  </button>
+                  
+                  <h2 className="text-xl font-semibold mb-5 mt-12 text-center text-gray-700 flex-shrink-0">{currentQuestion.question}</h2>
+                  
+                  <div className="overflow-y-auto pr-2 mb-40">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {currentQuestion.options.map((option) => {
+                        const isChecked = answers[currentQuestion.id]?.includes(option) || false;
+                        return (
+                          <label 
+                            key={option} 
+                            className={`flex items-center w-full py-3 px-4 rounded-lg border transition-all duration-200 cursor-pointer ${isChecked ? 'bg-brand-blue/10 border-brand-blue-dark text-brand-blue-dark' : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'}`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => handleSelect(option)}
+                              className="h-4 w-4 rounded text-brand-blue focus:ring-brand-blue mr-3 border-gray-300"
+                              disabled={transitioning}
+                            />
+                            <span className="font-medium">{option}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 py-10 text-center flex-shrink-0 flex justify-center space-x-20 bg-white">
+                    {step > 0 ? (
+                      <button
+                        onClick={() => {
+                          if (transitioning) return;
+                          setFadeOut(true);
+                          setTransitioning(true);
+                          setTimeout(() => {
+                            setStep(step - 1);
+                            setFadeOut(false);
+                            setTimeout(() => setTransitioning(false), 50);
+                          }, 300);
+                        }}
+                        className="flex flex-col items-center text-gray-500 hover:text-gray-700 transition-colors disabled:opacity-30"
+                        disabled={transitioning}
+                      >
+                        <FaArrowLeft size={24} className="mb-2" />
+                        <span className="font-medium">Back</span>
+                      </button>
+                    ) : (
+                      <div className="w-16">{/* placeholder when back button is not shown */}</div>
+                    )}
+                    <button
+                      onClick={handleNextStep}
+                      className="flex flex-col items-center text-brand-blue hover:text-brand-blue-dark transition-colors disabled:opacity-30"
+                      disabled={transitioning || answers[currentQuestion.id]?.length === 0}
+                    >
+                      <FaArrowRight size={24} className="mb-2" />
+                      <span className="font-medium">
+                        {step < displayedQuestions.length - 1 ? 'Next' : 'See Results'}
+                      </span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className="flex flex-col h-full">
+                  <h2 className="text-xl font-semibold mb-6 text-gray-700 flex-shrink-0">
+                    {loading 
+                      ? "Finding clubs that match your interests..." 
+                      : filteredClubs.length > 0 
+                        ? "Based on your preferences, check these out!" 
+                        : null}
+                  </h2>
+      
+                  {loading ? (
+                    <div className="flex-grow flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-blue"></div>
+                    </div>
+                  ) : filteredClubs.length > 0 ? (
+                    <div className="flex-grow columns-1 md:columns-2 lg:columns-3 gap-6 mb-6 overflow-y-auto pr-2">
+                      {filteredClubs.map((club) => (
+                        <div key={club.club_id} className="mb-6 break-inside-avoid-column">
+                          <ClubCard
+                            id={club.club_id}
+                            name={club.name}
+                            tags={club.tags}
+                            isAccepting={club.is_accepting}
+                            image_url={club.image_url}
+                            description={club.mission}
+                            recruitmentProcess={club.membership_process}
+                            isSavedInitially={savedClubs.has(club.club_id)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex-grow flex flex-col items-center justify-center mt-12 mb-16">
+                      <div className="text-center max-w-md">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-4">No Matches Found</h3>
+                        <p className="text-lg text-gray-600 mb-16">
+                          We couldn't find clubs that match all your selected preferences. Try exploring all clubs!
+                        </p>
+                        <div className="relative inline-block">
+                          <div className="absolute"></div>
+                          <div className="relative">
+                            <img 
+                              src={beaver} 
+                              alt="MIT Clubs Logo" 
+                              className="mx-auto h-36 w-auto" 
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="flex-shrink-0 flex justify-center space-x-4">
+                    <button
+                      onClick={() => {
+                        setCompleted(false);
+                        setStep(0);
+                        setAnswers({ category: [], tags: [], membership: [], recruiting: [] });
+                        setDisplayedQuestions([
+                          baseQuestions.category, 
+                          baseQuestions.tags,
+                          baseQuestions.membership, 
+                          baseQuestions.recruiting
+                        ]);
+                      }}
+                      className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                      disabled={transitioning}
+                    >
+                      Retake Survey
+                    </button>
+                    <button
+                      onClick={() => navigate("/")}
+                      className="px-6 py-2 bg-brand-blue text-white rounded-lg hover:bg-brand-blue-dark transition-colors font-semibold"
+                      disabled={transitioning}
+                    >
+                      Explore All Clubs
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
