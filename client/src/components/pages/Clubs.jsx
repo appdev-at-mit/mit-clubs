@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { SlidersHorizontal } from "lucide-react";
+import { FaSearch, FaChevronDown, FaChevronUp, FaBars } from "react-icons/fa";
+import { SlidersHorizontal, X } from "lucide-react";
 import ClubCard from "../modules/ClubCard";
 import Navbar from "../modules/Navbar";
 
@@ -64,6 +64,7 @@ const Clubs = () => {
     status: true,
   });
   const [isCategorySectionOpen, setIsCategorySectionOpen] = useState(true);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const [clubs, setClubs] = useState([]);
   const [savedClubs, setSavedClubs] = useState(new Set());
@@ -212,6 +213,10 @@ const Clubs = () => {
     }));
   };
 
+  const toggleMobileSidebar = () => {
+    setIsMobileSidebarOpen(!isMobileSidebarOpen);
+  };
+
   useEffect(() => {
     if (clubs.length > 0) {
       applyFilters(clubs, filters, searchTerm);
@@ -221,9 +226,26 @@ const Clubs = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <Navbar />
-      <div className="flex flex-grow overflow-hidden">
-        <div className="flex-shrink-0 w-full max-w-xs bg-white border-r border-gray-300 overflow-y-auto p-4 pl-8 pt-6 flex flex-col">
-          <div className="flex justify-between items-center mb-1 flex-shrink-0">
+      <div className="flex flex-grow overflow-hidden relative">
+        <div
+          className={`
+            fixed inset-y-0 left-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
+            transform transition-transform duration-300 ease-in-out
+            ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+            flex flex-col p-4 pl-8 pt-6
+            md:relative md:translate-x-0 md:flex-shrink-0 md:flex md:overflow-y-auto
+            md:max-w-none
+            md:w-64 lg:w-80
+          `}
+        >
+          <button
+            onClick={toggleMobileSidebar}
+            className="absolute top-4 right-4 md:hidden text-gray-500 hover:text-gray-700 z-40"
+            aria-label="Close filters"
+          >
+            <X size={20} />
+          </button>
+          <div className="flex justify-between items-center mb-1 flex-shrink-0 md:pt-0 pt-8">
             <div className="flex items-center gap-2">
               <SlidersHorizontal size={18} className="text-brand-blue-dark" />
               <span className="text-lg font-bold">Filters</span>
@@ -386,32 +408,51 @@ const Clubs = () => {
             </div>
           </div>
         </div>
+        {isMobileSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+            onClick={toggleMobileSidebar}
+            aria-hidden="true"
+          ></div>
+        )}
         <div className="flex-grow overflow-y-auto p-6 w-full bg-gray-50">
-          <div className="relative mb-6">
-            <input
-              type="text"
-              placeholder="Search clubs by name or mission..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-blue-dark focus:border-brand-blue-dark"
-            />
-            <FaSearch className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400" />
+          <div className="flex items-center justify-between mb-6">
+            <div className="relative flex-grow">
+              <input
+                type="text"
+                placeholder="Search clubs by name or mission..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-blue-dark focus:border-brand-blue-dark"
+              />
+              <FaSearch className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400" />
+            </div>
+            <button
+              onClick={toggleMobileSidebar}
+              className="ml-4 md:hidden p-2 rounded-md border border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
+              aria-label="Open filters"
+            >
+              <SlidersHorizontal size={20} />
+            </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          {/* Club Grid - Switched to CSS columns */}
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
             {filteredClubs
               .filter((club) => club && club.club_id)
               .map((club) => (
-                <ClubCard
-                  key={club.club_id}
-                  id={club.club_id}
-                  name={club.name}
-                  tags={club.tags}
-                  isAccepting={club.is_accepting}
-                  image_url={club.image_url}
-                  description={club.mission}
-                  recruitmentProcess={club.membership_process}
-                  isSavedInitially={savedClubs.has(club.club_id)}
-                />
+                <div key={club.club_id} className="mb-6 break-inside-avoid-column">
+                  <ClubCard
+                    id={club.club_id}
+                    name={club.name}
+                    tags={club.tags}
+                    isAccepting={club.is_accepting}
+                    image_url={club.image_url}
+                    description={club.mission}
+                    recruitmentProcess={club.membership_process}
+                    isSavedInitially={savedClubs.has(club.club_id)}
+                  />
+                </div>
               ))}
             {filteredClubs.length === 0 && !loading && (
               <p className="col-span-1 md:col-span-2 text-center text-gray-500 mt-10">

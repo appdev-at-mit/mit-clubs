@@ -6,6 +6,8 @@ import {
   FaClipboardCheck,
   FaCheckCircle,
   FaTimesCircle,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 import { saveClub, unsaveClub } from "../../api/clubs.js";
 import defaultImage from "../../assets/default.png";
@@ -58,11 +60,11 @@ function ClubCard({
   return (
     <div
       onClick={handleCardClick}
-      className="w-full h-full flex flex-col bg-white shadow-md rounded-lg p-6 border border-gray-200 cursor-pointer hover:shadow-lg transition-shadow"
+      className="w-full h-full flex flex-col bg-white shadow-md rounded-lg p-4 border border-gray-200 cursor-pointer hover:shadow-lg transition-shadow relative"
     >
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex mb-4">
         {/* Club Name and Logo */}
-        <div className="flex-1 pr-2">
+        <div className="flex-1 pr-20">
           <h2 className="text-xl font-semibold text-gray-900 break-words">
             {name}
           </h2>
@@ -77,15 +79,17 @@ function ClubCard({
             ))}
           </div>
         </div>
-        <img
-          src={fullImageUrl}
-          alt={name}
-          className="h-16 w-16 object-contain ml-2 flex-shrink-0 rounded-md"
-        />
+        <div className="absolute top-4 right-4">
+          <img
+            src={fullImageUrl}
+            alt={name}
+            className="h-16 w-16 md:h-12 md:w-12 object-contain flex-shrink-0 rounded-md"
+          />
+        </div>
       </div>
 
       {/* Club Description */}
-      <p className="text-gray-600 mt-1 text-sm flex-grow line-clamp-3 min-h-[3rem]">
+      <p className="text-gray-600 mt-1 text-sm flex-grow min-h-[3rem]">
         {description}
       </p>
 
