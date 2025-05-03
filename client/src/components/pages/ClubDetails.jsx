@@ -192,8 +192,7 @@ const ClubDetails = () => {
 
             {/* Club Mission */}
             <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-800 mb-1">Club Mission</h2>
-              <h3 className="text-lg font-medium text-gray-600 mb-4">About Us</h3>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Club Mission</h2>
               <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                 {club.mission || "No mission statement provided."}
               </p>
