@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getID, saveClub, unsaveClub, getSavedClubIds } from "../../api/clubs";
 import { UserContext } from "../App";
 import Navbar from "../modules/Navbar";
@@ -21,11 +21,13 @@ import {
   Facebook,
   Zap,
   ZapOff,
+  ArrowLeft
 } from "lucide-react";
 import { FaFacebookF, FaRegBookmark, FaBookmark } from "react-icons/fa";
 
 const ClubDetails = () => {
   const { clubId } = useParams();
+  const navigate = useNavigate();
   const { userId, login } = useContext(UserContext);
   const [club, setClub] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -141,7 +143,15 @@ const ClubDetails = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
-      <div className="flex-grow container mx-auto px-4 py-8">
+      <div className="flex-grow container mx-auto px-4 py-8 relative">
+        <button 
+          onClick={() => navigate('/')}
+          className="hidden md:flex flex-col items-center text-gray-600 hover:text-brand-blue-dark transition-colors absolute -left-16 top-12"
+        >
+          <ArrowLeft size={24} className="mb-1" />
+          <span className="text-xs font-medium">Back</span>
+        </button>
+        
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Column */}
           <div className="w-full lg:w-3/4 space-y-8">
@@ -149,6 +159,16 @@ const ClubDetails = () => {
             <div className="bg-white p-6 rounded-lg border border-gray-200">
               <div className="flex flex-col sm:flex-row items-start gap-6">
                 <div className="flex-grow">
+                  {/* Mobile-only back button */}
+                  <div className="flex items-center mb-3 md:hidden">
+                    <button 
+                      onClick={() => navigate('/')}
+                      className="flex items-center text-gray-600 hover:text-brand-blue-dark transition-colors mr-3"
+                    >
+                      <ArrowLeft size={20} className="mr-1" />
+                      <span className="text-sm">Back</span>
+                    </button>
+                  </div>
                   <h1 className="text-3xl font-bold text-gray-900">{club.name}</h1>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {tagList.map((tag, index) => (
