@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../modules/Navbar";
 import ClubCard from "../modules/ClubCard";
@@ -100,6 +100,99 @@ export default function InterestSurvey() {
   const [completed, setCompleted] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [clubs, setClubs] = useState([]);
+  const [filteredClubs, setFilteredClubs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [savedClubs, setSavedClubs] = useState(new Set());
+
+  useEffect(() => {
+    // fetch saved clubs for the user
+    fetch("http://localhost:3000/api/saved-clubs", { credentials: "include" })
+      .then((response) => (response.ok ? response.json() : []))
+      .then((data) => {
+        const savedClubIds = new Set(Array.isArray(data) ? data.map((club) => club.club_id) : []);
+        setSavedClubs(savedClubIds);
+      })
+      .catch((error) => {
+        console.error("Error fetching saved clubs:", error);
+        setSavedClubs(new Set());
+      });
+  }, []);
+
+  // qhen survey is completed, fetch clubs and filter them
+  useEffect(() => {
+    if (completed) {
+      setLoading(true);
+      fetch("http://localhost:3000/api/clubs")
+        .then((response) => response.json())
+        .then((data) => {
+          setClubs(data);
+          filterClubsBasedOnAnswers(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching clubs:", error);
+          setLoading(false);
+        });
+    }
+  }, [completed]);
+
+  const filterClubsBasedOnAnswers = (clubsData) => {
+    // start with all clubs
+    let filtered = [...clubsData];
+
+    // filter by selected tags
+    if (answers.tags && answers.tags.length > 0) {
+      filtered = filtered.filter((club) => {
+        if (!club.tags || typeof club.tags !== "string") return false;
+        const clubTags = club.tags.toLowerCase().split(/,\s*/);
+        // match if any of the selected tags are present (not all)
+        return answers.tags.some((selectedTag) =>
+          clubTags.includes(selectedTag.toLowerCase())
+        );
+      });
+    }
+    // if no specific tags but categories are selected, filter by categories
+    else if (answers.category && answers.category.length > 0) {
+      const allSelectedTags = answers.category.flatMap(cat => tagCategories[cat] || []);
+      filtered = filtered.filter((club) => {
+        if (!club.tags || typeof club.tags !== "string") return false;
+        const clubTags = club.tags.toLowerCase().split(/,\s*/);
+        // match if any of the category tags are present
+        return allSelectedTags.some((categoryTag) =>
+          clubTags.includes(categoryTag.toLowerCase())
+        );
+      });
+    }
+
+    // filter by membership process
+    if (answers.membership && answers.membership.length > 0) {
+      filtered = filtered.filter((club) =>
+        answers.membership.includes(club.membership_process)
+      );
+    }
+
+    // filter by recruiting cycle
+    if (answers.recruiting && answers.recruiting.length > 0) {
+      filtered = filtered.filter((club) =>
+        answers.recruiting.includes(club.recruiting_cycle)
+      );
+    }
+
+    // filter to only active clubs
+    filtered = filtered.filter((club) => club.is_active === true);
+
+    // sort by whether the club is accepting members (prioritize accepting clubs)
+    filtered.sort((a, b) => {
+      if (a.is_accepting && !b.is_accepting) return -1;
+      if (!a.is_accepting && b.is_accepting) return 1;
+      return 0;
+    });
+
+    // take up to 6 recommendations
+    const recommendations = filtered.slice(0, 6);
+    setFilteredClubs(recommendations);
+  };
 
   const handleSelect = (option) => {
     const currentQuestionId = displayedQuestions[step].id;
@@ -178,8 +271,8 @@ export default function InterestSurvey() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Navbar />
-      <div className="flex-grow flex flex-col items-center p-6">
-        <div className="w-full max-w-4xl flex flex-col h-full">
+      <div className="flex-grow flex flex-col items-center px-3 py-6">
+        <div className="w-full max-w-7xl flex flex-col h-full">
           <h1 className="text-2xl font-bold text-center mb-6 text-gray-800 flex-shrink-0">
             Get Club Recommendations
           </h1>
@@ -233,25 +326,56 @@ export default function InterestSurvey() {
 
               </div>
             ) : (
-              <div className="text-center flex flex-col h-full">
-                <h2 className="text-xl font-semibold mb-6 text-gray-700 flex-shrink-0">Based on your preferences, check these out!</h2>
+              <div className="flex flex-col h-full">
+                <h2 className="text-xl font-semibold mb-6 text-gray-700 flex-shrink-0">
+                  {loading 
+                    ? "Finding clubs that match your interests..." 
+                    : filteredClubs.length > 0 
+                      ? "Based on your preferences, check these out!" 
+                      : "We couldn't find exact matches. Try exploring all clubs!"}
+                </h2>
     
-                <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 overflow-y-auto pr-2">
-                  {[1, 2, 3, 4, 5, 6].map((_, index) => (
-                    <ClubCard
-                      key={`placeholder-${index}`}
-                      id={index}
-                      name={`Recommended Club ${index + 1}`}
-                      tags="Placeholder, Tag"
-                      isAccepting={true}
-                      description="This is a placeholder description based on survey results."
-                      recruitmentProcess="Placeholder Process"
-                      isSavedInitially={false}
-                    />
-                  ))}
-                </div>
+                {loading ? (
+                  <div className="flex-grow flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-blue"></div>
+                  </div>
+                ) : (
+                  <div className="flex-grow columns-1 md:columns-2 lg:columns-3 gap-6 mb-6 overflow-y-auto pr-2">
+                    {filteredClubs.map((club) => (
+                      <div key={club.club_id} className="mb-6 break-inside-avoid-column">
+                        <ClubCard
+                          id={club.club_id}
+                          name={club.name}
+                          tags={club.tags}
+                          isAccepting={club.is_accepting}
+                          image_url={club.image_url}
+                          description={club.mission}
+                          recruitmentProcess={club.membership_process}
+                          isSavedInitially={savedClubs.has(club.club_id)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
                 
-                <div className="flex-shrink-0 mt-6">
+                <div className="flex-shrink-0 mt-6 flex justify-center space-x-4">
+                  <button
+                    onClick={() => {
+                      setCompleted(false);
+                      setStep(0);
+                      setAnswers({ category: [], tags: [], membership: [], recruiting: [] });
+                      setDisplayedQuestions([
+                        baseQuestions.category, 
+                        baseQuestions.tags,
+                        baseQuestions.membership, 
+                        baseQuestions.recruiting
+                      ]);
+                    }}
+                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                    disabled={transitioning}
+                  >
+                    Retake Survey
+                  </button>
                   <button
                     onClick={() => navigate("/")}
                     className="px-6 py-2 bg-brand-blue text-white rounded-lg hover:bg-brand-blue-dark transition-colors font-semibold"
