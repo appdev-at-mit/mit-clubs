@@ -25,7 +25,7 @@ const Navbar = () => {
                 <NavLink
                   to="/saved-clubs"
                   className={({ isActive }) =>
-                    `text-gray-700 hover:text-gray-900 no-underline ${isActive ? "font-semibold" : ""}`
+                    `no-underline font-semibold ${isActive ? "text-brand-blue-dark" : "text-gray-600 hover:text-gray-900"}`
                   }
                 >
                   Saved
@@ -33,7 +33,7 @@ const Navbar = () => {
                 <NavLink
                   to="/profile"
                   className={({ isActive }) =>
-                    `text-gray-700 hover:text-gray-900 no-underline ${isActive ? "font-semibold" : ""}`
+                    `no-underline font-semibold ${isActive ? "text-brand-blue-dark" : "text-gray-600 hover:text-gray-900"}`
                   }
                 >
                   Profile
@@ -43,7 +43,7 @@ const Navbar = () => {
                     googleLogout();
                     handleLogout();
                   }}
-                  className="text-gray-700 hover:text-gray-900 no-underline"
+                  className="text-gray-600 hover:text-gray-900 no-underline font-semibold"
                 >
                   Logout
                 </button>
