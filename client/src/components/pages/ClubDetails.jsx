@@ -18,10 +18,10 @@ import {
   Bookmark,
   Bell,
   MessageSquare,
-  Facebook,
   Zap,
   ZapOff,
-  ArrowLeft
+  ArrowLeft,
+  ThumbsUp
 } from "lucide-react";
 import { FaFacebookF, FaRegBookmark, FaBookmark } from "react-icons/fa";
 
@@ -158,7 +158,7 @@ const ClubDetails = () => {
             {/* Header */}
             <div className="bg-white p-6 rounded-lg border border-gray-200">
               <div className="flex flex-col sm:flex-row items-start gap-6">
-                <div className="flex-grow">
+                <div className="flex-grow overflow-hidden">
                   {/* Mobile-only back button */}
                   <div className="flex items-center mb-3 md:hidden">
                     <button 
@@ -169,7 +169,7 @@ const ClubDetails = () => {
                       <span className="text-sm">Back</span>
                     </button>
                   </div>
-                  <h1 className="text-3xl font-bold text-gray-900">{club.name}</h1>
+                  <h1 className="text-3xl font-bold text-gray-900 break-words hyphens-auto overflow-wrap-anywhere">{club.name}</h1>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {tagList.map((tag, index) => (
                       <span
@@ -193,9 +193,37 @@ const ClubDetails = () => {
             {/* Club Mission */}
             <div className="bg-white p-6 rounded-lg border border-gray-200">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">Club Mission</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
                 {club.mission || "No mission statement provided."}
               </p>
+            </div>
+            
+            {/* FAQ Section */}
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold text-gray-800 mb-6">Frequently Asked Questions</h2>
+              
+              <div className="space-y-4">
+                {club.questions && club.questions.length > 0 ? (
+                  club.questions.map((item, index) => (
+                    <div key={index} className={index < club.questions.length - 1 ? "border-b border-gray-200 pb-4" : "pb-4"}>
+                      <div className="flex">
+                        <div className="border-l-4 border-gray-300 pl-4 w-full overflow-hidden">
+                          <div className="mb-2">
+                            <span className="font-semibold text-gray-800">Question: </span>
+                            <span className="text-gray-800 break-words overflow-wrap-anywhere hyphens-auto">{item.question.replace("this club", club.name)}</span>
+                          </div>
+                          
+                          <p className="text-gray-700 break-words overflow-wrap-anywhere hyphens-auto">
+                            {item.answer ? item.answer : <span className="text-gray-500 italic">This question has not been answered yet.</span>}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 italic">No FAQ information available.</p>
+                )}
+              </div>
             </div>
           </div>
 
@@ -224,9 +252,13 @@ const ClubDetails = () => {
                 {/* Save count */}
                 <span className="ml-1">{club?.saveCount ?? 0}</span>
               </button>
-              {/* Bell Button */}
-              <button className="p-2 bg-white border border-gray-300 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors">
-                <Bell size={18} />
+              {/* Manage Club Button */}
+              <button 
+                onClick={() => navigate(`/clubs/${clubId}/manage`)}
+                className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                <Settings size={16} className="text-gray-500" />
+                <span>Manage Club</span>
               </button>
             </div>
 

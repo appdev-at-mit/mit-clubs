@@ -117,14 +117,67 @@ router.post("/club", async (req, res) => {
 
 router.put("/club", async (req, res) => {
   const { club_id, ...updateData } = req.body;
+  
+  // validate required fields 
+  if (!club_id) {
+    return res.status(400).json({ error: "club_id is required" });
+  }
+  
+  // validate update data to ensure it only contains valid fields
+  const allowedFields = [
+    'name', 'is_active', 'is_accepting', 'recruiting_cycle', 
+    'membership_process', 'tags', 'email', 'instagram', 
+    'linkedin', 'facebook', 'website', 'mission', 'image_url',
+    'questions'
+  ];
+  
+  // filter out any fields that aren't in the allowed list
+  const validUpdateData = Object.keys(updateData)
+    .filter(key => allowedFields.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = updateData[key];
+      return obj;
+    }, {});
+  
+  // validate character limits
+  if (validUpdateData.name && validUpdateData.name.length > 100) {
+    return res.status(400).json({ error: "Club name cannot exceed 100 characters" });
+  }
+  
+  if (validUpdateData.mission && validUpdateData.mission.length > 1000) {
+    return res.status(400).json({ error: "Mission statement cannot exceed 1000 characters" });
+  }
+  
+  // validate questions
+  if (validUpdateData.questions) {
+    for (let i = 0; i < validUpdateData.questions.length; i++) {
+      const question = validUpdateData.questions[i];
+      if (question.answer && question.answer.length > 500) {
+        return res.status(400).json({ 
+          error: `Answer for question ${i+1} cannot exceed 500 characters` 
+        });
+      }
+    }
+  }
+  
+  // validate specific field formats
+  if (updateData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updateData.email)) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+  
   try {
-    const result = await Club.updateOne({ club_id }, { $set: updateData });
+    const result = await Club.updateOne({ club_id }, { $set: validUpdateData });
 
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: "club not found" });
     }
 
-    res.json({ message: "club updated successfully" });
+    // return the updated club data
+    const updatedClub = await Club.findOne({ club_id });
+    res.json({ 
+      message: "club updated successfully",
+      club: updatedClub
+    });
   } catch (error) {
     console.error("error updating club:", error);
     res.status(500).json({ error: "error updating club" });

@@ -10,6 +10,13 @@ export async function getID(id) {
   return await axios.get(`http://localhost:3000/api/clubs/${id}`);
 }
 
+export async function updateClub(clubId, updateData) {
+  return await axios.put("http://localhost:3000/api/club", {
+    club_id: clubId,
+    ...updateData,
+  });
+}
+
 export async function saveClub(clubId) {
   return await axios.post("http://localhost:3000/api/save-club", { club_id: clubId });
 }

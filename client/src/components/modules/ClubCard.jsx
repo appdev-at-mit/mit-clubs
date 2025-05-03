@@ -65,7 +65,7 @@ function ClubCard({
       <div className="flex mb-4">
         {/* Club Name and Logo */}
         <div className="flex-1 pr-20">
-          <h2 className="text-xl font-semibold text-gray-900 break-words">
+          <h2 className="text-xl font-semibold text-gray-900 break-words hyphens-auto overflow-wrap-anywhere overflow-hidden">
             {name}
           </h2>
           <div className="mt-3 flex flex-wrap gap-2 min-h-[28px]">
@@ -89,7 +89,7 @@ function ClubCard({
       </div>
 
       {/* Club Description */}
-      <p className="text-gray-600 mt-1 text-sm flex-grow min-h-[3rem]">
+      <p className="text-gray-600 mt-1 text-sm flex-grow min-h-[3rem] break-words hyphens-auto overflow-wrap-anywhere overflow-hidden">
         {description}
       </p>
 
