@@ -9,7 +9,7 @@ const Navbar = () => {
   const isAuth = Boolean(userId);
 
   return (
-    <nav className="bg-white z-10 border-b border-gray-300">
+    <nav className="bg-white z-50 border-b border-gray-300 fixed top-0 w-full">
       <div className="max-w-full pl-8 pr-8 text-md">
         <div className="flex justify-between items-center h-16">
           {/* Left Side - Home Link */}
@@ -22,6 +22,14 @@ const Navbar = () => {
           <div className="flex items-center space-x-10">
             {isAuth ? (
               <>
+                <NavLink
+                  to="/about"
+                  className={({ isActive }) =>
+                    `no-underline font-semibold ${isActive ? "text-brand-blue-dark" : "text-gray-600 hover:text-gray-900"}`
+                  }
+                >
+                  About
+                </NavLink>
                 <NavLink
                   to="/saved-clubs"
                   className={({ isActive }) =>

@@ -227,26 +227,27 @@ const Clubs = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <Navbar />
-      <div className="flex flex-grow overflow-hidden relative">
+      <div className="flex flex-grow overflow-hidden relative pt-16">
         <div
           className={`
-            fixed inset-y-0 left-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
+            fixed top-[64px] left-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
             transform transition-transform duration-300 ease-in-out
             ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-            flex flex-col p-4 pl-8 pt-6
+            flex flex-col p-4 pl-8 pt-3
             md:relative md:translate-x-0 md:flex-shrink-0 md:flex md:overflow-y-auto
+            md:top-0 md:pt-8
             md:max-w-none
             md:w-64 lg:w-80
           `}
         >
           <button
             onClick={toggleMobileSidebar}
-            className="absolute top-4 right-4 md:hidden text-gray-500 hover:text-gray-700 z-40"
+            className="absolute top-6 right-4 md:hidden text-gray-500 hover:text-gray-700 z-40"
             aria-label="Close filters"
           >
             <X size={20} />
           </button>
-          <div className="flex justify-between items-center mb-1 flex-shrink-0 md:pt-0 pt-8">
+          <div className="flex justify-between items-center mb-1 flex-shrink-0 md:pt-0 pt-8 mt-2">
             <div className="flex items-center gap-2">
               <SlidersHorizontal size={18} className="text-brand-blue-dark" />
               <span className="text-lg font-bold">Filters</span>
@@ -267,7 +268,7 @@ const Clubs = () => {
           <p className="text-xs text-gray-500 mb-3 flex-shrink-0">
             Showing {filteredClubs.length} of {clubs.length} clubs
           </p>
-          <div className="flex-grow overflow-y-auto space-y-1 pr-2">
+          <div className="flex-grow overflow-y-auto space-y-1 pr-2 mt-3">
             <div className="border-b border-gray-200 pb-2 mb-2">
               <button
                 onClick={() => setIsCategorySectionOpen(!isCategorySectionOpen)}
@@ -417,7 +418,7 @@ const Clubs = () => {
         </div>
         {isMobileSidebarOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+            className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden top-[64px]"
             onClick={toggleMobileSidebar}
             aria-hidden="true"
           ></div>

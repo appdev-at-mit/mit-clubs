@@ -9,6 +9,7 @@ import ClubDetails from "./components/pages/ClubDetails";
 import Calendar from "./components/pages/Calendar";
 import Profile from "./components/pages/Profile";
 import ClubManage from "./components/pages/ClubManage";
+import About from "./components/pages/About";
 
 import InterestSurvey from "./components/pages/InterestSurvey";
 import {
@@ -32,6 +33,7 @@ const router = createBrowserRouter(
       <Route path="/calendar" element={<Calendar />}/>
       <Route path="/profile" element={<Profile />}/>
       <Route path="/survey" element={<InterestSurvey />}/>
+      <Route path="/about" element={<About />}/>
     </Route>
   )
 )
