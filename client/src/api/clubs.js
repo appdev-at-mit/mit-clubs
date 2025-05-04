@@ -38,3 +38,28 @@ export async function unsaveClub(clubId) {
     withCredentials: true,
   });
 }
+
+// Member Management Functions
+export async function getClubMembers(clubId) {
+  return await axios.get(`http://localhost:3000/api/clubs/${clubId}/members`);
+}
+
+export async function addClubMember(clubId, memberData) {
+  return await axios.post(
+    `http://localhost:3000/api/clubs/${clubId}/members`,
+    memberData
+  );
+}
+
+export async function updateClubMember(clubId, memberId, memberData) {
+  return await axios.put(
+    `http://localhost:3000/api/clubs/${clubId}/members/${memberId}`,
+    memberData
+  );
+}
+
+export async function removeClubMember(clubId, memberId) {
+  return await axios.delete(
+    `http://localhost:3000/api/clubs/${clubId}/members/${memberId}`
+  );
+}

@@ -15,7 +15,6 @@ const Club = require("./models/club");
 const SavedClub = require("./models/savedClub");
 const Event = require("./models/event");
 const ClubOfficer = require("./models/clubOfficer");
-// const ClubOfficer = require("./models/clubOfficer");const Event = require("./models/event");
 
 // import authentication library
 const auth = require("./auth");
@@ -115,7 +114,79 @@ router.post("/club", async (req, res) => {
   }
 });
 
-router.put("/club", async (req, res) => {
+// middleware to check if user is an admin
+const ensureSystemAdmin = async (req, res, next) => {
+  try {
+    // Make sure user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+    
+    // Check if user is an admin
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ error: "Admin privileges required" });
+    }
+    
+    // User is admin, proceed to next middleware
+    next();
+  } catch (error) {
+    console.error("Error checking admin status:", error);
+    res.status(500).json({ error: "Error checking admin status" });
+  }
+};
+
+// middleware to ensure user has owner permissions for a club OR is a system admin
+const ensureOwnerOrAdmin = async (req, res, next) => {
+  try {
+    // Get club ID from params
+    const clubId = req.params.id || req.params.clubId || req.body.club_id;
+    
+    if (!clubId) {
+      return res.status(400).json({ error: "Club ID is required" });
+    }
+    
+    // Make sure user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+    
+    // Check if user is an admin using the User model's isAdmin field
+    if (req.user.isAdmin) {
+      return next();
+    }
+    
+    // If not admin, check if they're an owner of this club
+    const club = await Club.findOne({ club_id: clubId });
+    if (!club) {
+      return res.status(404).json({ error: "Club not found" });
+    }
+    
+    // Get user email
+    const userEmail = req.user.email;
+    if (!userEmail) {
+      return res.status(401).json({ error: "User email not found" });
+    }
+    
+    // Find the user in the club's member list
+    const isMemberWithOwnerPermission = club.members && 
+      club.members.some(member => 
+        member.email === userEmail && member.permissions === "Owner"
+      );
+    
+    if (!isMemberWithOwnerPermission) {
+      return res.status(403).json({ error: "You don't have permission to manage this club" });
+    }
+    
+    // The user is an owner, they're allowed to manage the club
+    next();
+  } catch (error) {
+    console.error("Error in permission check:", error);
+    res.status(500).json({ error: "Error checking permissions" });
+  }
+};
+
+// update club details - add owner permission check
+router.put("/club", auth.ensureLoggedIn, ensureOwnerOrAdmin, async (req, res) => {
   const { club_id, ...updateData } = req.body;
   
   // validate required fields 
@@ -128,7 +199,7 @@ router.put("/club", async (req, res) => {
     'name', 'is_active', 'is_accepting', 'recruiting_cycle', 
     'membership_process', 'tags', 'email', 'instagram', 
     'linkedin', 'facebook', 'website', 'mission', 'image_url',
-    'questions'
+    'questions', 'members'
   ];
   
   // filter out any fields that aren't in the allowed list
@@ -522,6 +593,227 @@ router.delete("/events/:id", auth.ensureLoggedIn, async (req, res) => {
   } catch (error) {
     console.error("Error deleting event:", error);
     res.status(500).json({ error: "Error deleting event" });
+  }
+});
+
+// |------------------------------|
+// | Club Members API Methods     |
+// |------------------------------|
+
+// get members for a specific club
+router.get("/clubs/:id/members", async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const club = await Club.findOne({ club_id: id });
+    if (!club) {
+      return res.status(404).json({ error: "Club not found" });
+    }
+    
+    // return members array or empty array if no members
+    res.json({ members: club.members || [] });
+  } catch (error) {
+    console.error("Error fetching club members:", error);
+    res.status(500).json({ error: "Error fetching club members" });
+  }
+});
+
+// add a new member to a club - add owner permission check
+router.post("/clubs/:id/members", auth.ensureLoggedIn, ensureOwnerOrAdmin, async (req, res) => {
+  const { id } = req.params;
+  const memberData = req.body;
+  
+  try {
+    // validate member data
+    if (!memberData.name || !memberData.email || !memberData.role) {
+      return res.status(400).json({ error: "Name, email, and role are required" });
+    }
+    
+    // validate name length
+    if (memberData.name.length > 50) {
+      return res.status(400).json({ error: "Member name cannot exceed 50 characters" });
+    }
+    
+    // validate name format (only letters and spaces)
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(memberData.name)) {
+      return res.status(400).json({ error: "Name can only contain alphabetic characters and spaces" });
+    }
+    
+    // validate email length and format
+    if (memberData.email.length > 100) {
+      return res.status(400).json({ error: "Email cannot exceed 100 characters" });
+    }
+    
+    // simple email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(memberData.email)) {
+      return res.status(400).json({ error: "Please enter a valid email address" });
+    }
+    
+    // find the club
+    const club = await Club.findOne({ club_id: id });
+    if (!club) {
+      return res.status(404).json({ error: "Club not found" });
+    }
+    
+    // generate a unique id for the member
+    memberData.id = new ObjectId().toString();
+    
+    // add the member to the club
+    if (!club.members) {
+      club.members = [];
+    }
+    
+    // check for duplicate email
+    const existingMember = club.members.find(member => member.email === memberData.email);
+    if (existingMember) {
+      return res.status(400).json({ error: "A member with this email already exists" });
+    }
+    
+    club.members.push(memberData);
+    await club.save();
+    
+    res.status(201).json({ 
+      message: "Member added successfully",
+      member: memberData
+    });
+  } catch (error) {
+    console.error("Error adding club member:", error);
+    res.status(500).json({ error: "Error adding club member" });
+  }
+});
+
+// update a member in a club - add owner permission check
+router.put("/clubs/:clubId/members/:memberId", auth.ensureLoggedIn, ensureOwnerOrAdmin, async (req, res) => {
+  const { clubId, memberId } = req.params;
+  const updateData = req.body;
+  
+  try {
+    // validate update data
+    if (!updateData.name || !updateData.email || !updateData.role) {
+      return res.status(400).json({ error: "Name, email, and role are required" });
+    }
+    
+    // validate name length
+    if (updateData.name.length > 50) {
+      return res.status(400).json({ error: "Member name cannot exceed 50 characters" });
+    }
+    
+    // validate name format (only letters and spaces)
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(updateData.name)) {
+      return res.status(400).json({ error: "Name can only contain alphabetic characters and spaces" });
+    }
+    
+    // validate email length and format
+    if (updateData.email.length > 100) {
+      return res.status(400).json({ error: "Email cannot exceed 100 characters" });
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(updateData.email)) {
+      return res.status(400).json({ error: "Please enter a valid email address" });
+    }
+    
+    // find the club
+    const club = await Club.findOne({ club_id: clubId });
+    if (!club) {
+      return res.status(404).json({ error: "Club not found" });
+    }
+    
+    // check if members array exists
+    if (!club.members || club.members.length === 0) {
+      return res.status(404).json({ error: "Member not found" });
+    }
+    
+    // find the member index
+    const memberIndex = club.members.findIndex(member => member.id === memberId);
+    if (memberIndex === -1) {
+      return res.status(404).json({ error: "Member not found" });
+    }
+    
+    // check for duplicate email if changing email
+    if (updateData.email !== club.members[memberIndex].email) {
+      const existingMember = club.members.find(member => 
+        member.email === updateData.email && member.id !== memberId
+      );
+      if (existingMember) {
+        return res.status(400).json({ error: "A member with this email already exists" });
+      }
+    }
+    
+    // update the member
+    club.members[memberIndex] = {
+      ...club.members[memberIndex],
+      ...updateData,
+      id: memberId // ensure id doesn't change
+    };
+    
+    await club.save();
+    
+    res.json({ 
+      message: "Member updated successfully",
+      member: club.members[memberIndex]
+    });
+  } catch (error) {
+    console.error("Error updating club member:", error);
+    res.status(500).json({ error: "Error updating club member" });
+  }
+});
+
+// remove a member from a club - add owner permission check
+router.delete("/clubs/:clubId/members/:memberId", auth.ensureLoggedIn, ensureOwnerOrAdmin, async (req, res) => {
+  const { clubId, memberId } = req.params;
+  
+  try {
+    // find the club
+    const club = await Club.findOne({ club_id: clubId });
+    if (!club) {
+      return res.status(404).json({ error: "Club not found" });
+    }
+    
+    // check if members array exists
+    if (!club.members || club.members.length === 0) {
+      return res.status(404).json({ error: "Member not found" });
+    }
+    
+    // find the member index
+    const memberIndex = club.members.findIndex(member => member.id === memberId);
+    if (memberIndex === -1) {
+      return res.status(404).json({ error: "Member not found" });
+    }
+    
+    // remove the member
+    club.members.splice(memberIndex, 1);
+    await club.save();
+    
+    res.json({ message: "Member removed successfully" });
+  } catch (error) {
+    console.error("Error removing club member:", error);
+    res.status(500).json({ error: "Error removing club member" });
+  }
+});
+
+// |------------------------------|
+// | Admin API Methods            |
+// |------------------------------|
+
+// check if current user is an admin
+router.get("/admin/check", auth.ensureLoggedIn, async (req, res) => {
+  try {
+    console.log("Admin check requested by:", req.user);
+    
+    if (!req.user) {
+      console.log("No user found in request");
+      return res.json({ isAdmin: false });
+    }
+    
+    console.log("User admin status:", req.user.isAdmin);
+    res.json({ isAdmin: !!req.user.isAdmin });
+  } catch (error) {
+    console.error("Error checking admin status:", error);
+    res.status(500).json({ error: "Error checking admin status" });
   }
 });
 

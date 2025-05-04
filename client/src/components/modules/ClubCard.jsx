@@ -108,13 +108,13 @@ function ClubCard({
           </span>
           <span
             className={`flex items-center gap-1 ${
-              isAccepting ? "text-brand-green-dark" : "text-red-600"
+              isAccepting ? "text-brand-green-dark" : "text-brand-red"
             }`}
           >
             {isAccepting ? (
               <FaCheckCircle className="text-brand-green-dark" />
             ) : (
-              <FaTimesCircle className="text-red-600" />
+              <FaTimesCircle className="text-brand-red" />
             )}
             {isAccepting ? "Accepting Members" : "Not Accepting Members"}
           </span>

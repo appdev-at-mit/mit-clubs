@@ -56,6 +56,30 @@ const ClubSchema = new mongoose.Schema({
       { question: "What does the time commitment for this club look like?", answer: "" },
       { question: "When and where does this club meet?", answer: "" }
     ]
+  },
+  members: {
+    type: [{
+      id: { type: String, required: true },
+      name: { 
+        type: String, 
+        required: true,
+        maxlength: [50, 'Member name cannot exceed 50 characters'],
+        validate: {
+          validator: function(v) {
+            return /^[A-Za-z\s]+$/.test(v);
+          },
+          message: props => 'Name can only contain alphabetic characters and spaces'
+        }
+      },
+      email: { 
+        type: String, 
+        required: true,
+        maxlength: [100, 'Email cannot exceed 100 characters']
+      },
+      role: { type: String, required: true },
+      permissions: { type: String, required: true }
+    }],
+    default: []
   }
 });
 

@@ -16,6 +16,9 @@ export const UserContext = createContext(null);
  */
 const App = () => {
   const [userId, setUserId] = useState(undefined);
+  const [userName, setUserName] = useState(undefined);
+  const [userEmail, setUserEmail] = useState(undefined);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,6 +26,9 @@ const App = () => {
       if (user._id) {
         // they are registed in the database, and currently logged in.
         setUserId(user._id);
+        setUserName(user.name);
+        setUserEmail(user.email);
+        setIsAdmin(!!user.isAdmin);
       }
     });
   }, []);
@@ -36,6 +42,9 @@ const App = () => {
       const isNewUser = response.isNewUser;
 
       setUserId(user._id);
+      setUserName(user.name);
+      setUserEmail(user.email);
+      setIsAdmin(!!user.isAdmin);
       post("/api/initsocket", { socketid: socket.id });
 
       if (isNewUser) {
@@ -49,11 +58,17 @@ const App = () => {
 
   const handleLogout = () => {
     setUserId(undefined);
+    setUserName(undefined);
+    setUserEmail(undefined);
+    setIsAdmin(false);
     post("/api/logout");
   };
 
   const authContextValue = {
     userId,
+    userName,
+    userEmail,
+    isAdmin,
     handleLogin,
     handleLogout,
   };

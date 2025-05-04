@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getID, saveClub, unsaveClub, getSavedClubIds } from "../../api/clubs";
+import { getID, saveClub, unsaveClub, getSavedClubIds, getClubMembers } from "../../api/clubs";
+import { checkIsAdmin } from "../../api/admin";
 import { UserContext } from "../App";
 import Navbar from "../modules/Navbar";
 import defaultImage from "../../assets/default.png";
@@ -28,12 +29,14 @@ import { FaFacebookF, FaRegBookmark, FaBookmark } from "react-icons/fa";
 const ClubDetails = () => {
   const { clubId } = useParams();
   const navigate = useNavigate();
-  const { userId, login } = useContext(UserContext);
+  const { userId, login, userEmail } = useContext(UserContext);
   const [club, setClub] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
   const [isHoveringSave, setIsHoveringSave] = useState(false);
   const [saveCount, setSaveCount] = useState(243);
+  const [hasOwnerPermission, setHasOwnerPermission] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchAllDetails = async () => {
@@ -49,8 +52,36 @@ const ClubDetails = () => {
           if (savedIdsResponse && Array.isArray(savedIdsResponse.data)) {
             setIsSaved(savedIdsResponse.data.some((saved) => saved.club_id === clubId));
           }
+          
+          // check if user has owner permissions
+          try {
+            const membersResponse = await getClubMembers(clubId);
+            const members = membersResponse.data.members || [];
+            
+            // check if the current user is an owner
+            const userMember = members.find(member => 
+              member.email === userEmail && member.permissions === "Owner"
+            );
+            
+            setHasOwnerPermission(Boolean(userMember));
+            
+            // check if user is an admin
+            try {
+              const adminResponse = await checkIsAdmin();
+              setIsAdmin(adminResponse.data.isAdmin);
+            } catch (err) {
+              console.error("Error checking admin status:", err);
+              setIsAdmin(false);
+            }
+            
+          } catch (err) {
+            console.error("Error checking member permissions:", err);
+            setHasOwnerPermission(false);
+          }
         } else {
           setIsSaved(false);
+          setHasOwnerPermission(false);
+          setIsAdmin(false);
         }
       } catch (error) {
         console.error("Error fetching club details or save status:", error);
@@ -61,7 +92,7 @@ const ClubDetails = () => {
     };
 
     fetchAllDetails();
-  }, [clubId, userId]);
+  }, [clubId, userId, userEmail]);
 
   // function to handle image errors
   const handleImageError = (e) => {
@@ -134,7 +165,7 @@ const ClubDetails = () => {
       <div className="flex flex-col min-h-screen">
         <Navbar />
         <div className="flex-grow flex items-center justify-center">
-          <p className="text-center text-xl text-red-600">Could not load club details.</p>
+          <p className="text-center text-xl text-brand-red">Could not load club details.</p>
         </div>
       </div>
     );
@@ -252,14 +283,19 @@ const ClubDetails = () => {
                 {/* Save count */}
                 <span className="ml-1">{club?.saveCount ?? 0}</span>
               </button>
-              {/* Manage Club Button */}
-              <button 
-                onClick={() => navigate(`/clubs/${clubId}/manage`)}
-                className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-              >
-                <Settings size={16} className="text-gray-500" />
-                <span>Manage Club</span>
-              </button>
+              
+              {/* Manage Club Button - show for owners or admins */}
+              {(hasOwnerPermission || isAdmin) && (
+                <button 
+                  onClick={() => navigate(`/clubs/${clubId}/manage`)}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <Settings size={16} className="text-gray-500" />
+                  <span>
+                    {isAdmin && !hasOwnerPermission ? "Admin: Manage Club" : "Manage Club"}
+                  </span>
+                </button>
+              )}
             </div>
 
             {/* Info Box */}
@@ -275,7 +311,7 @@ const ClubDetails = () => {
                     {club.is_active ? (
                       <Zap size={18} className="text-brand-green-dark flex-shrink-0" />
                     ) : (
-                      <ZapOff size={18} className="text-red-600 flex-shrink-0" />
+                      <ZapOff size={18} className="text-brand-red flex-shrink-0" />
                     )}
                     <span>{club.is_active ? "Active" : "Inactive"}</span>
                   </div>
@@ -284,7 +320,7 @@ const ClubDetails = () => {
                     {club.is_accepting ? (
                       <CheckCircle size={18} className="text-brand-green-dark flex-shrink-0" />
                     ) : (
-                      <XCircle size={18} className="text-red-600 flex-shrink-0" />
+                      <XCircle size={18} className="text-brand-red flex-shrink-0" />
                     )}
                     <span>
                       {club.is_accepting
