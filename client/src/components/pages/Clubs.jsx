@@ -268,8 +268,8 @@ const Clubs = () => {
           <p className="text-xs text-gray-500 mb-3 flex-shrink-0">
             Showing {filteredClubs.length} of {clubs.length} clubs
           </p>
-          <div className="flex-grow overflow-y-auto space-y-1 pr-2 mt-3">
-            <div className="border-b border-gray-200 pb-2 mb-2">
+          <div className="flex-grow overflow-y-auto space-y-1 mt-3 scrollbar-hide">
+            <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
               <button
                 onClick={() => setIsCategorySectionOpen(!isCategorySectionOpen)}
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
@@ -315,7 +315,7 @@ const Clubs = () => {
                 </div>
               )}
             </div>
-            <div className="border-b border-gray-200 pb-2 mb-2">
+            <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
               <button
                 onClick={() => toggleSubSection("membership")}
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
@@ -346,7 +346,7 @@ const Clubs = () => {
                 </div>
               )}
             </div>
-            <div className="border-b border-gray-200 pb-2 mb-2">
+            <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
               <button
                 onClick={() => toggleSubSection("recruiting")}
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
@@ -377,7 +377,7 @@ const Clubs = () => {
                 </div>
               )}
             </div>
-            <div className="pb-2 mb-2">
+            <div className="pb-2 mb-2 pr-2">
               <button
                 onClick={() => toggleSubSection("status")}
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
@@ -475,5 +475,18 @@ const Clubs = () => {
     </div>
   );
 };
+
+// Add custom styles to hide scrollbars while maintaining functionality
+const style = document.createElement('style');
+style.textContent = `
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+`;
+document.head.appendChild(style);
 
 export default Clubs;
