@@ -257,7 +257,7 @@ const ClubManage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-8 py-6 pt-28">
         {/* Club Name and View Club button */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-2">
           <h1 className="text-2xl font-bold text-gray-800 break-words hyphens-auto overflow-wrap-anywhere max-w-3xl overflow-hidden">{club.name}</h1>

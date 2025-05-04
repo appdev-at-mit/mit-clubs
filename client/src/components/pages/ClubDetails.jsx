@@ -175,7 +175,7 @@ const ClubDetails = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
-      <div className="flex-grow container mx-auto px-4 py-8 relative">
+      <div className="flex-grow container mx-auto px-8 py-8 relative pt-28">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Column */}
           <div className="w-full lg:w-3/4 space-y-8">
