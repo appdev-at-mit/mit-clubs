@@ -58,7 +58,6 @@ function login(req, res) {
   verify(req.body.token)
     .then((googleUser) => getOrCreateUser(googleUser)) // googleUser is the raw payload
     .then((result) => { // result is { user: UserDocument, isNewUser: boolean }
-      console.log("Login result being sent to frontend:", result);
       // persist user document in the session
       req.session.user = result.user;
       // Send back the user document AND the isNewUser flag
