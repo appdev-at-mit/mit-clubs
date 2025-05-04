@@ -4,6 +4,7 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import Navbar from "../modules/Navbar";
 import ClubCard from "../modules/ClubCard";
 import beaver from "../../assets/beaver.png";
+import { API_BASE_URL } from "../../config";
 
 const tagCategories = {
   "Academic & Professional": [
@@ -110,7 +111,7 @@ export default function InterestSurvey() {
 
   useEffect(() => {
     // fetch saved clubs for the user
-    fetch("http://localhost:3000/api/saved-clubs", { credentials: "include" })
+    fetch(`${API_BASE_URL}/api/saved-clubs`, { credentials: "include" })
       .then((response) => (response.ok ? response.json() : []))
       .then((data) => {
         const savedClubIds = new Set(Array.isArray(data) ? data.map((club) => club.club_id) : []);
@@ -126,7 +127,7 @@ export default function InterestSurvey() {
   useEffect(() => {
     if (completed) {
       setLoading(true);
-      fetch("http://localhost:3000/api/clubs")
+      fetch(`${API_BASE_URL}/api/clubs`)
         .then((response) => response.json())
         .then((data) => {
           setClubs(data);

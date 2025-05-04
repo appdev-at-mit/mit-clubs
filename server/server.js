@@ -71,7 +71,7 @@ app.use(
 );
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
   credentials: true
 }));
 
@@ -113,8 +113,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// hardcode port to 3000 for now
-const port = 3000;
+// use port from environment variables or default to 3000
+const port = process.env.PORT || 3000;
 const server = http.Server(app);
 socketManager.init(server);
 

@@ -3,6 +3,7 @@ import { FaSearch, FaChevronDown, FaChevronUp, FaBars } from "react-icons/fa";
 import { SlidersHorizontal, X } from "lucide-react";
 import ClubCard from "../modules/ClubCard";
 import Navbar from "../modules/Navbar";
+import { API_BASE_URL } from "../../config";
 
 const tagCategories = {
   "Academic & Professional": [
@@ -86,7 +87,7 @@ const Clubs = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch("http://localhost:3000/api/clubs")
+    fetch(`${API_BASE_URL}/api/clubs`)
       .then((response) => response.json())
       .then((data) => {
         setClubs(data);
@@ -98,7 +99,7 @@ const Clubs = () => {
         setLoading(false);
       });
 
-    fetch("http://localhost:3000/api/saved-clubs", { credentials: "include" })
+    fetch(`${API_BASE_URL}/api/saved-clubs`, { credentials: "include" })
       .then((response) => (response.ok ? response.json() : []))
       .then((data) => {
         const savedClubIds = new Set(Array.isArray(data) ? data.map((club) => club.club_id) : []);
