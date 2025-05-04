@@ -413,7 +413,7 @@ export default function InterestSurvey() {
                           <div className="relative">
                             <img 
                               src={beaver} 
-                              alt="MIT Clubs Logo" 
+                              alt="Beaver Clubs Logo" 
                               className="mx-auto h-36 w-auto" 
                             />
                           </div>

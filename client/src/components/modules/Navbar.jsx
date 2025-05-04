@@ -14,7 +14,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Left Side - Home Link */}
           <NavLink to="/" className="flex items-center no-underline">
-            <img src={beaverLogo} alt="MIT Clubs Logo" className="h-8 w-auto mr-2" />
+            <img src={beaverLogo} alt="Beaver Clubs Logo" className="h-8 w-auto mr-2" />
             <span className="text-xl font-bold text-brand-blue-dark">Beaver Clubs</span>
           </NavLink>
 

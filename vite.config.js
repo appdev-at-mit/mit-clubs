@@ -6,6 +6,7 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   // load env file from root directory
   const env = loadEnv(mode, process.cwd(), '');
+  const isProduction = mode === 'production';
   
   return {
     plugins: [react(), svgr()],
@@ -13,6 +14,19 @@ export default defineConfig(({ mode }) => {
     envDir: path.resolve(__dirname),
     build: {
       outDir: path.resolve(__dirname, 'client/dist'),
+      assetsDir: 'assets',
+      emptyOutDir: true,
+      sourcemap: !isProduction,
+      minify: isProduction,
+      manifest: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            utils: ['axios', 'jwt-decode']
+          }
+        }
+      }
     },
     server: {
       port: 5173,
