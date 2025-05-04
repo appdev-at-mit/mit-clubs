@@ -71,6 +71,7 @@ const ClubManage = () => {
   const [hasOwnerPermission, setHasOwnerPermission] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [permissionChecked, setPermissionChecked] = useState(false);
+  const [isHoveringViewClub, setIsHoveringViewClub] = useState(false);
 
   useEffect(() => {
     const checkPermissionsAndFetchClub = async () => {
@@ -262,7 +263,13 @@ const ClubManage = () => {
           <h1 className="text-2xl font-bold text-gray-800 break-words hyphens-auto overflow-wrap-anywhere max-w-3xl overflow-hidden">{club.name}</h1>
           <button
             onClick={() => navigate(`/clubs/${clubId}`)}
-            className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50"
+            onMouseEnter={() => setIsHoveringViewClub(true)}
+            onMouseLeave={() => setIsHoveringViewClub(false)}
+            style={{
+              backgroundColor: isHoveringViewClub ? '#F3F4F6' : 'white',
+              transition: 'background-color 0.2s ease'
+            }}
+            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700"
           >
             View Club
           </button>
@@ -391,7 +398,7 @@ const ClubManage = () => {
           {activeTab !== "members" && (
             <div className={`${saveMessage ? 'mt-2 sm:mt-0' : ''} sm:ml-auto w-full sm:w-auto`}>
               <button 
-                className={`px-6 py-2 bg-brand-purple text-white rounded-md hover:bg-brand-purple-dark transition-colors ${isSaving ? 'opacity-70 cursor-not-allowed' : ''} w-full sm:w-auto`}
+                className={`px-6 py-2 bg-brand-purple text-white rounded-md hover:bg-brand-purple/80 transition-all duration-200 ${isSaving ? 'opacity-70 cursor-not-allowed' : ''} w-full sm:w-auto`}
                 onClick={handleSave}
                 disabled={isSaving}
               >
@@ -1101,7 +1108,7 @@ const MembersPage = ({ club }) => {
           
           <button
             onClick={handleAddMember}
-            className="whitespace-nowrap px-3 py-1.5 bg-brand-green-dark text-white rounded-md hover:bg-brand-green transition-colors"
+            className="whitespace-nowrap px-3 py-1.5 bg-brand-green-dark text-white rounded-md hover:bg-brand-green-dark/80 transition-all duration-200"
           >
             + Add Member
           </button>
@@ -1313,13 +1320,13 @@ const MembersPage = ({ club }) => {
             <div className="flex justify-end gap-2 mt-6">
               <button 
                 onClick={() => setShowEditModal(false)} 
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100 transition-all duration-200"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSaveMemberChanges} 
-                className="px-4 py-2 bg-brand-purple text-white rounded-md hover:bg-brand-purple-dark"
+                className="px-4 py-2 bg-brand-purple text-white rounded-md hover:bg-brand-purple/80 transition-all duration-200"
               >
                 Save Changes
               </button>
@@ -1426,13 +1433,13 @@ const MembersPage = ({ club }) => {
             <div className="flex justify-end gap-2 mt-6">
               <button 
                 onClick={() => setShowAddModal(false)} 
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100 transition-all duration-200"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSaveNewMember} 
-                className="px-4 py-2 bg-brand-green-dark text-white rounded-md hover:bg-brand-green"
+                className="px-4 py-2 bg-brand-green-dark text-white rounded-md hover:bg-brand-green-dark/80 transition-all duration-200"
               >
                 Add Member
               </button>
@@ -1456,13 +1463,13 @@ const MembersPage = ({ club }) => {
             <div className="flex justify-end gap-2 mt-6">
               <button 
                 onClick={cancelRemoveMember} 
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100 transition-all duration-200"
               >
                 Cancel
               </button>
               <button 
                 onClick={confirmRemoveMember} 
-                className="px-4 py-2 bg-brand-red text-white rounded-md hover:opacity-90"
+                className="px-4 py-2 bg-brand-red text-white rounded-md hover:bg-brand-red/80 transition-all duration-200"
               >
                 Remove Member
               </button>

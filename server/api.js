@@ -809,7 +809,7 @@ router.get("/admin/check", auth.ensureLoggedIn, async (req, res) => {
       return res.json({ isAdmin: false });
     }
     
-    console.log("User admin status:", req.user.isAdmin);
+    // console.log("User admin status:", req.user.isAdmin);
     res.json({ isAdmin: !!req.user.isAdmin });
   } catch (error) {
     console.error("Error checking admin status:", error);

@@ -71,6 +71,7 @@ const Clubs = () => {
   const [filteredClubs, setFilteredClubs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isHoveringResetAll, setIsHoveringResetAll] = useState(false);
 
   const membershipProcesses = [
     "Open Membership",
@@ -252,7 +253,13 @@ const Clubs = () => {
             </div>
             <button
               onClick={resetFilters}
-              className="px-3 py-1 bg-gray-300 rounded-md text-xs hover:bg-gray-400"
+              onMouseEnter={() => setIsHoveringResetAll(true)}
+              onMouseLeave={() => setIsHoveringResetAll(false)}
+              style={{
+                backgroundColor: isHoveringResetAll ? '#E5E7EB' : '#D1D5DB',
+                transition: 'background-color 0.1s ease'
+              }}
+              className="px-3 py-1 rounded-md text-xs"
             >
               Reset All
             </button>

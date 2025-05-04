@@ -34,6 +34,7 @@ const ClubDetails = () => {
   const [loading, setLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
   const [isHoveringSave, setIsHoveringSave] = useState(false);
+  const [isHoveringManage, setIsHoveringManage] = useState(false);
   const [saveCount, setSaveCount] = useState(243);
   const [hasOwnerPermission, setHasOwnerPermission] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -175,14 +176,6 @@ const ClubDetails = () => {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
       <div className="flex-grow container mx-auto px-4 py-8 relative">
-        <button 
-          onClick={() => navigate('/')}
-          className="hidden md:flex flex-col items-center text-gray-600 hover:text-brand-blue-dark transition-colors absolute -left-16 top-12"
-        >
-          <ArrowLeft size={24} className="mb-1" />
-          <span className="text-xs font-medium">Back</span>
-        </button>
-        
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Column */}
           <div className="w-full lg:w-3/4 space-y-8">
@@ -190,16 +183,6 @@ const ClubDetails = () => {
             <div className="bg-white p-6 rounded-lg border border-gray-200">
               <div className="flex flex-col sm:flex-row items-start gap-6">
                 <div className="flex-grow overflow-hidden">
-                  {/* Mobile-only back button */}
-                  <div className="flex items-center mb-3 md:hidden">
-                    <button 
-                      onClick={() => navigate('/')}
-                      className="flex items-center text-gray-600 hover:text-brand-blue-dark transition-colors mr-3"
-                    >
-                      <ArrowLeft size={20} className="mr-1" />
-                      <span className="text-sm">Back</span>
-                    </button>
-                  </div>
                   <h1 className="text-3xl font-bold text-gray-900 break-words hyphens-auto overflow-wrap-anywhere">{club.name}</h1>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {tagList.map((tag, index) => (
@@ -288,7 +271,13 @@ const ClubDetails = () => {
               {(hasOwnerPermission || isAdmin) && (
                 <button 
                   onClick={() => navigate(`/clubs/${clubId}/manage`)}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  onMouseEnter={() => setIsHoveringManage(true)}
+                  onMouseLeave={() => setIsHoveringManage(false)}
+                  style={{
+                    backgroundColor: isHoveringManage ? '#F3F4F6' : 'white',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700"
                 >
                   <Settings size={16} className="text-gray-500" />
                   <span>
@@ -373,8 +362,7 @@ const ClubDetails = () => {
                       <Globe size={18} className="text-gray-500 flex-shrink-0" />
                       <a
                         href={
-                          club.website.startsWith("http") ? club.website : `https://${club.website}`
-                        }
+                          club.website.startsWith("http") ? club.website : `https://${club.website}`                        }
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:underline break-all"
@@ -397,3 +385,4 @@ const ClubDetails = () => {
 };
 
 export default ClubDetails;
+
