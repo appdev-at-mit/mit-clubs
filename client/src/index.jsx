@@ -4,7 +4,6 @@ import App from "./components/App";
 import Skeleton from "./components/pages/Skeleton";
 import NotFound from "./components/pages/NotFound";
 import Clubs from "./components/pages/Clubs";
-import SavedClubs from "./components/pages/SavedClubs";
 import ClubDetails from "./components/pages/ClubDetails";
 import Calendar from "./components/pages/Calendar";
 import Profile from "./components/pages/Profile";
@@ -16,7 +15,8 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  RouterProvider
+  RouterProvider,
+  Navigate
 } from 'react-router-dom'
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -27,7 +27,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route errorElement={<NotFound />} element={<App />}>
       <Route path="/" element={<Clubs />}/>
-      <Route path="/saved-clubs" element={<SavedClubs />}/>
+      <Route path="/saved-clubs" element={<Navigate to="/profile" replace />} />
       <Route path="/clubs/:clubId" element={<ClubDetails />}/>
       <Route path="/clubs/:clubId/manage" element={<ClubManage />} />
       <Route path="/calendar" element={<Calendar />}/>

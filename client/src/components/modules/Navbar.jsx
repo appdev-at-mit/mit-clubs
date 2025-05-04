@@ -31,14 +31,6 @@ const Navbar = () => {
                   About
                 </NavLink>
                 <NavLink
-                  to="/saved-clubs"
-                  className={({ isActive }) =>
-                    `no-underline font-semibold ${isActive ? "text-brand-blue-dark" : "text-gray-600 hover:text-gray-900"}`
-                  }
-                >
-                  Saved
-                </NavLink>
-                <NavLink
                   to="/profile"
                   className={({ isActive }) =>
                     `no-underline font-semibold ${isActive ? "text-brand-blue-dark" : "text-gray-600 hover:text-gray-900"}`
@@ -57,7 +49,17 @@ const Navbar = () => {
                 </button>
               </>
             ) : (
-              <GoogleLogin onSuccess={handleLogin} onError={(err) => console.log(err)} />
+              <>
+                <NavLink
+                  to="/about"
+                  className={({ isActive }) =>
+                    `no-underline font-semibold ${isActive ? "text-brand-blue-dark" : "text-gray-600 hover:text-gray-900"}`
+                  }
+                >
+                  About
+                </NavLink>
+                <GoogleLogin onSuccess={handleLogin} onError={(err) => console.log(err)} />
+              </>
             )}
           </div>
         </div>

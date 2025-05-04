@@ -63,3 +63,13 @@ export async function removeClubMember(clubId, memberId) {
     `http://localhost:3000/api/clubs/${clubId}/members/${memberId}`
   );
 }
+
+// get user memberships
+export async function getUserMemberships() {
+  return await axios.get("http://localhost:3000/api/users/clubs", { withCredentials: true });
+}
+
+// get all user data including memberships and saved clubs
+export async function getUserData() {
+  return await axios.get("http://localhost:3000/api/users/data", { withCredentials: true });
+}

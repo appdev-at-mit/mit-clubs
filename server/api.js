@@ -314,6 +314,19 @@ router.post("/save-club", auth.ensureLoggedIn, async (req, res) => {
 
     // create entry in SavedClub collection to mark as currently saved
     await SavedClub.create({ user_id, club_id });
+    
+    // Add to user's savedClubs array as well
+    await User.updateOne(
+      { _id: user_id },
+      { 
+        $addToSet: { 
+          savedClubs: {
+            club_id: club_id,
+            saved_date: new Date()
+          }
+        }
+      }
+    );
 
     // return the latest club data (with potentially updated count)
     res.status(201).json(updatedClub);
@@ -389,11 +402,17 @@ router.delete("/unsave-club/:id", auth.ensureLoggedIn, async (req, res) => {
       return res.status(404).json({ error: "club not found in saved list" });
     }
 
-    // remove the saved club
+    // remove the saved club from SavedClub collection
     await SavedClub.deleteOne({
       user_id,
       club_id,
     });
+    
+    // Also remove from user's savedClubs array
+    await User.updateOne(
+      { _id: user_id },
+      { $pull: { savedClubs: { club_id: club_id } } }
+    );
 
     // Fetch the current club data (saveCount is NOT decremented)
     const currentClub = await Club.findOne({ club_id: club_id });
@@ -597,6 +616,105 @@ router.delete("/events/:id", auth.ensureLoggedIn, async (req, res) => {
 });
 
 // |------------------------------|
+// | User Memberships API Methods |
+// |------------------------------|
+
+// Get all user data including memberships and saved clubs in one call
+router.get("/users/data", auth.ensureLoggedIn, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    // Get user with memberOf and savedClubs arrays
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Get all club IDs the user is associated with (both member and saved)
+    const memberClubIds = user.memberOf?.map(membership => membership.club_id) || [];
+    const savedClubIds = user.savedClubs?.map(saved => saved.club_id) || [];
+    const allClubIds = [...new Set([...memberClubIds, ...savedClubIds])];
+    
+    if (allClubIds.length === 0) {
+      return res.json({
+        memberClubs: [],
+        savedClubs: []
+      });
+    }
+    
+    // Fetch all clubs in one query
+    const clubs = await Club.find({ club_id: { $in: allClubIds } });
+    
+    // Process member clubs
+    const memberClubs = memberClubIds.map(clubId => {
+      const club = clubs.find(c => c.club_id === clubId);
+      if (!club) return null;
+      
+      const membership = user.memberOf.find(m => m.club_id === clubId);
+      return {
+        ...club.toObject(),
+        role: membership?.role || "Member",
+        year_joined: membership?.joined_date ? new Date(membership.joined_date).getFullYear() : "Unknown"
+      };
+    }).filter(Boolean);
+    
+    // Process saved clubs
+    const savedClubs = savedClubIds.map(clubId => {
+      const club = clubs.find(c => c.club_id === clubId);
+      if (!club) return null;
+      
+      const saved = user.savedClubs.find(s => s.club_id === clubId);
+      return {
+        ...club.toObject(),
+        saved_date: saved?.saved_date
+      };
+    }).filter(Boolean);
+    
+    res.json({
+      memberClubs,
+      savedClubs
+    });
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    res.status(500).json({ error: "Error fetching user data" });
+  }
+});
+
+// Get clubs a user is a member of
+router.get("/users/clubs", auth.ensureLoggedIn, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    // Get user with memberOf array
+    const user = await User.findById(userId);
+    if (!user || !user.memberOf || user.memberOf.length === 0) {
+      return res.json([]);
+    }
+    
+    // Get the club_ids from the memberOf array
+    const clubIds = user.memberOf.map(membership => membership.club_id);
+    
+    // Fetch all clubs the user is a member of
+    const clubs = await Club.find({ club_id: { $in: clubIds } });
+    
+    // Add role and joined_date from user.memberOf to each club
+    const clubsWithMemberInfo = clubs.map(club => {
+      const membership = user.memberOf.find(m => m.club_id === club.club_id);
+      return {
+        ...club.toObject(),
+        role: membership?.role || "Member",
+        year_joined: membership?.joined_date ? new Date(membership.joined_date).getFullYear() : "Unknown"
+      };
+    });
+    
+    res.json(clubsWithMemberInfo);
+  } catch (error) {
+    console.error("Error fetching user's clubs:", error);
+    res.status(500).json({ error: "Error fetching user's clubs" });
+  }
+});
+
+// |------------------------------|
 // | Club Members API Methods     |
 // |------------------------------|
 
@@ -618,7 +736,7 @@ router.get("/clubs/:id/members", async (req, res) => {
   }
 });
 
-// add a new member to a club - add owner permission check
+// Modified: add a new member to a club - update both Club and User models
 router.post("/clubs/:id/members", auth.ensureLoggedIn, ensureOwnerOrAdmin, async (req, res) => {
   const { id } = req.params;
   const memberData = req.body;
@@ -674,6 +792,26 @@ router.post("/clubs/:id/members", auth.ensureLoggedIn, ensureOwnerOrAdmin, async
     club.members.push(memberData);
     await club.save();
     
+    try {
+      const user = await User.findOne({ email: memberData.email });
+      if (user) {
+        // check if already a member to avoid duplicate entries
+        const alreadyMember = user.memberOf && user.memberOf.some(m => m.club_id === id);
+        if (!alreadyMember) {
+          // add to user's memberOf array
+          user.memberOf = user.memberOf || [];
+          user.memberOf.push({
+            club_id: id,
+            role: memberData.role,
+            joined_date: new Date()
+          });
+          await user.save();
+        }
+      }
+    } catch (userError) {
+      console.error("Warning: Couldn't update user's memberships:", userError);
+    }
+    
     res.status(201).json({ 
       message: "Member added successfully",
       member: memberData
@@ -684,7 +822,7 @@ router.post("/clubs/:id/members", auth.ensureLoggedIn, ensureOwnerOrAdmin, async
   }
 });
 
-// update a member in a club - add owner permission check
+// update a member in a club - update both Club and User models
 router.put("/clubs/:clubId/members/:memberId", auth.ensureLoggedIn, ensureOwnerOrAdmin, async (req, res) => {
   const { clubId, memberId } = req.params;
   const updateData = req.body;
@@ -733,17 +871,22 @@ router.put("/clubs/:clubId/members/:memberId", auth.ensureLoggedIn, ensureOwnerO
       return res.status(404).json({ error: "Member not found" });
     }
     
+    // get the current and new email for the member
+    const currentEmail = club.members[memberIndex].email;
+    const newEmail = updateData.email;
+    const newRole = updateData.role;
+    
     // check for duplicate email if changing email
-    if (updateData.email !== club.members[memberIndex].email) {
+    if (newEmail !== currentEmail) {
       const existingMember = club.members.find(member => 
-        member.email === updateData.email && member.id !== memberId
+        member.email === newEmail && member.id !== memberId
       );
       if (existingMember) {
         return res.status(400).json({ error: "A member with this email already exists" });
       }
     }
     
-    // update the member
+    // update the member in the club
     club.members[memberIndex] = {
       ...club.members[memberIndex],
       ...updateData,
@@ -751,6 +894,41 @@ router.put("/clubs/:clubId/members/:memberId", auth.ensureLoggedIn, ensureOwnerO
     };
     
     await club.save();
+    
+    try {
+      // if email changed, remove from old user's memberOf
+      if (newEmail !== currentEmail) {
+        const oldUser = await User.findOne({ email: currentEmail });
+        if (oldUser && oldUser.memberOf) {
+          oldUser.memberOf = oldUser.memberOf.filter(m => m.club_id !== clubId);
+          await oldUser.save();
+        }
+      }
+      
+      // add or update on the new user record
+      const user = await User.findOne({ email: newEmail });
+      if (user) {
+        const membershipIndex = user.memberOf ? user.memberOf.findIndex(m => m.club_id === clubId) : -1;
+        
+        if (membershipIndex >= 0) {
+          // update existing membership
+          user.memberOf[membershipIndex].role = newRole;
+        } else {
+          // add new membership
+          user.memberOf = user.memberOf || [];
+          user.memberOf.push({
+            club_id: clubId,
+            role: newRole,
+            joined_date: new Date()
+          });
+        }
+        
+        await user.save();
+      }
+    } catch (userError) {
+      console.error("Warning: Couldn't update user's memberships:", userError);
+      // Continue with response, don't fail the whole request
+    }
     
     res.json({ 
       message: "Member updated successfully",
@@ -762,7 +940,7 @@ router.put("/clubs/:clubId/members/:memberId", auth.ensureLoggedIn, ensureOwnerO
   }
 });
 
-// remove a member from a club - add owner permission check
+// Modified: remove a member from a club - update both Club and User models
 router.delete("/clubs/:clubId/members/:memberId", auth.ensureLoggedIn, ensureOwnerOrAdmin, async (req, res) => {
   const { clubId, memberId } = req.params;
   
@@ -784,9 +962,23 @@ router.delete("/clubs/:clubId/members/:memberId", auth.ensureLoggedIn, ensureOwn
       return res.status(404).json({ error: "Member not found" });
     }
     
-    // remove the member
+    // store the email before removing the member
+    const memberEmail = club.members[memberIndex].email;
+    
+    // remove the member from the club
     club.members.splice(memberIndex, 1);
     await club.save();
+    
+    try {
+      // remove the club from the user's memberOf array
+      const user = await User.findOne({ email: memberEmail });
+      if (user && user.memberOf) {
+        user.memberOf = user.memberOf.filter(m => m.club_id !== clubId);
+        await user.save();
+      }
+    } catch (userError) {
+      console.error("Warning: Couldn't update user's memberships:", userError);
+    }
     
     res.json({ message: "Member removed successfully" });
   } catch (error) {
