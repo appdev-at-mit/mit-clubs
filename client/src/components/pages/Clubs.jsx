@@ -455,9 +455,11 @@ const Clubs = () => {
                 </div>
               ))}
             {filteredClubs.length === 0 && !loading && (
-              <p className="col-span-1 md:col-span-2 text-center text-gray-500 mt-10">
-                No clubs match your current filters. Try adjusting your search or filters.
-              </p>
+              <div className="col-span-1 md:col-span-2 lg:col-span-3 flex justify-center w-full">
+                <p className="text-center text-gray-500 mt-10">
+                  No clubs match your current filters. Try adjusting your search or filters.
+                </p>
+              </div>
             )}
           </div>
         </div>
