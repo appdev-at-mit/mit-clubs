@@ -66,10 +66,10 @@ function SavedClubs() {
                 key={club.club_id}
                 id={club.club_id}
                 name={club.name}
-                type={club.type}
+                tags={club.tags}
                 isAccepting={club.is_accepting}
                 description={club.mission}
-                pictureUrl={club.picture_url}
+                image_url={club.image_url}
                 recruitmentProcess={club.membership_process}
                 isSavedInitially={true}
               />

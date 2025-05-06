@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 import jwt_decode from "jwt-decode";
 
@@ -16,12 +16,19 @@ export const UserContext = createContext(null);
  */
 const App = () => {
   const [userId, setUserId] = useState(undefined);
+  const [userName, setUserName] = useState(undefined);
+  const [userEmail, setUserEmail] = useState(undefined);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     get("/api/whoami").then((user) => {
       if (user._id) {
         // they are registed in the database, and currently logged in.
         setUserId(user._id);
+        setUserName(user.name);
+        setUserEmail(user.email);
+        setIsAdmin(!!user.isAdmin);
       }
     });
   }, []);
@@ -29,20 +36,39 @@ const App = () => {
   const handleLogin = (credentialResponse) => {
     const userToken = credentialResponse.credential;
     const decodedCredential = jwt_decode(userToken);
-    console.log(`Logged in as ${decodedCredential.name}`);
-    post("/api/login", { token: userToken }).then((user) => {
+    post("/api/login", { token: userToken }).then((response) => { 
+
+      const user = response.user;
+      const isNewUser = response.isNewUser;
+
       setUserId(user._id);
+      setUserName(user.name);
+      setUserEmail(user.email);
+      setIsAdmin(!!user.isAdmin);
       post("/api/initsocket", { socketid: socket.id });
+
+      if (isNewUser) {
+        navigate('/survey');
+      } else {
+        navigate('/');
+      } 
+    }).catch((err) => {
     });
   };
 
   const handleLogout = () => {
     setUserId(undefined);
+    setUserName(undefined);
+    setUserEmail(undefined);
+    setIsAdmin(false);
     post("/api/logout");
   };
 
   const authContextValue = {
     userId,
+    userName,
+    userEmail,
+    isAdmin,
     handleLogin,
     handleLogout,
   };

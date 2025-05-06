@@ -1,0 +1,40 @@
+{
+  "_utils-6044be56.js": {
+    "file": "assets/utils-6044be56.js"
+  },
+  "_vendor-1bf47a93.js": {
+    "file": "assets/vendor-1bf47a93.js"
+  },
+  "favicon.png": {
+    "file": "assets/favicon-bd304d21.png",
+    "src": "favicon.png"
+  },
+  "index.css": {
+    "file": "assets/index-85383311.css",
+    "src": "index.css"
+  },
+  "index.html": {
+    "assets": [
+      "assets/default-73fd7113.png",
+      "assets/beaver-ef3ce3cd.png"
+    ],
+    "css": [
+      "assets/index-85383311.css"
+    ],
+    "file": "assets/index-ee35f7b4.js",
+    "imports": [
+      "_vendor-1bf47a93.js",
+      "_utils-6044be56.js"
+    ],
+    "isEntry": true,
+    "src": "index.html"
+  },
+  "src/assets/beaver.png": {
+    "file": "assets/beaver-ef3ce3cd.png",
+    "src": "src/assets/beaver.png"
+  },
+  "src/assets/default.png": {
+    "file": "assets/default-73fd7113.png",
+    "src": "src/assets/default.png"
+  }
+}
