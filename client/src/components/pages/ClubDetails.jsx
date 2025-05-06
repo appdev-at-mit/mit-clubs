@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { getID } from "../../api/clubs";
 
 const ClubDetails = () => {
     const { clubId } = useParams();
+    const [ searchParams ] = useSearchParams();
+    const survey = searchParams.get('survey');
+
     const navigate = useNavigate();
     const [club, setClub] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -37,7 +40,7 @@ const ClubDetails = () => {
                 {/* Back Button */}
                 <button
                     className="mb-6 px-6 py-3 bg-white text-black text-md font-medium rounded-full border hover:bg-cyan-600 transition-all"
-                    onClick={() => navigate("/")}
+                    onClick={() => survey ? navigate("/survey") : navigate("/")}
                 >
                     ← Back to All Clubs
                 </button>

@@ -3,6 +3,44 @@ import {useNavigate} from 'react-router-dom';
 
 import ClubCard from "../modules/ClubCard";
 
+const questions = [
+  {
+    id: "club-type",
+    question: "What type of club are you looking for?",
+    options: [
+      "Career",
+      "Academic",
+      "Cultural",
+      "Recreational",
+      "Sports",
+      "Any"
+    ]
+  },
+  {
+    id: "membership",
+    question: "What type of membership do you prefer?",
+    options: [
+      "Open",
+      "Tryout Required",
+      "Audition Required",
+      "Application Required",
+      "Application and Interview Required",
+      "Any"
+    ]
+  },
+  {
+    id: "size",
+    question: "How large of a club are you looking for?",
+    options: [
+      "Small (1-10 members)",
+      "Medium (20-50 members)",
+      "Large (50-100 members)",
+      "Very Large (100+ members)",
+      "Any size"
+    ]
+  },
+];
+
 export default function InterestSurvey() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
@@ -10,44 +48,28 @@ export default function InterestSurvey() {
   const [completed, setCompleted] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [clubs, setClubs] = useState([]);
+  
 
-  const questions = [
-    {
-      id: "club-type",
-      question: "What type of club are you looking for?",
-      options: [
-        "Career",
-        "Academic",
-        "Cultural",
-        "Recreational",
-        "Sports",
-        "Any"
-      ]
-    },
-    {
-      id: "membership",
-      question: "What type of membership do you prefer?",
-      options: [
-        "Open",
-        "Tryout Required",
-        "Audition Required",
-        "Application Required",
-        "Application and Interview Required",
-        "Any"
-      ]
-    },
-    {
-      id: "size",
-      question: "How large of a club are you looking for?",
-      options: [
-        "Small (1-10 members)",
-        "Medium (20-50 members)",
-        "Large (50-100 members)",
-        "Very Large (100+ members)",
-        "Any size"
-      ]
-    },
-  ];
+  useEffect(() => {
+    // fetch all clubs
+    fetch("http://localhost:3000/api/clubs")
+      .then((response) => response.json())
+      .then((data) => {
+        setClubs(data);
+      })
+      .catch((error) => console.error("Error fetching clubs:", error));
+  }, []);
+
+  const filteredClubs = useMemo(() => {
+    return clubs.filter()
+  }, [clubs, answers]);
+
+  const restart = () => {
+    setStep(0);
+    setCompleted(false);
+    setAnswers({});
+  }
 
   const handleSelect = (option) => {
     if (transitioning) return;
@@ -72,7 +94,7 @@ export default function InterestSurvey() {
   return (
     <div className="flex-grow overflow-y-auto p-6 w-full bg-gray-50">
       <h1 className="text-2xl font-bold text-center mb-6">What Are You Interested In?</h1>
-      
+      {!completed ? (<h2 className="text-xl font-semibold mb-4 text-right text-blue">skip</h2>) : false }
       <div className={`transition-opacity duration-300 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
         {!completed ? (
           <div className="mb-6">
@@ -123,6 +145,7 @@ export default function InterestSurvey() {
                     recruitmentProcess={"placeholder"}
                     membersRange={0}
                     isSavedInitially={false}
+                    inSurvey={true}
                   />
                 ))}
               </div>
@@ -134,6 +157,13 @@ export default function InterestSurvey() {
               disabled={transitioning}
             >
               Complete
+            </button>
+            <button
+              onClick={restart}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              disabled={transitioning}
+            >
+              Restart
             </button>
           </div>
         )}

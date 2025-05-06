@@ -19,6 +19,7 @@ function ClubCard({
   recruitmentProcess,
   pictureUrl,
   isSavedInitially = false,
+  inSurvey = false
 }) {
   const [isSaved, setIsSaved] = useState(isSavedInitially);
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ function ClubCard({
   };
 
   const handleCardClick = () => {
-    navigate(`/clubs/${id}`);
+    navigate(`/clubs/${id}?survey=${inSurvey}`);
   };
 
   return (
