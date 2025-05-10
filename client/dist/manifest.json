@@ -5,10 +5,6 @@
   "_vendor-1bf47a93.js": {
     "file": "assets/vendor-1bf47a93.js"
   },
-  "favicon.png": {
-    "file": "assets/favicon-bd304d21.png",
-    "src": "favicon.png"
-  },
   "index.css": {
     "file": "assets/index-85383311.css",
     "src": "index.css"
@@ -21,7 +17,7 @@
     "css": [
       "assets/index-85383311.css"
     ],
-    "file": "assets/index-ee35f7b4.js",
+    "file": "assets/index-16f5450d.js",
     "imports": [
       "_vendor-1bf47a93.js",
       "_utils-6044be56.js"
