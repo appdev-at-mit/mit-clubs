@@ -1,0 +1,17 @@
+FROM node:18
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY client ./client/
+COPY postcss.config.cjs ./
+COPY tailwind.config.js ./
+COPY vite.config.js ./
+
+RUN npm install
+
+RUN npm run build
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"] 
