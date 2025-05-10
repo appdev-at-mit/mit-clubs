@@ -51,8 +51,8 @@ mongoose
     useUnifiedTopology: true,
     dbName: databaseName,
   })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.log(`Error connecting to MongoDB: ${err}`));
+  .then(() => { /* console.log("Connected to MongoDB") */ })
+  .catch((err) => { /* console.log(`Error connecting to MongoDB: ${err}`) */ });
 
 // create a new express server
 const app = express();
@@ -124,7 +124,7 @@ app.use('/assets', express.static(assetsDir, {
 app.get("*", (req, res) => {
   res.sendFile(path.join(staticDir, "index.html"), (err) => {
     if (err) {
-      console.log("Error sending index.html:", err.status || 500);
+      // console.log("Error sending index.html:", err.status || 500);
       res.status(err.status || 500).send("Error loading application");
     }
   });
@@ -136,8 +136,8 @@ app.use((err, req, res, next) => {
   
   // Only log detailed errors in development
   if (!isProduction && status === 500) {
-    console.log("The server errored when processing a request!");
-    console.log(err);
+    // console.log("The server errored when processing a request!");
+    // console.log(err);
   }
 
   // Send a cleaner error message in production
@@ -156,5 +156,5 @@ const server = http.Server(app);
 socketManager.init(server);
 
 server.listen(port, () => {
-  console.log(`Server running on port: ${port} in ${isProduction ? 'production' : 'development'} mode`);
+  // console.log(`Server running on port: ${port} in ${isProduction ? 'production' : 'development'} mode`);
 });

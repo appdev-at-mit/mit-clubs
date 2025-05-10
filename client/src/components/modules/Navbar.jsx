@@ -58,7 +58,7 @@ const Navbar = () => {
                 >
                   About
                 </NavLink>
-                <GoogleLogin onSuccess={handleLogin} onError={(err) => console.log(err)} />
+                <GoogleLogin onSuccess={handleLogin} onError={ (err) => { /* console.log(err) */ } } />
               </>
             )}
           </div>

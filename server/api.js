@@ -37,7 +37,7 @@ async function connectToMongo() {
   try {
     const client = new MongoClient(mongoURI);
     await client.connect();
-    console.log("Connected to MongoDB");
+    // console.log("Connected to MongoDB");
     db = client.db(dbName);
   } catch (error) {
     console.error("Error connecting to MongoDB collections:", error);
@@ -994,10 +994,10 @@ router.delete("/clubs/:clubId/members/:memberId", auth.ensureLoggedIn, ensureOwn
 // check if current user is an admin
 router.get("/admin/check", auth.ensureLoggedIn, async (req, res) => {
   try {
-    console.log("Admin check requested by:", req.user);
+    // console.log("Admin check requested by:", req.user);
     
     if (!req.user) {
-      console.log("No user found in request");
+      // console.log("No user found in request");
       return res.json({ isAdmin: false });
     }
     
@@ -1011,7 +1011,7 @@ router.get("/admin/check", auth.ensureLoggedIn, async (req, res) => {
 
 // anything else falls to this "not found" case
 router.all("*", (req, res) => {
-  console.log(`API route not found: ${req.method} ${req.url}`);
+  // console.log(`API route not found: ${req.method} ${req.url}`);
   res.status(404).send({ msg: "API route not found" });
 });
 

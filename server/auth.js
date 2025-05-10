@@ -35,7 +35,7 @@ function getOrCreateUser(user) {
       // Only save if something actually changed
       const savePromise = updated ? existingUser.save() : Promise.resolve(existingUser);
       return savePromise.then(savedUser => {
-        console.log(`Existing user found/updated: ${savedUser.email}, isNewUser: false`);
+        // console.log(`Existing user found/updated: ${savedUser.email}, isNewUser: false`);
         return { user: savedUser, isNewUser: false };
       });
     }
@@ -48,7 +48,7 @@ function getOrCreateUser(user) {
     });
 
     return newUser.save().then(savedUser => {
-      console.log(`New user created: ${savedUser.email}, isNewUser: true`);
+      // console.log(`New user created: ${savedUser.email}, isNewUser: true`);
       return { user: savedUser, isNewUser: true };
     });
   });
@@ -64,7 +64,7 @@ function login(req, res) {
       res.send({ user: result.user, isNewUser: result.isNewUser });
     })
     .catch((err) => {
-      console.log(`Failed to log in: ${err}`);
+      // console.log(`Failed to log in: ${err}`);
       res.status(401).send({ err });
     });
 }

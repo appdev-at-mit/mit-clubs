@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FaSearch, FaChevronDown, FaChevronUp, FaBars } from "react-icons/fa";
 import { SlidersHorizontal, X } from "lucide-react";
 import ClubCard from "../modules/ClubCard";
 import Navbar from "../modules/Navbar";
 import { API_BASE_URL } from "../../config";
+import { UserContext } from "../App";
 
 const tagCategories = {
   "Academic & Professional": [
@@ -52,6 +53,7 @@ const tagCategories = {
 };
 
 const Clubs = () => {
+  const { userId } = useContext(UserContext);
   const [filters, setFilters] = useState({
     membership_process: [],
     recruiting_cycle: [],
@@ -98,18 +100,24 @@ const Clubs = () => {
         console.error("Error fetching clubs:", error);
         setLoading(false);
       });
-
-    fetch(`${API_BASE_URL}/api/saved-clubs`, { credentials: "include" })
-      .then((response) => (response.ok ? response.json() : []))
-      .then((data) => {
-        const savedClubIds = new Set(Array.isArray(data) ? data.map((club) => club.club_id) : []);
-        setSavedClubs(savedClubIds);
-      })
-      .catch((error) => {
-        console.error("Error fetching saved clubs:", error);
-        setSavedClubs(new Set());
-      });
   }, []);
+
+  useEffect(() => {
+    if (userId) {
+      fetch(`${API_BASE_URL}/api/saved-clubs`, { credentials: "include" })
+        .then((response) => (response.ok ? response.json() : []))
+        .then((data) => {
+          const savedClubIds = new Set(Array.isArray(data) ? data.map((club) => club.club_id) : []);
+          setSavedClubs(savedClubIds);
+        })
+        .catch((error) => {
+          console.error("Error fetching saved clubs:", error);
+          setSavedClubs(new Set());
+        });
+    } else {
+      setSavedClubs(new Set());
+    }
+  }, [userId]);
 
   const applyFilters = (
     clubsList = clubs,

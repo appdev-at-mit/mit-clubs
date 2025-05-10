@@ -89,7 +89,7 @@ const ClubManage = () => {
         
         // if user is admin fetch the club
         if (userIsAdmin) {
-          console.log("User is admin");
+          // console.log("User is admin");
           const response = await getID(clubId);
           setClub(response.data);
           setLoading(false);
@@ -109,12 +109,12 @@ const ClubManage = () => {
         setHasOwnerPermission(Boolean(userMember));
         
         const hasPermission = Boolean(userMember) || isAdmin;
-        console.log("Permission check:", { hasOwnerPermission: Boolean(userMember), isAdmin, hasPermission });
+        // console.log("Permission check:", { hasOwnerPermission: Boolean(userMember), isAdmin, hasPermission });
         setPermissionChecked(true);
         
         if (!hasPermission) {
           // if no permission, don't fetch club data and prepare to redirect
-          console.log("No permission, preparing to redirect");
+          // console.log("No permission, preparing to redirect");
           setLoading(false);
           return;
         }
