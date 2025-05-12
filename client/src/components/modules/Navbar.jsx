@@ -30,6 +30,14 @@ const Navbar = () => {
                 >
                   About
                 </NavLink>
+                {/* <NavLink
+                  to="/calendar"
+                  className={({ isActive }) =>
+                    `no-underline font-semibold ${isActive ? "text-brand-blue-dark" : "text-gray-600 hover:text-gray-900"}`
+                  }
+                >
+                  Calendar
+                </NavLink> */}
                 <NavLink
                   to="/profile"
                   className={({ isActive }) =>

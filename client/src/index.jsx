@@ -30,7 +30,7 @@ const router = createBrowserRouter(
       <Route path="/saved-clubs" element={<Navigate to="/profile" replace />} />
       <Route path="/clubs/:clubId" element={<ClubDetails />}/>
       <Route path="/clubs/:clubId/manage" element={<ClubManage />} />
-      <Route path="/calendar" element={<Calendar />}/>
+      {/* <Route path="/calendar" element={<Calendar />}/> */}
       <Route path="/profile" element={<Profile />}/>
       <Route path="/survey" element={<InterestSurvey />}/>
       <Route path="/about" element={<About />}/>
