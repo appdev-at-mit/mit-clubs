@@ -142,60 +142,85 @@ export default function InterestSurvey() {
   }, [completed]);
 
   const filterClubsBasedOnAnswers = (clubsData) => {
+    console.log("Starting filtering with", clubsData.length, "clubs");
+    
     // start with all clubs
     let filtered = [...clubsData];
-
-    // filter by selected tags
-    if (answers.tags && answers.tags.length > 0) {
-      filtered = filtered.filter((club) => {
-        if (!club.tags || typeof club.tags !== "string") return false;
-        const clubTags = club.tags.toLowerCase().split(/,\s*/);
-        // match if any of the selected tags are present (not all)
-        return answers.tags.some((selectedTag) =>
-          clubTags.includes(selectedTag.toLowerCase())
-        );
-      });
-    }
-    // if no specific tags but categories are selected, filter by categories
-    else if (answers.category && answers.category.length > 0) {
-      const allSelectedTags = answers.category.flatMap(cat => tagCategories[cat] || []);
-      filtered = filtered.filter((club) => {
-        if (!club.tags || typeof club.tags !== "string") return false;
-        const clubTags = club.tags.toLowerCase().split(/,\s*/);
-        // match if any of the category tags are present
-        return allSelectedTags.some((categoryTag) =>
-          clubTags.includes(categoryTag.toLowerCase())
-        );
-      });
-    }
-
-    // filter by membership process
-    if (answers.membership && answers.membership.length > 0) {
-      filtered = filtered.filter((club) =>
-        answers.membership.includes(club.membership_process)
-      );
-    }
-
-    // filter by recruiting cycle
-    if (answers.recruiting && answers.recruiting.length > 0) {
-      filtered = filtered.filter((club) =>
-        answers.recruiting.includes(club.recruiting_cycle)
-      );
-    }
-
-    // filter to only active clubs
+    
+    // Only filter active clubs
     filtered = filtered.filter((club) => club.is_active === true);
-
-    // sort by whether the club is accepting members (prioritize accepting clubs)
-    filtered.sort((a, b) => {
-      if (a.is_accepting && !b.is_accepting) return -1;
-      if (!a.is_accepting && b.is_accepting) return 1;
-      return 0;
+    console.log("After active filter:", filtered.length, "clubs");
+    
+    // create a scoring system
+    const scoredClubs = filtered.map(club => {
+      let score = 0;
+      
+      // score based on tags
+      if (answers.tags && answers.tags.length > 0) {
+        if (club.tags && typeof club.tags === "string") {
+          const clubTags = club.tags.toLowerCase().split(/,\s*/);
+          answers.tags.forEach(selectedTag => {
+            if (clubTags.includes(selectedTag.toLowerCase())) {
+              score += 3; // higher score for specific tag matches
+            }
+          });
+        }
+      }
+      // score based on categories
+      else if (answers.category && answers.category.length > 0) {
+        const allSelectedTags = answers.category.flatMap(cat => tagCategories[cat] || []);
+        if (club.tags && typeof club.tags === "string") {
+          const clubTags = club.tags.toLowerCase().split(/,\s*/);
+          allSelectedTags.forEach(categoryTag => {
+            if (clubTags.includes(categoryTag.toLowerCase())) {
+              score += 2; // medium score for category matches
+            }
+          });
+        }
+      }
+      
+      // score based on membership
+      if (answers.membership && answers.membership.length > 0) {
+        if (answers.membership.includes(club.membership_process)) {
+          score += 1;
+        }
+      }
+      
+      // score based on recruiting cycle
+      if (answers.recruiting && answers.recruiting.length > 0) {
+        if (answers.recruiting.includes(club.recruiting_cycle)) {
+          score += 1;
+        }
+      }
+      
+      // bonus points for accepting members
+      if (club.is_accepting) {
+        score += 2;
+      }
+      
+      return { club, score };
     });
-
-    // take up to 6 recommendations
-    const recommendations = filtered.slice(0, 6);
-    setFilteredClubs(recommendations);
+    
+    // sort by score (highest first)
+    scoredClubs.sort((a, b) => b.score - a.score);
+    
+    console.log("Scored clubs:", scoredClubs.map(c => `${c.club.name}: ${c.score}`).join(', '));
+    
+    // filter out clubs with zero score (no matches at all)
+    const matchingClubs = scoredClubs.filter(item => item.score > 0).map(item => item.club);
+    
+    console.log("Final matching count:", matchingClubs.length);
+    
+    // if we have no matches with scoring, return all active clubs as fallback
+    if (matchingClubs.length === 0) {
+      const fallbackClubs = filtered.slice(0, 6);
+      console.log("no matches found, using fallback:", fallbackClubs.length);
+      setFilteredClubs(fallbackClubs);
+    } else {
+      // take up to 6 recommendations
+      const recommendations = matchingClubs.slice(0, 6);
+      setFilteredClubs(recommendations);
+    }
   };
 
   const handleSelect = (option) => {
@@ -371,7 +396,7 @@ export default function InterestSurvey() {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col h-full">
+                <div className="flex flex-col h-full pt-24">
                   <h2 className="text-xl font-semibold mb-6 text-gray-700 flex-shrink-0">
                     {loading 
                       ? "Finding clubs that match your interests..." 
