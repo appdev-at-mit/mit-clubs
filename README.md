@@ -1,7 +1,7 @@
-# Beaver Clubs
+# MIT Clubs
 
 ## Overview
-Beaver Clubs serves as a platform for connecting students with MIT's student organizations. Explore and discover student groups throughout the academic year, beyond just Activities Midway.
+MIT Clubs serves as a platform for connecting students with MIT's student organizations. Explore and discover student groups throughout the academic year, beyond just Activities Midway.
 
 ## Features
 - Find clubs using search function and filters by categories, membership size, and application processes
