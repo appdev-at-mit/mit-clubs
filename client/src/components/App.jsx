@@ -47,11 +47,7 @@ const App = () => {
       setIsAdmin(!!user.isAdmin);
       post("/api/initsocket", { socketid: socket.id });
 
-      if (isNewUser) {
-        navigate('/survey');
-      } else {
-        navigate('/');
-      } 
+      navigate('/'); 
     }).catch((err) => {
     });
   };

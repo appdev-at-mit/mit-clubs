@@ -242,7 +242,7 @@ const Clubs = () => {
             fixed top-[64px] left-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
             transform transition-transform duration-300 ease-in-out
             ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-            flex flex-col p-4 pl-8 pt-3
+            flex flex-col pt-3 pb-4 px-6
             md:relative md:translate-x-0 md:flex-shrink-0 md:flex md:overflow-y-auto
             md:top-0 md:pt-8
             md:max-w-none
@@ -256,7 +256,7 @@ const Clubs = () => {
           >
             <X size={20} />
           </button>
-          <div className="flex justify-between items-center mb-1 flex-shrink-0 md:pt-0 pt-8 mt-2">
+          <div className="flex justify-between items-center mb-1 flex-shrink-0 md:pt-0 pt-0 mt-0">
             <div className="flex items-center gap-2">
               <SlidersHorizontal size={18} className="text-brand-blue-dark" />
               <span className="text-lg font-bold">Filters</span>
