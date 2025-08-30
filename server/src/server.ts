@@ -10,6 +10,9 @@ import assert from "assert";
 import path from "path";
 import { checkRoutes, checkSetup } from "./validator";
 import apiRouter from "./api";
+import { clubRouter } from "./api/clubs";
+import { userRouter } from "./api/users";
+import { adminRouter } from "./api/admin";
 import { populateCurrentUser } from "./auth/auth";
 import cookieParser from "cookie-parser";
 
@@ -48,6 +51,15 @@ app.use(
 );
 app.use(populateCurrentUser);
 app.use("/api", apiRouter);
+app.use("/api", clubRouter);
+app.use("/api", userRouter);
+app.use("/api", adminRouter);
+
+// catch-all for unmatched API routes
+app.all("/api/*", (_req: Request, res: Response) => {
+  res.status(404).send({ msg: "API route not found" });
+});
+
 const reactPath = path.resolve(__dirname, "..", "..", "..", "client", "dist");
 app.use(express.static(reactPath));
 

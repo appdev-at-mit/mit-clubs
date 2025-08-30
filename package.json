@@ -2,12 +2,12 @@
   "name": "beaver-clubs",
   "version": "1.0.0",
   "description": "",
-  "main": "server/dist/server.js",
+  "main": "server/dist/src/server.js",
   "scripts": {
     "dev": "vite --port 5173 --host",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "tsc -p server && nodemon",
+    "start": "tsc -p server && node server/dist/src/server.js",
     "compile": "tsc -p server"
   },
   "repository": {
