@@ -22,7 +22,7 @@ checkSetup();
 const mongoConnectionURL =
   process.env["MONGO_SRV"] ??
   assert.fail("Missing MONGO_SRV environment variable");
-const databaseName = "beaver-clubs";
+const databaseName = "Cluster0";
 
 mongoose.set("strictQuery", false);
 

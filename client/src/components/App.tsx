@@ -1,46 +1,67 @@
 import React, { useState, useEffect, createContext } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
-export interface User {
-  _id?: string;
-  name?: string;
-  email?: string;
-  isAdmin?: boolean;
-}
+import "../utilities.css";
+import { get, post } from "../utilities";
+import { AuthContextType, User } from "../types";
 
-export interface UserContextType {
-  userId?: string;
-  userName?: string;
-  userEmail?: string;
-  isAdmin: boolean;
-  handleLogin: (credentialResponse: any) => void;
-  handleLogout: () => void;
-}
+export const UserContext = createContext<AuthContextType | null>(null);
 
-export const UserContext = createContext<UserContextType | null>(null);
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const App: React.FC = () => {
   const [userId, setUserId] = useState<string | undefined>(undefined);
   const [userName, setUserName] = useState<string | undefined>(undefined);
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO: login
+    get("/api/whoami")
+      .then((user: User) => {
+        if (user._id) {
+          setUserId(user._id);
+          setUserName(user.name);
+          setUserEmail(user.email);
+          setIsAdmin(!!user.isAdmin);
+        }
+      })
+      .catch((error) => {
+        console.log("User not logged in:", error);
+      });
   }, []);
 
-  const handleLogin = (credentialResponse: any) => {
-    console.log("TOOD", credentialResponse);
-  };
+  function handleLogin(credentialResponse: any): void {
+    const userToken = credentialResponse.credential;
+    post("/api/login", { token: userToken })
+      .then((response: any) => {
+        const user = response.user;
+        const isNewUser = response.isNewUser;
 
-  const handleLogout = () => {
+        setUserId(user._id);
+        setUserName(user.name);
+        setUserEmail(user.email);
+        setIsAdmin(!!user.isAdmin);
+
+        navigate("/");
+      })
+      .catch((err) => {
+        console.error("Login failed:", err);
+      });
+  }
+
+  function handleLogout(): void {
     setUserId(undefined);
     setUserName(undefined);
     setUserEmail(undefined);
     setIsAdmin(false);
-  };
+    post("/api/logout").then(() => {
+      navigate("/");
+    });
+  }
 
-  const authContextValue: UserContextType = {
+  const authContextValue: AuthContextType = {
     userId,
     userName,
     userEmail,
@@ -50,9 +71,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <UserContext.Provider value={authContextValue}>
-      <Outlet />
-    </UserContext.Provider>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <UserContext.Provider value={authContextValue}>
+        <Outlet />
+      </UserContext.Provider>
+    </GoogleOAuthProvider>
   );
 };
 

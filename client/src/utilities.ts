@@ -1,0 +1,90 @@
+/**
+ * Utility functions to make API requests.
+ * By importing this file, you can use the provided get and post functions.
+ * You shouldn't need to modify this file, but if you want to learn more
+ * about how these functions work, google search "Fetch API"
+ *
+ * These functions return promises, which means you should use ".then" on them.
+ * e.g. get('/api/foo', { bar: 0 }).then(res => console.log(res))
+ */
+
+// ex: formatParams({ some_key: "some_value", a: "b"}) => "some_key=some_value&a=b"
+function formatParams(params: Record<string, any>): string {
+  // iterate of all the keys of params as an array,
+  // map it to a new array of URL string encoded key,value pairs
+  // join all the url params using an ampersand (&).
+  return Object.keys(params)
+    .map((key) => key + "=" + encodeURIComponent(params[key]))
+    .join("&");
+}
+
+// convert a fetch result to a JSON object with error handling for fetch and json errors
+async function convertToJSON(res: Response): Promise<any> {
+  if (!res.ok) {
+    throw `API request failed with response status ${res.status} and text: ${res.statusText}`;
+  }
+
+  return res
+    .clone() // clone so that the original is still readable for debugging
+    .json() // start converting to JSON object
+    .catch(async (error: Error) => {
+      // throw an error containing the text that couldn't be converted to JSON
+      return res.text().then((text: string) => {
+        throw `API request's result could not be converted to a JSON object: \n${text}`;
+      });
+    });
+}
+
+// Helper code to make a get request. Default parameter of empty JSON Object for params.
+// Returns a Promise to a JSON Object.
+export async function get(endpoint: string, params = {}): Promise<any> {
+  const fullPath = endpoint + "?" + formatParams(params);
+  return fetch(fullPath)
+    .then(convertToJSON)
+    .catch((error) => {
+      // give a useful error message
+      throw `GET request to ${fullPath} failed with error:\n${error}`;
+    });
+}
+
+// Helper code to make a post request. Default parameter of empty JSON Object for params.
+// Returns a Promise to a JSON Object.
+export async function post(endpoint: string, params = {}): Promise<any> {
+  return fetch(endpoint, {
+    method: "post",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(params),
+  })
+    .then(convertToJSON) // convert result to JSON object
+    .catch((error) => {
+      // give a useful error message
+      throw `POST request to ${endpoint} failed with error:\n${error}`;
+    });
+}
+
+// Helper code to make a put request. Default parameter of empty JSON Object for params.
+// Returns a Promise to a JSON Object.
+export async function put(endpoint: string, params = {}): Promise<any> {
+  return fetch(endpoint, {
+    method: "put",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(params),
+  })
+    .then(convertToJSON)
+    .catch((error) => {
+      throw `PUT request to ${endpoint} failed with error:\n${error}`;
+    });
+}
+
+// Helper code to make a delete request.
+// Returns a Promise to a JSON Object.
+export async function del(endpoint: string): Promise<any> {
+  return fetch(endpoint, {
+    method: "delete",
+    headers: { "Content-type": "application/json" },
+  })
+    .then(convertToJSON)
+    .catch((error) => {
+      throw `DELETE request to ${endpoint} failed with error:\n${error}`;
+    });
+}
