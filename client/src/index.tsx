@@ -1,36 +1,33 @@
+import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./components/App";
 import NotFound from "./components/pages/NotFound";
-import Home from "./components/pages/Home";
-import About from "./components/pages/About";
 import Clubs from "./components/pages/Clubs";
 import ClubDetails from "./components/pages/ClubDetails";
-import ClubManage from "./components/pages/ClubManage";
 import Profile from "./components/pages/Profile";
-
+import ClubManage from "./components/pages/ClubManage";
+import About from "./components/pages/About";
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
+  Navigate,
 } from "react-router-dom";
-
-import "./utilities.css";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route errorElement={<NotFound />} element={<App />}>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Clubs />} />
+      <Route path="/saved-clubs" element={<Navigate to="/profile" replace />} />
+      <Route path="/clubs/:clubId" element={<ClubDetails />} />
+      <Route path="/clubs/:clubId/manage" element={<ClubManage />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/about" element={<About />} />
-      <Route path="/clubs" element={<Clubs />} />
-      <Route path="/club/:clubId" element={<ClubDetails />} />
-      <Route path="/manage/:clubId" element={<ClubManage />} />
-      <Route path="/profile/:userId" element={<Profile />} />
     </Route>
   )
 );
 
-const rootElement = document.getElementById("root");
-if (!rootElement) throw new Error("Root element not found");
-
-ReactDOM.createRoot(rootElement).render(<RouterProvider router={router} />);
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <RouterProvider router={router} />
+);
