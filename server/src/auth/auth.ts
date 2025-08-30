@@ -9,11 +9,12 @@ interface GoogleCredential {
   sub: string;
 }
 
-export async function login(req: Request, res: Response) {
+export async function login(req: Request, res: Response): Promise<void> {
   const { token } = req.body;
 
   if (!token) {
-    return res.status(400).json({ error: "No token provided" });
+    res.status(400).json({ error: "No token provided" });
+    return;
   }
 
   try {
