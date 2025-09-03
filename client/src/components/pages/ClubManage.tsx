@@ -244,7 +244,7 @@ function ClubManage() {
       <div className="flex flex-col min-h-screen">
         <Navbar />
         <div className="flex-grow flex items-center justify-center">
-          <p className="text-xl text-brand-blue-dark">
+          <p className="text-xl text-appdev-blue-dark">
             Loading club details...
           </p>
         </div>
@@ -292,7 +292,7 @@ function ClubManage() {
             <button
               className={`pb-3 font-medium ${
                 activeTab === "edit"
-                  ? "text-brand-blue-dark border-b-2 border-brand-blue-dark"
+                  ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                   : "text-gray-500 hover:text-gray-700"
               }`}
               onClick={() => setActiveTab("edit")}
@@ -302,7 +302,7 @@ function ClubManage() {
             <button
               className={`pb-3 font-medium ${
                 activeTab === "recruitment"
-                  ? "text-brand-blue-dark border-b-2 border-brand-blue-dark"
+                  ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                   : "text-gray-500 hover:text-gray-700"
               }`}
               onClick={() => setActiveTab("recruitment")}
@@ -312,7 +312,7 @@ function ClubManage() {
             <button
               className={`pb-3 font-medium ${
                 activeTab === "questions"
-                  ? "text-brand-blue-dark border-b-2 border-brand-blue-dark"
+                  ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                   : "text-gray-500 hover:text-gray-700"
               }`}
               onClick={() => setActiveTab("questions")}
@@ -322,7 +322,7 @@ function ClubManage() {
             <button
               className={`pb-3 font-medium ${
                 activeTab === "members"
-                  ? "text-brand-blue-dark border-b-2 border-brand-blue-dark"
+                  ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                   : "text-gray-500 hover:text-gray-700"
               }`}
               onClick={() => setActiveTab("members")}
@@ -355,7 +355,7 @@ function ClubManage() {
                 <button
                   className={`block w-full text-left px-4 py-2 ${
                     activeTab === "edit"
-                      ? "bg-gray-100 text-brand-blue-dark"
+                      ? "bg-gray-100 text-appdev-blue-dark"
                       : "text-gray-700"
                   }`}
                   onClick={() => {
@@ -368,7 +368,7 @@ function ClubManage() {
                 <button
                   className={`block w-full text-left px-4 py-2 ${
                     activeTab === "recruitment"
-                      ? "bg-gray-100 text-brand-blue-dark"
+                      ? "bg-gray-100 text-appdev-blue-dark"
                       : "text-gray-700"
                   }`}
                   onClick={() => {
@@ -381,7 +381,7 @@ function ClubManage() {
                 <button
                   className={`block w-full text-left px-4 py-2 ${
                     activeTab === "questions"
-                      ? "bg-gray-100 text-brand-blue-dark"
+                      ? "bg-gray-100 text-appdev-blue-dark"
                       : "text-gray-700"
                   }`}
                   onClick={() => {
@@ -394,7 +394,7 @@ function ClubManage() {
                 <button
                   className={`block w-full text-left px-4 py-2 ${
                     activeTab === "members"
-                      ? "bg-gray-100 text-brand-blue-dark"
+                      ? "bg-gray-100 text-appdev-blue-dark"
                       : "text-gray-700"
                   }`}
                   onClick={() => {
@@ -434,7 +434,7 @@ function ClubManage() {
               } sm:ml-auto w-full sm:w-auto`}
             >
               <button
-                className={`px-6 py-2 bg-brand-purple text-white rounded-md hover:bg-brand-purple/80 transition-all duration-200 ${
+                className={`px-6 py-2 bg-appdev-purple text-white rounded-md hover:bg-appdev-purple/80 transition-all duration-200 ${
                   isSaving ? "opacity-70 cursor-not-allowed" : ""
                 } w-full sm:w-auto`}
                 onClick={handleSave}

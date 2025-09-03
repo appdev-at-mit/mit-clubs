@@ -84,7 +84,7 @@ function ClubCard({
             {tagList.map(function(tag, index) { return (
               <span
                 key={index}
-                className="text-xs bg-brand-blue/20 text-brand-blue-dark font-medium rounded-full px-2.5 py-1"
+                className="text-xs bg-appdev-blue/20 text-appdev-blue-dark font-medium rounded-full px-2.5 py-1"
               >
                 {tag}
               </span>
@@ -116,13 +116,13 @@ function ClubCard({
           </span>
           <span
             className={`flex items-center gap-1 ${
-              isAccepting ? "text-brand-green-dark" : "text-brand-red"
+              isAccepting ? "text-appdev-green-dark" : "text-appdev-red"
             }`}
           >
             {isAccepting ? (
-              <FaCheckCircle className="text-brand-green-dark" />
+              <FaCheckCircle className="text-appdev-green-dark" />
             ) : (
-              <FaTimesCircle className="text-brand-red" />
+              <FaTimesCircle className="text-appdev-red" />
             )}
             {isAccepting ? "Accepting Members" : "Not Accepting Members"}
           </span>
@@ -136,13 +136,13 @@ function ClubCard({
           {isSaved ? (
             <FaBookmark
               className={`text-2xl transition-colors duration-300 ease-in-out ${
-                isHovering ? "text-brand-blue-dark" : "text-brand-blue"
+                isHovering ? "text-appdev-blue-dark" : "text-appdev-blue"
               }`}
             />
           ) : isHovering ? (
-            <FaBookmark className="text-brand-blue text-2xl transition-colors duration-300 ease-in-out" />
+            <FaBookmark className="text-appdev-blue text-2xl transition-colors duration-300 ease-in-out" />
           ) : (
-            <FaRegBookmark className="text-brand-blue-dark text-2xl transition-colors duration-300 ease-in-out" />
+            <FaRegBookmark className="text-appdev-blue-dark text-2xl transition-colors duration-300 ease-in-out" />
           )}
         </button>
       </div>

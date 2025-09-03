@@ -24,7 +24,7 @@ function Navbar() {
               alt="MIT Clubs Logo"
               className="h-8 w-auto mr-2"
             />
-            <span className="text-xl font-bold text-brand-blue-dark">
+            <span className="text-xl font-bold text-appdev-blue-dark">
               MIT Clubs
             </span>
           </NavLink>
@@ -36,7 +36,7 @@ function Navbar() {
                   className={({ isActive }) =>
                     `no-underline font-semibold ${
                       isActive
-                        ? "text-brand-blue-dark"
+                        ? "text-appdev-blue-dark"
                         : "text-gray-600 hover:text-gray-900"
                     }`
                   }
@@ -48,7 +48,7 @@ function Navbar() {
                   className={({ isActive }) =>
                     `no-underline font-semibold ${
                       isActive
-                        ? "text-brand-blue-dark"
+                        ? "text-appdev-blue-dark"
                         : "text-gray-600 hover:text-gray-900"
                     }`
                   }
@@ -72,7 +72,7 @@ function Navbar() {
                   className={({ isActive }) =>
                     `no-underline font-semibold ${
                       isActive
-                        ? "text-brand-blue-dark"
+                        ? "text-appdev-blue-dark"
                         : "text-gray-600 hover:text-gray-900"
                     }`
                   }

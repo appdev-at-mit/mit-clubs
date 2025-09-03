@@ -57,13 +57,13 @@ function MembersTable({
               <td className="px-6 py-2 whitespace-nowrap text-right text-sm font-medium">
                 <button
                   onClick={() => onEditMember(member)}
-                  className="text-white bg-brand-green-dark rounded-md px-3 py-1 mr-2 inline-flex items-center"
+                  className="text-white bg-appdev-green-dark rounded-md px-3 py-1 mr-2 inline-flex items-center"
                 >
                   <Edit size={16} className="mr-1" /> Edit
                 </button>
                 <button
                   onClick={() => onRemoveMember(member)}
-                  className="text-white bg-brand-red rounded-md px-3 py-1 inline-flex items-center"
+                  className="text-white bg-appdev-red rounded-md px-3 py-1 inline-flex items-center"
                 >
                   <UserX size={16} className="mr-1" /> Kick
                 </button>

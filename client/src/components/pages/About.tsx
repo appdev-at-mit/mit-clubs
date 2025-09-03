@@ -86,7 +86,7 @@ function About() {
               process. Questions or ideas to share? Reach out to our team at{" "}
               <a
                 href="mailto:fullstack-exec@mit.edu"
-                className="text-brand-blue-dark hover:underline"
+                className="text-appdev-blue-dark hover:underline"
               >
                 fullstack-exec@mit.edu
               </a>
@@ -99,7 +99,7 @@ function About() {
               MIT Clubs is made by a team of students at{" "}
               <a
                 href="https://www.mitappdev.com/"
-                className="text-brand-blue-dark hover:underline"
+                className="text-appdev-blue-dark hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
               >

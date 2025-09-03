@@ -37,7 +37,7 @@ function ConfirmRemoveModal({
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 bg-brand-red text-white rounded-md hover:bg-brand-red/80 transition-all duration-200"
+            className="px-4 py-2 bg-appdev-red text-white rounded-md hover:bg-appdev-red/80 transition-all duration-200"
           >
             Remove Member
           </button>

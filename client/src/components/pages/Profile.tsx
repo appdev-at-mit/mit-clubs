@@ -106,7 +106,7 @@ function Profile() {
             <div className="flex items-start p-4">
               <div className="flex-grow">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-brand-blue-dark">
+                  <h3 className="font-semibold text-appdev-blue-dark">
                     {club.name}
                   </h3>
                   {type === "member" && club.role && (
@@ -132,7 +132,7 @@ function Profile() {
 
               <Link
                 to={`/clubs/${club.club_id}`}
-                className="flex items-center text-sm text-brand-blue hover:text-brand-blue-dark"
+                className="flex items-center text-sm text-appdev-blue hover:text-appdev-blue-dark"
               >
                 <span className="mr-1">View</span>
                 <ExternalLink size={14} />
@@ -201,7 +201,7 @@ function Profile() {
                   <button
                     className={`px-4 py-3 flex items-center gap-2 text-sm font-medium ${
                       activeTab === "saved"
-                        ? "text-brand-blue-dark border-b-2 border-brand-blue-dark"
+                        ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                         : "text-gray-500 hover:text-gray-700"
                     }`}
                     onClick={() => setActiveTab("saved")}
@@ -212,7 +212,7 @@ function Profile() {
                   <button
                     className={`px-4 py-3 flex items-center gap-2 text-sm font-medium ${
                       activeTab === "member"
-                        ? "text-brand-blue-dark border-b-2 border-brand-blue-dark"
+                        ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                         : "text-gray-500 hover:text-gray-700"
                     }`}
                     onClick={() => setActiveTab("member")}
@@ -225,7 +225,7 @@ function Profile() {
                 <div className="p-6">
                   {loading ? (
                     <div className="flex justify-center items-center h-48">
-                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-blue-dark"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-appdev-blue-dark"></div>
                     </div>
                   ) : (
                     <>

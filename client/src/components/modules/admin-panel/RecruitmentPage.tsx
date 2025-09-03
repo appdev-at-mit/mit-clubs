@@ -45,7 +45,7 @@ function RecruitmentPage({ club }: { club: Club }) {
                 id="is_accepting"
                 checked={isAccepting}
                 onChange={(e) => setIsAccepting(e.target.checked)}
-                className="h-4 w-4 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
+                className="h-4 w-4 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
               />
               <label htmlFor="is_accepting" className="ml-2 text-gray-700">
                 Currently accepting members
@@ -57,7 +57,7 @@ function RecruitmentPage({ club }: { club: Club }) {
                 id="is_active"
                 checked={isActive}
                 onChange={(e) => setIsActive(e.target.checked)}
-                className="h-4 w-4 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
+                className="h-4 w-4 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
               />
               <label htmlFor="is_active" className="ml-2 text-gray-700">
                 Active
@@ -103,7 +103,7 @@ function RecruitmentPage({ club }: { club: Club }) {
                   value={cycle.value}
                   checked={cycles.includes(cycle.value)}
                   onChange={() => toggleCycle(cycle.value)}
-                  className="h-4 w-4 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
+                  className="h-4 w-4 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
                 />
                 <label htmlFor={cycle.id} className="ml-2 text-gray-700">
                   {cycle.label}
