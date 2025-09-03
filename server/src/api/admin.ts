@@ -15,7 +15,7 @@ async function ensureOwnerOrAdmin(
 ): Promise<void> {
   try {
     const { id, clubId } = req.params;
-    const currentClubId = id || clubId;
+    const currentClubId = id || clubId || req.body.club_id;
 
     if (!currentClubId) {
       res.status(400).json({ error: "Club ID is required" });

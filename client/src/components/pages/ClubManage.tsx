@@ -193,7 +193,7 @@ function ClubManage() {
           break;
       }
 
-      const response = await updateClub(updateData);
+      const response = await updateClub({ ...updateData, club_id: clubId });
       setClub(response.club);
 
       setSaveMessage({ type: "success", text: "Changes saved successfully!" });
@@ -262,7 +262,7 @@ function ClubManage() {
             {club.name}
           </h1>
           <button
-            onClick={() => navigate(`/club/${clubId}`)}
+            onClick={() => navigate(`/clubs/${clubId}`)}
             onMouseEnter={() => setIsHoveringViewClub(true)}
             onMouseLeave={() => setIsHoveringViewClub(false)}
             style={{
