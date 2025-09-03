@@ -28,7 +28,7 @@ export type Club = {
   is_accepting?: boolean;
   recruiting_cycle?: "Fall" | "Spring" | "Year-round" | string | string[];
   membership_process?: string;
-  tags?: string[] | string;
+  tags?: string[];
   email?: string;
   instagram?: string;
   linkedin?: string;
