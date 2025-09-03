@@ -6,6 +6,7 @@ import os
 import sys
 import pymongo
 from pymongo import MongoClient
+import uuid
 
 
 class ClubScraper:
@@ -140,22 +141,64 @@ class ClubScraper:
             db = client[self.db_name]
             clubs_collection = db.clubs
 
+            updated_count = 0
+            created_count = 0
+
             for club_data in clubs:
-                if not club_data.get("id") or not club_data.get("name"):
+                if not club_data.get("name"):
+                    print(f"Skipping club with no name: {club_data}")
                     continue
+
+                club_id = club_data.get("id")
+                club_name = club_data["name"]
 
                 # Only update the fields we scraped
                 update_doc = {
-                    "name": club_data["name"],
+                    "name": club_name,
                     "engage_tags": ", ".join(club_data.get("categories", [])),
                     "website": club_data.get("website_url"),
                     "mission": club_data.get("mission"),
                     "image_url": club_data.get("logo_url"),
                 }
 
-                clubs_collection.update_one(
-                    {"club_id": club_data["id"]}, {"$set": update_doc}, upsert=True
+                # Check if club already has an ID
+                existing_by_id = (
+                    clubs_collection.find_one({"club_id": club_id}) if club_id else None
                 )
+
+                # Check if club has a name
+                existing_by_name = clubs_collection.find_one({"name": club_name})
+
+                if existing_by_id:
+                    clubs_collection.update_one(
+                        {"club_id": club_id}, {"$set": update_doc}
+                    )
+                    updated_count += 1
+                elif existing_by_name:
+                    if club_id:
+                        # Update with the scraped ID
+                        clubs_collection.update_one(
+                            {"name": club_name},
+                            {"$set": {**update_doc, "club_id": club_id}},
+                        )
+                        print(f"Updated club {club_name} with scraped ID: {club_id}")
+                    else:
+                        # Generate new ID if none provided
+                        new_id = str(uuid.uuid4())
+                        clubs_collection.update_one(
+                            {"name": club_name},
+                            {"$set": {**update_doc, "club_id": new_id}},
+                        )
+                        print(f"Updated club {club_name} with new ID: {new_id}")
+                    updated_count += 1
+                else:
+                    # Create new club
+                    if not club_id:
+                        club_id = str(uuid.uuid4())
+                        print(f"Generated ID for new club: {club_name}: {club_id}")
+
+                    clubs_collection.insert_one({"club_id": club_id, **update_doc})
+                    created_count += 1
 
             client.close()
             return True
