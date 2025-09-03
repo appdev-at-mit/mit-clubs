@@ -113,11 +113,7 @@ function Clubs() {
     ) {
       result = result.filter((club) => {
         if (!club.tags) return false;
-        const clubTags = Array.isArray(club.tags)
-          ? club.tags.map((tag) => tag.toLowerCase())
-          : typeof club.tags === "string"
-          ? club.tags.toLowerCase().split(/,\s*/)
-          : [];
+        const clubTags = club.tags.map((tag) => tag.toLowerCase());
         return currentFilters.selected_tags.every((selectedTag) =>
           clubTags.includes(selectedTag.toLowerCase())
         );
@@ -253,9 +249,9 @@ function Clubs() {
             fixed top-[64px] left-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
             transform transition-transform duration-300 ease-in-out
             ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-            flex flex-col pt-3 pb-4 px-6
+            flex flex-col pt-6 pb-4 px-6
             md:relative md:translate-x-0 md:flex-shrink-0 md:flex md:overflow-y-auto
-            md:top-0 md:pt-8
+            md:top-0 md:pt-6
             md:max-w-none
             md:w-64 lg:w-80
           `}
@@ -267,7 +263,7 @@ function Clubs() {
           >
             <X size={20} />
           </button>
-          <div className="flex justify-between items-center mb-1 flex-shrink-0 md:pt-0 pt-0 mt-0">
+          <div className="flex justify-between items-center mb-1 flex-shrink-0">
             <div className="flex items-center gap-2">
               <SlidersHorizontal size={18} className="text-appdev-blue-dark" />
               <span className="text-lg font-bold">Filters</span>
@@ -288,60 +284,86 @@ function Clubs() {
           <p className="text-xs text-gray-500 mb-3 flex-shrink-0">
             Showing {filteredClubs.length} of {clubs.length} clubs
           </p>
-          <div className="flex-grow overflow-y-auto space-y-1 mt-3 scrollbar-hide">
+          <div className="flex-grow overflow-y-auto space-y-1 scrollbar-hide">
             <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
               <button
                 onClick={() => setIsCategorySectionOpen(!isCategorySectionOpen)}
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
               >
                 <span>Category</span>
-                {isCategorySectionOpen ? (
-                  <FaChevronUp size={12} />
-                ) : (
-                  <FaChevronDown size={12} />
-                )}
+                <FaChevronDown
+                  size={12}
+                  className={`transition-transform duration-300 ${
+                    isCategorySectionOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
-              {isCategorySectionOpen && (
-                <div className="mt-2 pl-3 space-y-1">
-                  {Object.entries(tagCategories).map(([category, tags]) => (
-                    <div key={category} className="pb-1">
-                      <button
-                        onClick={() => toggleSubSection(category)}
-                        className="flex justify-between items-center w-full py-1 text-left font-medium text-sm text-gray-500 hover:text-gray-700"
-                      >
-                        <span>{category}</span>
-                        {openSections[category] ? (
-                          <FaChevronUp size={10} />
-                        ) : (
-                          <FaChevronDown size={10} />
-                        )}
-                      </button>
-                      {openSections[category] && (
-                        <div className="mt-1 pl-3 space-y-0.5">
-                          {tags.map((tag) => (
-                            <div key={tag} className="flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                id={`tag-${tag}`}
-                                checked={
-                                  filters.selected_tags
-                                    ? filters.selected_tags.includes(tag)
-                                    : false
-                                }
-                                onChange={() => handleTagCheckboxChange(tag)}
-                                className="h-3 w-3 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
-                              />
-                              <label htmlFor={`tag-${tag}`} className="text-xs">
-                                {tag}
-                              </label>
+              <div
+                className={`grid transition-all duration-300 ease-in-out ${
+                  isCategorySectionOpen
+                    ? "grid-rows-[1fr] opacity-100"
+                    : "grid-rows-[0fr] opacity-0"
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <div className="mt-2 pl-3 space-y-1">
+                    {Object.entries(tagCategories).map(([category, tags]) => (
+                      <div key={category} className="pb-1">
+                        <button
+                          onClick={() => toggleSubSection(category)}
+                          className="flex justify-between items-center w-full py-1 text-left font-medium text-sm text-gray-500 hover:text-gray-700"
+                        >
+                          <span>{category}</span>
+                          <FaChevronDown
+                            size={10}
+                            className={`transition-transform duration-300 ${
+                              openSections[category] ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+                        <div
+                          className={`grid transition-all duration-300 ease-in-out ${
+                            openSections[category]
+                              ? "grid-rows-[1fr] opacity-100"
+                              : "grid-rows-[0fr] opacity-0"
+                          }`}
+                        >
+                          <div className="overflow-hidden">
+                            <div className="mt-1 pl-3 space-y-0.5">
+                              {tags.map((tag) => (
+                                <div
+                                  key={tag}
+                                  className="flex items-center gap-2"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    id={`tag-${tag}`}
+                                    checked={
+                                      filters.selected_tags
+                                        ? filters.selected_tags.includes(tag)
+                                        : false
+                                    }
+                                    onChange={() =>
+                                      handleTagCheckboxChange(tag)
+                                    }
+                                    className="h-3 w-3 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
+                                  />
+                                  <label
+                                    htmlFor={`tag-${tag}`}
+                                    className="text-xs"
+                                  >
+                                    {tag}
+                                  </label>
+                                </div>
+                              ))}
                             </div>
-                          ))}
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
             <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
               <button
@@ -349,39 +371,48 @@ function Clubs() {
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
               >
                 <span>Membership Process</span>
-                {openSections["membership"] ? (
-                  <FaChevronUp size={12} />
-                ) : (
-                  <FaChevronDown size={12} />
-                )}
+                <FaChevronDown
+                  size={12}
+                  className={`transition-transform duration-300 ${
+                    openSections["membership"] ? "rotate-180" : ""
+                  }`}
+                />
               </button>
-              {openSections["membership"] && (
-                <div className="mt-2 pl-3 space-y-1">
-                  {membershipProcessOptions.map((process) => (
-                    <div key={process} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id={`membership-${process}`}
-                        checked={
-                          filters.membership_process
-                            ? filters.membership_process.includes(process)
-                            : false
-                        }
-                        onChange={() =>
-                          toggleFilter("membership_process", process)
-                        }
-                        className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
-                      />
-                      <label
-                        htmlFor={`membership-${process}`}
-                        className="text-sm"
-                      >
-                        {process}
-                      </label>
-                    </div>
-                  ))}
+              <div
+                className={`grid transition-all duration-300 ease-in-out ${
+                  openSections["membership"]
+                    ? "grid-rows-[1fr] opacity-100"
+                    : "grid-rows-[0fr] opacity-0"
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <div className="mt-2 pl-3 space-y-1">
+                    {membershipProcessOptions.map((process) => (
+                      <div key={process} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id={`membership-${process}`}
+                          checked={
+                            filters.membership_process
+                              ? filters.membership_process.includes(process)
+                              : false
+                          }
+                          onChange={() =>
+                            toggleFilter("membership_process", process)
+                          }
+                          className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
+                        />
+                        <label
+                          htmlFor={`membership-${process}`}
+                          className="text-sm"
+                        >
+                          {process}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
             <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
               <button
@@ -389,37 +420,48 @@ function Clubs() {
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
               >
                 <span>Recruiting Cycle</span>
-                {openSections["recruiting"] ? (
-                  <FaChevronUp size={12} />
-                ) : (
-                  <FaChevronDown size={12} />
-                )}
+                <FaChevronDown
+                  size={12}
+                  className={`transition-transform duration-300 ${
+                    openSections["recruiting"] ? "rotate-180" : ""
+                  }`}
+                />
               </button>
-              {openSections["recruiting"] && (
-                <div className="mt-2 pl-3 space-y-1">
-                  {recruitingCycles.map((cycle) => (
-                    <div key={cycle} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id={`recruiting-${cycle}`}
-                        checked={
-                          filters.recruiting_cycle
-                            ? filters.recruiting_cycle.includes(cycle)
-                            : false
-                        }
-                        onChange={() => toggleFilter("recruiting_cycle", cycle)}
-                        className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
-                      />
-                      <label
-                        htmlFor={`recruiting-${cycle}`}
-                        className="text-sm"
-                      >
-                        {cycle}
-                      </label>
-                    </div>
-                  ))}
+              <div
+                className={`grid transition-all duration-300 ease-in-out ${
+                  openSections["recruiting"]
+                    ? "grid-rows-[1fr] opacity-100"
+                    : "grid-rows-[0fr] opacity-0"
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <div className="mt-2 pl-3 space-y-1">
+                    {recruitingCycles.map((cycle) => (
+                      <div key={cycle} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id={`recruiting-${cycle}`}
+                          checked={
+                            filters.recruiting_cycle
+                              ? filters.recruiting_cycle.includes(cycle)
+                              : false
+                          }
+                          onChange={() =>
+                            toggleFilter("recruiting_cycle", cycle)
+                          }
+                          className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
+                        />
+                        <label
+                          htmlFor={`recruiting-${cycle}`}
+                          className="text-sm"
+                        >
+                          {cycle}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
             <div className="pb-2 mb-2 pr-2">
               <button
@@ -427,40 +469,49 @@ function Clubs() {
                 className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
               >
                 <span>Status</span>
-                {openSections["status"] ? (
-                  <FaChevronUp size={12} />
-                ) : (
-                  <FaChevronDown size={12} />
-                )}
+                <FaChevronDown
+                  size={12}
+                  className={`transition-transform duration-300 ${
+                    openSections["status"] ? "rotate-180" : ""
+                  }`}
+                />
               </button>
-              {openSections["status"] && (
-                <div className="mt-2 pl-3 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="is_accepting_filter"
-                      checked={filters.is_accepting || false}
-                      onChange={toggleAcceptingMembers}
-                      className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
-                    />
-                    <label htmlFor="is_accepting_filter" className="text-sm">
-                      Accepting Members
-                    </label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="is_active_filter"
-                      checked={filters.is_active}
-                      onChange={toggleActiveClubs}
-                      className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
-                    />
-                    <label htmlFor="is_active_filter" className="text-sm">
-                      Active Clubs Only
-                    </label>
+              <div
+                className={`grid transition-all duration-300 ease-in-out ${
+                  openSections["status"]
+                    ? "grid-rows-[1fr] opacity-100"
+                    : "grid-rows-[0fr] opacity-0"
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <div className="mt-2 pl-3 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="is_accepting_filter"
+                        checked={filters.is_accepting || false}
+                        onChange={toggleAcceptingMembers}
+                        className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
+                      />
+                      <label htmlFor="is_accepting_filter" className="text-sm">
+                        Accepting Members
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="is_active_filter"
+                        checked={filters.is_active}
+                        onChange={toggleActiveClubs}
+                        className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
+                      />
+                      <label htmlFor="is_active_filter" className="text-sm">
+                        Active Clubs Only
+                      </label>
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -526,6 +577,6 @@ function Clubs() {
       </div>
     </div>
   );
-};
+}
 
 export default Clubs;
