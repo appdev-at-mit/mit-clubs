@@ -86,7 +86,7 @@ const ClubDetails: React.FC = () => {
             );
 
             setHasOwnerPermission(Boolean(userMember));
-            
+
             // check if user is an admin
             try {
               const adminResponse = await checkIsAdmin();
@@ -95,7 +95,6 @@ const ClubDetails: React.FC = () => {
               console.error("Error checking admin status:", err);
               setIsAdmin(false);
             }
-            
           } catch (err) {
             console.error("Error checking member permissions:", err);
             setHasOwnerPermission(false);
@@ -153,21 +152,21 @@ const ClubDetails: React.FC = () => {
       }
     } catch (error: any) {
       console.error("Failed to toggle save status:", error);
-      alert(error.response?.data?.error || "Failed to update save status.");
+      alert(error.response && error.response.data && error.response.data.error ? error.response.data.error : "Failed to update save status.");
     }
   }
 
   // process tags
   const tagList =
-    typeof club?.tags === "string"
+    club && typeof club.tags === "string"
       ? club.tags.split(/,\s*/).filter((tag) => tag)
-      : Array.isArray(club?.tags)
+      : club && Array.isArray(club.tags)
       ? club.tags
       : [];
 
   // construct image URL
   let fullImageUrl = defaultImage;
-  if (typeof club?.image_url === "string") {
+  if (club && typeof club.image_url === "string") {
     if (club.image_url.startsWith("/")) {
       fullImageUrl = `https://engage.mit.edu${club.image_url}`;
     } else if (club.image_url) {
@@ -251,7 +250,7 @@ const ClubDetails: React.FC = () => {
                     <div
                       key={index}
                       className={
-                        index < club.questions!.length - 1
+                        club.questions && index < club.questions.length - 1
                           ? "border-b border-gray-200 pb-4"
                           : "pb-4"
                       }
@@ -309,7 +308,7 @@ const ClubDetails: React.FC = () => {
                 ) : (
                   <FaRegBookmark className="text-brand-blue-dark text-xl transition-colors duration-300 ease-in-out" />
                 )}
-                <span className="ml-1">{club?.saveCount ?? 0}</span>
+                <span className="ml-1">{club ? club.saveCount || 0 : 0}</span>
               </button>
               {/* Manage Club Button - show for owners or admins */}
               {(hasOwnerPermission || isAdmin) && (

@@ -316,7 +316,7 @@ const Clubs: React.FC = () => {
                                 type="checkbox"
                                 id={`tag-${tag}`}
                                 checked={
-                                  filters.selected_tags?.includes(tag) || false
+                                  filters.selected_tags ? filters.selected_tags.includes(tag) : false
                                 }
                                 onChange={() => handleTagCheckboxChange(tag)}
                                 className="h-3 w-3 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
@@ -353,7 +353,7 @@ const Clubs: React.FC = () => {
                         type="checkbox"
                         id={`membership-${process}`}
                         checked={
-                          filters.membership_process?.includes(process) || false
+                          filters.membership_process ? filters.membership_process.includes(process) : false
                         }
                         onChange={() =>
                           toggleFilter("membership_process", process)
@@ -391,7 +391,7 @@ const Clubs: React.FC = () => {
                         type="checkbox"
                         id={`recruiting-${cycle}`}
                         checked={
-                          filters.recruiting_cycle?.includes(cycle) || false
+                          filters.recruiting_cycle ? filters.recruiting_cycle.includes(cycle) : false
                         }
                         onChange={() => toggleFilter("recruiting_cycle", cycle)}
                         className="h-3.5 w-3.5 rounded text-brand-blue-dark focus:ring-brand-blue-dark"

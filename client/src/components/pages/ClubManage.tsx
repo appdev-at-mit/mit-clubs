@@ -58,17 +58,18 @@ function ClubManage() {
           console.error("Error checking admin status:", err);
           setIsAdmin(false);
         }
-        
+
         const membersResponse = await getClubMembers(clubId);
         const members = Array.isArray(membersResponse) ? membersResponse : [];
 
         // check if the current user is an owner
         const userMember = members.find(
-          (member) => member.email === userEmail && member.permissions === "Owner"
+          (member) =>
+            member.email === userEmail && member.permissions === "Owner"
         );
 
         setHasOwnerPermission(Boolean(userMember));
-        
+
         const hasPermission = Boolean(userMember) || adminStatus;
         setPermissionChecked(true);
 
@@ -96,15 +97,25 @@ function ClubManage() {
     if (permissionChecked && !hasOwnerPermission && !isAdmin && !loading) {
       navigate(`/clubs/${clubId}`);
     }
-  }, [permissionChecked, hasOwnerPermission, isAdmin, loading, navigate, clubId]);
+  }, [
+    permissionChecked,
+    hasOwnerPermission,
+    isAdmin,
+    loading,
+    navigate,
+    clubId,
+  ]);
 
   // save functionality
   async function handleSave() {
     if (!clubId) return;
-    
+
     // don't allow saving if user doesn't have permission
     if (!hasOwnerPermission && !isAdmin) {
-      setSaveMessage({ type: 'error', text: 'You do not have permission to edit this club.' });
+      setSaveMessage({
+        type: "error",
+        text: "You do not have permission to edit this club.",
+      });
       return;
     }
 
@@ -119,18 +130,20 @@ function ClubManage() {
           // get data from EditClubPage component
           const editComponent = document.getElementById("edit-form");
           if (editComponent) {
+            const nameInput = editComponent.querySelector(
+              "#club-name"
+            ) as HTMLInputElement;
+            const missionInput = editComponent.querySelector(
+              "#club-mission"
+            ) as HTMLTextAreaElement;
+            const tagsInput = editComponent.querySelector(
+              "#club-tags"
+            ) as HTMLInputElement;
+
             updateData = {
-              name: (
-                editComponent.querySelector("#club-name") as HTMLInputElement
-              )?.value,
-              mission: (
-                editComponent.querySelector(
-                  "#club-mission"
-                ) as HTMLTextAreaElement
-              )?.value,
-              tags: (
-                editComponent.querySelector("#club-tags") as HTMLInputElement
-              )?.value,
+              name: nameInput ? nameInput.value : "",
+              mission: missionInput ? missionInput.value : "",
+              tags: tagsInput ? tagsInput.value : "",
             };
           }
           break;
@@ -140,22 +153,22 @@ function ClubManage() {
           const recruitmentComponent =
             document.getElementById("recruitment-form");
           if (recruitmentComponent) {
+            const isActiveInput = recruitmentComponent.querySelector(
+              "#is_active"
+            ) as HTMLInputElement;
+            const isAcceptingInput = recruitmentComponent.querySelector(
+              "#is_accepting"
+            ) as HTMLInputElement;
+            const membershipProcessInput = recruitmentComponent.querySelector(
+              "#membership-process"
+            ) as HTMLSelectElement;
+
             updateData = {
-              is_active: (
-                recruitmentComponent.querySelector(
-                  "#is_active"
-                ) as HTMLInputElement
-              )?.checked,
-              is_accepting: (
-                recruitmentComponent.querySelector(
-                  "#is_accepting"
-                ) as HTMLInputElement
-              )?.checked,
-              membership_process: (
-                recruitmentComponent.querySelector(
-                  "#membership-process"
-                ) as HTMLSelectElement
-              )?.value,
+              is_active: isActiveInput ? isActiveInput.checked : false,
+              is_accepting: isAcceptingInput ? isAcceptingInput.checked : false,
+              membership_process: membershipProcessInput
+                ? membershipProcessInput.value
+                : "",
               recruiting_cycle: Array.from(
                 recruitmentComponent.querySelectorAll(
                   'input[name="recruitment_cycle"]:checked'
@@ -169,13 +182,12 @@ function ClubManage() {
           // get data from QuestionsPage component
           const questionsComponent = document.getElementById("questions-form");
           if (questionsComponent) {
+            const questionsInput = questionsComponent.querySelector(
+              "#club-questions"
+            ) as HTMLInputElement;
             updateData = {
               questions: JSON.parse(
-                (
-                  questionsComponent.querySelector(
-                    "#club-questions"
-                  ) as HTMLInputElement
-                )?.value || "[]"
+                questionsInput ? questionsInput.value || "[]" : "[]"
               ),
             };
           }
