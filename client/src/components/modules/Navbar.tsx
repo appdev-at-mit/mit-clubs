@@ -4,7 +4,7 @@ import { UserContext } from "../App";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import beaverLogo from "../../assets/beaver.png";
 
-const Navbar: React.FC = () => {
+function Navbar() {
   const userContext = useContext(UserContext);
 
   if (!userContext) {

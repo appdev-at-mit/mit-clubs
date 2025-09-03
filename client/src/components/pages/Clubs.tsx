@@ -19,7 +19,7 @@ type FilterState = {
   selected_tags: string[];
 };
 
-const Clubs: React.FC = () => {
+function Clubs() {
   const userContext = useContext(UserContext);
 
   if (!userContext) {
@@ -154,7 +154,7 @@ const Clubs: React.FC = () => {
   }
 
   function resetFilters() {
-    const defaultFilters: FilterState = {
+    const defaultFilters = {
       membership_process: [],
       recruiting_cycle: [],
       is_accepting: false,

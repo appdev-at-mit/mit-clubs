@@ -56,11 +56,10 @@ export function ensureClubOfficer(
         return;
       }
 
-      const isOfficer = club.members.some(
-        (member: any) =>
-          member.email === user.email &&
-          (member.permissions === "Owner" || member.permissions === "Officer")
-      );
+      const isOfficer = club.members.some(function(member: any) {
+        return member.email === user.email &&
+          (member.permissions === "Owner" || member.permissions === "Officer");
+      });
 
       if (!isOfficer) {
         res.status(403).send({ err: "club officer access required" });
@@ -80,15 +79,13 @@ export function ensureClubOfficer(
 export async function isClubOfficer(userEmail: string): Promise<boolean> {
   try {
     const clubs = await Club.find({});
-    const isOfficer = clubs.some(
-      (club) =>
-        club.members &&
-        club.members.some(
-          (member: any) =>
-            member.email === userEmail &&
-            (member.permissions === "Owner" || member.permissions === "Officer")
-        )
-    );
+    const isOfficer = clubs.some(function(club) {
+      return club.members &&
+        club.members.some(function(member: any) {
+          return member.email === userEmail &&
+            (member.permissions === "Owner" || member.permissions === "Officer");
+        });
+    });
     return isOfficer;
   } catch (error) {
     console.error("Error checking if user is club officer:", error);
@@ -105,17 +102,17 @@ export async function getUserOfficerClubs(
   try {
     const clubs = await Club.find({});
     const officerClubs = clubs
-      .filter(
-        (club) =>
-          club.members &&
-          club.members.some(
-            (member: any) =>
-              member.email === userEmail &&
+      .filter(function(club) {
+        return club.members &&
+          club.members.some(function(member: any) {
+            return member.email === userEmail &&
               (member.permissions === "Owner" ||
-                member.permissions === "Officer")
-          )
-      )
-      .map((club) => club.club_id);
+                member.permissions === "Officer");
+          });
+      })
+      .map(function(club) {
+        return club.club_id;
+      });
     return officerClubs;
   } catch (error) {
     console.error("Error getting user officer clubs:", error);

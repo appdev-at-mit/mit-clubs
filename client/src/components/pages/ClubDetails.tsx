@@ -33,7 +33,7 @@ import {
 import { FaFacebookF, FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { Club } from "../../types";
 
-const ClubDetails: React.FC = () => {
+function ClubDetails() {
   const { clubId } = useParams<{ clubId: string }>();
   const navigate = useNavigate();
   const userContext = useContext(UserContext);

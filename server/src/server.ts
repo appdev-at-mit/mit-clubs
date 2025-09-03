@@ -19,9 +19,10 @@ import cookieParser from "cookie-parser";
 // validator runs some basic checks to make sure you've set everything up correctly
 checkSetup();
 
-const mongoConnectionURL =
-  process.env["MONGO_SRV"] ??
+const mongoConnectionURL = process.env["MONGO_SRV"];
+if (!mongoConnectionURL) {
   assert.fail("Missing MONGO_SRV environment variable");
+}
 const databaseName = "Cluster0";
 
 mongoose.set("strictQuery", false);
@@ -42,9 +43,13 @@ app.use(cookieParser());
 
 app.use(
   session({
-    secret:
-      process.env["SESSION_SECRET"] ??
-      assert.fail("Missing SESSION_SECRET environment variable!"),
+    secret: (() => {
+      const sessionSecret = process.env["SESSION_SECRET"];
+      if (!sessionSecret) {
+        assert.fail("Missing SESSION_SECRET environment variable!");
+      }
+      return sessionSecret;
+    })(),
     resave: false,
     saveUninitialized: false,
   })
@@ -91,10 +96,10 @@ app.get("*", (_req: Request, res: Response) => {
   });
 });
 
-const port =
-  process.env["SERVER_PORT"] ??
-  process.env["PORT"] ??
+const port = process.env["SERVER_PORT"] || process.env["PORT"];
+if (!port) {
   assert.fail("Missing SERVER_PORT or PORT environment variable!");
+}
 const server = new http.Server(app);
 
 server.listen(port, () => {

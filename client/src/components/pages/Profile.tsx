@@ -15,7 +15,7 @@ interface ExtendedClub extends Club {
   year_joined?: string;
 }
 
-const Profile: React.FC = () => {
+function Profile() {
   const userContext = useContext(UserContext);
 
   if (!userContext) {
