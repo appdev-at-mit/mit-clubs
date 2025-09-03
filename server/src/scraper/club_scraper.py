@@ -2,6 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import re
+import os
+import sys
+import pymongo
+from pymongo import MongoClient
 
 
 class ClubScraper:
@@ -12,6 +16,8 @@ class ClubScraper:
     def __init__(self, base_url="https://engage.mit.edu"):
         self.base_url = base_url
         self.clubs_url = f"{base_url}/club_signup?view=all&"
+        self.mongo_uri = os.getenv("MONGO_SRV", "")
+        self.db_name = "Cluster0"
 
     def fetch_page(self):
         try:
@@ -48,19 +54,25 @@ class ClubScraper:
             text = re.sub(r"\s+", " ", element.get_text(strip=True))
             if " - " in text:
                 category_part = text.split(" - ", 1)[1].split(",")
-                categories.extend([category.strip() for category in category_part if category.strip()])
+                categories.extend(
+                    [category.strip() for category in category_part if category.strip()]
+                )
         return categories
 
     def get_club_website(self, club_item):
         for link in club_item.find_all("a", href=True):
             if link.find("span", class_="mdi mdi-web"):
                 return link["href"]
-        
-        website_link = club_item.find("a", href=True, string=lambda text: text and "Website" in text)
+
+        website_link = club_item.find(
+            "a", href=True, string=lambda text: text and "Website" in text
+        )
         return website_link["href"] if website_link else None
 
     def get_club_mission(self, club_item):
-        for element in club_item.find_all("p", style=lambda s: s and "display:none" in s):
+        for element in club_item.find_all(
+            "p", style=lambda s: s and "display:none" in s
+        ):
             text = element.get_text(strip=True)
             if "Mission" in text:
                 return re.sub(r"^Mission\s*", "", text, flags=re.IGNORECASE).strip()
@@ -71,7 +83,9 @@ class ClubScraper:
             text = re.sub(r"\s+", " ", element.get_text(strip=True))
             if " - " in text:
                 return text.split(" - ", 1)[0].strip()
-            elif not any(word in text.lower() for word in ["academic", "technology", "education"]):
+            elif not any(
+                word in text.lower() for word in ["academic", "technology", "education"]
+            ):
                 return text
         return None
 
@@ -115,3 +129,37 @@ class ClubScraper:
     def save_to_json(self, clubs, filename="mit_clubs.json"):
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(clubs, f)
+
+    def update_database(self, clubs):
+        if not self.mongo_uri:
+            print("MongoDB URI not found.")
+            return False
+
+        try:
+            client = MongoClient(self.mongo_uri)
+            db = client[self.db_name]
+            clubs_collection = db.clubs
+
+            for club_data in clubs:
+                if not club_data.get("id") or not club_data.get("name"):
+                    continue
+
+                # Only update the fields we scraped
+                update_doc = {
+                    "name": club_data["name"],
+                    "engage_tags": ", ".join(club_data.get("categories", [])),
+                    "website": club_data.get("website_url"),
+                    "mission": club_data.get("mission"),
+                    "image_url": club_data.get("logo_url"),
+                }
+
+                clubs_collection.update_one(
+                    {"club_id": club_data["id"]}, {"$set": update_doc}, upsert=True
+                )
+
+            client.close()
+            return True
+
+        except Exception as e:
+            print(f"Error updating database: {e}")
+            return False
