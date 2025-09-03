@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import React, { useContext } from "react";
 import { UserContext } from "../App";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
-import beaverLogo from "../../assets/beaver.png";
+import logo from "../../assets/logo.png";
 
 function Navbar() {
   const userContext = useContext(UserContext);
@@ -20,12 +20,12 @@ function Navbar() {
         <div className="flex justify-between items-center h-16">
           <NavLink to="/" className="flex items-center no-underline">
             <img
-              src={beaverLogo}
-              alt="Beaver Clubs Logo"
+              src={logo}
+              alt="MIT Clubs Logo"
               className="h-8 w-auto mr-2"
             />
             <span className="text-xl font-bold text-brand-blue-dark">
-              Beaver Clubs
+              MIT Clubs
             </span>
           </NavLink>
           <div className="flex items-center space-x-10">

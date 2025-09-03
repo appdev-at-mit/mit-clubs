@@ -13,14 +13,14 @@ function About() {
           <div>
             <h3 className="text-lg font-medium mb-2 text-gray-900">Overview</h3>
             <p className="text-gray-700">
-              Beaver Clubs serves as a platform for connecting students with
+              MIT Clubs serves as a platform for connecting students with
               MIT's student organizations. Explore and discover student groups
               throughout the academic year, beyond just Activities Midway.
             </p>
           </div>
           <div>
             <h3 className="text-lg font-medium mb-2 text-gray-900">
-              Using Beaver Clubs
+              Using MIT Clubs
             </h3>
             <p className="text-gray-700">
               Find clubs using our search function and filter by categories,
@@ -34,7 +34,7 @@ function About() {
               Account Login Benefits
             </h3>
             <p className="text-gray-700 mb-2">
-              Creating an account on Beaver Clubs unlocks the following features
+              Creating an account on MIT Clubs unlocks the following features
               designed to improve your club experience:
             </p>
             <ul className="list-disc pl-8 text-gray-700 space-y-1">
@@ -67,7 +67,7 @@ function About() {
               Club Leader Tools
             </h3>
             <p className="text-gray-700 mb-2">
-              Beaver Clubs provides tools for organization leaders to:
+              MIT Clubs provides tools for organization leaders to:
             </p>
             <ul className="list-disc pl-8 text-gray-700 space-y-1">
               <li>Customize and update your club's public profile</li>
@@ -82,7 +82,7 @@ function About() {
             </h3>
             <p className="text-gray-700">
               We welcome input from the entire MIT community to help improve
-              Beaver Clubs! Your suggestions and feedback drive our development
+              MIT Clubs! Your suggestions and feedback drive our development
               process. Questions or ideas to share? Reach out to our team at{" "}
               <a
                 href="mailto:fullstack-exec@mit.edu"
@@ -96,7 +96,7 @@ function About() {
           <div>
             <h3 className="text-lg font-medium mb-2 text-gray-900">Our Team</h3>
             <p className="text-gray-700">
-              Beaver Clubs is made by a team of students at{" "}
+              MIT Clubs is made by a team of students at{" "}
               <a
                 href="https://www.mitappdev.com/"
                 className="text-brand-blue-dark hover:underline"
