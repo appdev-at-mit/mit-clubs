@@ -29,7 +29,6 @@ export interface Club {
   mission?: string;
   image_url?: string;
   saveCount: number;
-  savedByUsers: mongoose.Types.ObjectId[];
   questions: ClubQuestion[];
   members: ClubMember[];
 }
@@ -110,7 +109,6 @@ const ClubSchema = new mongoose.Schema({
   },
   image_url: { type: String },
   saveCount: { type: Number, default: 0 },
-  savedByUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   questions: {
     type: [ClubQuestionSchema],
     default: [
@@ -129,7 +127,9 @@ const ClubSchema = new mongoose.Schema({
 
 const ClubModel = mongoose.model<Club>("club", ClubSchema);
 
-const f = () => new ClubModel();
-export type ClubModelType = ReturnType<typeof f>;
+function createClubModel() {
+  return new ClubModel();
+}
+export type ClubModelType = ReturnType<typeof createClubModel>;
 
 export default ClubModel;
