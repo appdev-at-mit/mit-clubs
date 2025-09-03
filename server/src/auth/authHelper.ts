@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import ClubOfficer from "../models/ClubOfficer";
+import Club from "../models/Club";
 
 /**
  * Middleware to ensure user is an admin
@@ -48,12 +48,21 @@ export function ensureClubOfficer(
   }
 
   // check if user is officer of this specific club
-  ClubOfficer.findOne({
-    user_id: req.user._id,
-    club_id: clubId,
-  })
-    .then((officer) => {
-      if (!officer) {
+  const user = req.user;
+  Club.findOne({ club_id: clubId })
+    .then((club) => {
+      if (!club || !club.members) {
+        res.status(404).send({ err: "club not found" });
+        return;
+      }
+
+      const isOfficer = club.members.some(
+        (member: any) =>
+          member.email === user.email &&
+          (member.permissions === "Owner" || member.permissions === "Officer")
+      );
+
+      if (!isOfficer) {
         res.status(403).send({ err: "club officer access required" });
         return;
       }
@@ -68,10 +77,19 @@ export function ensureClubOfficer(
 /**
  * Check if user is an officer of any club
  */
-export async function isClubOfficer(userId: string): Promise<boolean> {
+export async function isClubOfficer(userEmail: string): Promise<boolean> {
   try {
-    const officer = await ClubOfficer.findOne({ user_id: userId });
-    return Boolean(officer);
+    const clubs = await Club.find({});
+    const isOfficer = clubs.some(
+      (club) =>
+        club.members &&
+        club.members.some(
+          (member: any) =>
+            member.email === userEmail &&
+            (member.permissions === "Owner" || member.permissions === "Officer")
+        )
+    );
+    return isOfficer;
   } catch (error) {
     console.error("Error checking if user is club officer:", error);
     return false;
@@ -81,10 +99,24 @@ export async function isClubOfficer(userId: string): Promise<boolean> {
 /**
  * Get all clubs where user is an officer
  */
-export async function getUserOfficerClubs(userId: string): Promise<string[]> {
+export async function getUserOfficerClubs(
+  userEmail: string
+): Promise<string[]> {
   try {
-    const officerRecords = await ClubOfficer.find({ user_id: userId });
-    return officerRecords.map((record) => record.club_id);
+    const clubs = await Club.find({});
+    const officerClubs = clubs
+      .filter(
+        (club) =>
+          club.members &&
+          club.members.some(
+            (member: any) =>
+              member.email === userEmail &&
+              (member.permissions === "Owner" ||
+                member.permissions === "Officer")
+          )
+      )
+      .map((club) => club.club_id);
+    return officerClubs;
   } catch (error) {
     console.error("Error getting user officer clubs:", error);
     return [];
