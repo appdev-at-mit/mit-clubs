@@ -3,3 +3,6 @@ client/dist
 server/dist
 
 .env
+
+__pycache__/
+venv/
