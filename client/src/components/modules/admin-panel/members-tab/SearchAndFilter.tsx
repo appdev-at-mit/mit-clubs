@@ -27,7 +27,7 @@ function SearchAndFilter({
             placeholder={`Search ${membersCount} entries`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-blue"
+            className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-appdev-blue"
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
             <Search size={18} className="text-gray-400" />
@@ -38,7 +38,7 @@ function SearchAndFilter({
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-brand-blue appearance-none bg-white"
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-appdev-blue appearance-none bg-white"
           >
             <option value="">Filter by Role</option>
             <option value="Co-Chair (Owner)">Co-Chair (Owner)</option>
@@ -54,7 +54,7 @@ function SearchAndFilter({
 
       <button
         onClick={onAddMember}
-        className="whitespace-nowrap px-3 py-1.5 bg-brand-green-dark text-white rounded-md hover:bg-brand-green-dark/80 transition-all duration-200"
+        className="whitespace-nowrap px-3 py-1.5 bg-appdev-green-dark text-white rounded-md hover:bg-appdev-green-dark/80 transition-all duration-200"
       >
         + Add Member
       </button>

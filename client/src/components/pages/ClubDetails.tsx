@@ -179,7 +179,7 @@ function ClubDetails() {
       <div className="flex flex-col min-h-screen">
         <Navbar />
         <div className="flex-grow flex items-center justify-center">
-          <p className="text-center text-xl text-brand-blue-dark">
+          <p className="text-center text-xl text-appdev-blue-dark">
             Loading club details...
           </p>
         </div>
@@ -192,7 +192,7 @@ function ClubDetails() {
       <div className="flex flex-col min-h-screen">
         <Navbar />
         <div className="flex-grow flex items-center justify-center">
-          <p className="text-center text-xl text-brand-red">
+          <p className="text-center text-xl text-appdev-red">
             Could not load club details.
           </p>
         </div>
@@ -216,7 +216,7 @@ function ClubDetails() {
                     {tagList.map((tag, index) => (
                       <span
                         key={index}
-                        className="text-sm bg-brand-blue/20 text-brand-blue-dark font-medium rounded-full px-3 py-1"
+                        className="text-sm bg-appdev-blue/20 text-appdev-blue-dark font-medium rounded-full px-3 py-1"
                       >
                         {tag}
                       </span>
@@ -299,14 +299,14 @@ function ClubDetails() {
                   <FaBookmark
                     className={`text-xl transition-colors duration-300 ease-in-out ${
                       isHoveringSave
-                        ? "text-brand-blue-dark"
-                        : "text-brand-blue"
+                        ? "text-appdev-blue-dark"
+                        : "text-appdev-blue"
                     }`}
                   />
                 ) : isHoveringSave ? (
-                  <FaBookmark className="text-brand-blue text-xl transition-colors duration-300 ease-in-out" />
+                  <FaBookmark className="text-appdev-blue text-xl transition-colors duration-300 ease-in-out" />
                 ) : (
-                  <FaRegBookmark className="text-brand-blue-dark text-xl transition-colors duration-300 ease-in-out" />
+                  <FaRegBookmark className="text-appdev-blue-dark text-xl transition-colors duration-300 ease-in-out" />
                 )}
                 <span className="ml-1">{club ? club.saveCount || 0 : 0}</span>
               </button>
@@ -337,12 +337,12 @@ function ClubDetails() {
                     {club.is_active ? (
                       <Zap
                         size={18}
-                        className="text-brand-green-dark flex-shrink-0"
+                        className="text-appdev-green-dark flex-shrink-0"
                       />
                     ) : (
                       <ZapOff
                         size={18}
-                        className="text-brand-red flex-shrink-0"
+                        className="text-appdev-red flex-shrink-0"
                       />
                     )}
                     <span>{club.is_active ? "Active" : "Inactive"}</span>
@@ -351,12 +351,12 @@ function ClubDetails() {
                     {club.is_accepting ? (
                       <CheckCircle
                         size={18}
-                        className="text-brand-green-dark flex-shrink-0"
+                        className="text-appdev-green-dark flex-shrink-0"
                       />
                     ) : (
                       <XCircle
                         size={18}
-                        className="text-brand-red flex-shrink-0"
+                        className="text-appdev-red flex-shrink-0"
                       />
                     )}
                     <span>

@@ -74,7 +74,7 @@ function MemberModal({
         </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-md bg-red-50 text-brand-red text-sm">
+          <div className="mb-4 p-3 rounded-md bg-red-50 text-appdev-red text-sm">
             {error}
           </div>
         )}
@@ -90,13 +90,13 @@ function MemberModal({
               onChange={(e) => onMemberChange({ name: e.target.value })}
               className={`w-full p-2 border ${
                 nameError ? "border-red-500" : "border-gray-300"
-              } rounded-md focus:outline-none focus:ring-1 focus:ring-brand-blue`}
+              } rounded-md focus:outline-none focus:ring-1 focus:ring-appdev-blue`}
               placeholder={isEditMode ? "" : "Enter member name"}
               required
               maxLength={50}
             />
             <div className="flex justify-between">
-              <p className="text-xs text-brand-red mt-1">{nameError}</p>
+              <p className="text-xs text-appdev-red mt-1">{nameError}</p>
               <p className="text-sm text-gray-500 mt-1">
                 {(member.name || "").length}/50
               </p>
@@ -115,7 +115,7 @@ function MemberModal({
               onChange={onRoleChange}
               className={`w-full p-2 border ${
                 roleError ? "border-red-500" : "border-gray-300"
-              } rounded-md focus:outline-none focus:ring-1 focus:ring-brand-blue`}
+              } rounded-md focus:outline-none focus:ring-1 focus:ring-appdev-blue`}
               required
             >
               {availableRoles.map((roleOption, index) => (
@@ -125,7 +125,7 @@ function MemberModal({
               ))}
             </select>
             {roleError && (
-              <p className="text-xs text-brand-red mt-1">{roleError}</p>
+              <p className="text-xs text-appdev-red mt-1">{roleError}</p>
             )}
           </div>
 
@@ -139,13 +139,13 @@ function MemberModal({
               onChange={(e) => onMemberChange({ email: e.target.value })}
               className={`w-full p-2 border ${
                 emailError ? "border-red-500" : "border-gray-300"
-              } rounded-md focus:outline-none focus:ring-1 focus:ring-brand-blue`}
+              } rounded-md focus:outline-none focus:ring-1 focus:ring-appdev-blue`}
               placeholder={isEditMode ? "" : "Enter member email"}
               required
               maxLength={100}
             />
             <div className="flex justify-between">
-              <p className="text-xs text-brand-red mt-1">{emailError}</p>
+              <p className="text-xs text-appdev-red mt-1">{emailError}</p>
               <p className="text-sm text-gray-500 mt-1">
                 {(member.email || "").length}/100
               </p>
@@ -164,8 +164,8 @@ function MemberModal({
             onClick={onSave}
             className={`px-4 py-2 text-white rounded-md transition-all duration-200 ${
               isEditMode
-                ? "bg-brand-purple hover:bg-brand-purple/80"
-                : "bg-brand-green-dark hover:bg-brand-green-dark/80"
+                ? "bg-appdev-purple hover:bg-appdev-purple/80"
+                : "bg-appdev-green-dark hover:bg-appdev-green-dark/80"
             }`}
           >
             {isEditMode ? "Save Changes" : "Add Member"}

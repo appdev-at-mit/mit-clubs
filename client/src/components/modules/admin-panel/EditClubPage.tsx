@@ -104,12 +104,12 @@ function EditClubPage({ club }: { club: Club }) {
                   selectedTags.map(function(tag) { return (
                     <div
                       key={tag}
-                      className="inline-flex items-center bg-brand-blue/20 text-brand-blue-dark px-2.5 py-1 rounded-full text-sm"
+                      className="inline-flex items-center bg-appdev-blue/20 text-appdev-blue-dark px-2.5 py-1 rounded-full text-sm"
                     >
                       {tag}
                       <button
                         onClick={function() { removeTag(tag); }}
-                        className="ml-1 text-brand-blue-dark hover:text-brand-blue-dark/80"
+                        className="ml-1 text-appdev-blue-dark hover:text-appdev-blue-dark/80"
                       >
                         <X size={14} />
                       </button>
@@ -144,7 +144,7 @@ function EditClubPage({ club }: { club: Club }) {
                               id={`tag-${tag}`}
                               checked={selectedTags.includes(tag)}
                               onChange={function() { toggleTag(tag); }}
-                              className="h-4 w-4 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
+                              className="h-4 w-4 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
                             />
                             <label
                               htmlFor={`tag-${tag}`}

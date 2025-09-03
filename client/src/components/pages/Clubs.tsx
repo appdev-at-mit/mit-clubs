@@ -228,7 +228,7 @@ function Clubs() {
         <Navbar />
         <div className="pt-16 min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-appdev-blue mx-auto"></div>
             <p className="mt-4 text-gray-600">Loading clubs...</p>
           </div>
         </div>
@@ -261,7 +261,7 @@ function Clubs() {
           </button>
           <div className="flex justify-between items-center mb-1 flex-shrink-0 md:pt-0 pt-0 mt-0">
             <div className="flex items-center gap-2">
-              <SlidersHorizontal size={18} className="text-brand-blue-dark" />
+              <SlidersHorizontal size={18} className="text-appdev-blue-dark" />
               <span className="text-lg font-bold">Filters</span>
             </div>
             <button
@@ -319,7 +319,7 @@ function Clubs() {
                                   filters.selected_tags ? filters.selected_tags.includes(tag) : false
                                 }
                                 onChange={() => handleTagCheckboxChange(tag)}
-                                className="h-3 w-3 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
+                                className="h-3 w-3 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
                               />
                               <label htmlFor={`tag-${tag}`} className="text-xs">
                                 {tag}
@@ -358,7 +358,7 @@ function Clubs() {
                         onChange={() =>
                           toggleFilter("membership_process", process)
                         }
-                        className="h-3.5 w-3.5 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
+                        className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
                       />
                       <label
                         htmlFor={`membership-${process}`}
@@ -394,7 +394,7 @@ function Clubs() {
                           filters.recruiting_cycle ? filters.recruiting_cycle.includes(cycle) : false
                         }
                         onChange={() => toggleFilter("recruiting_cycle", cycle)}
-                        className="h-3.5 w-3.5 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
+                        className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
                       />
                       <label
                         htmlFor={`recruiting-${cycle}`}
@@ -427,7 +427,7 @@ function Clubs() {
                       id="is_accepting_filter"
                       checked={filters.is_accepting || false}
                       onChange={toggleAcceptingMembers}
-                      className="h-3.5 w-3.5 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
+                      className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
                     />
                     <label htmlFor="is_accepting_filter" className="text-sm">
                       Accepting Members
@@ -439,7 +439,7 @@ function Clubs() {
                       id="is_active_filter"
                       checked={filters.is_active}
                       onChange={toggleActiveClubs}
-                      className="h-3.5 w-3.5 rounded text-brand-blue-dark focus:ring-brand-blue-dark"
+                      className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
                     />
                     <label htmlFor="is_active_filter" className="text-sm">
                       Active Clubs Only
@@ -465,7 +465,7 @@ function Clubs() {
                 placeholder="Search clubs by name or mission..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand-blue-dark focus:border-brand-blue-dark"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark"
               />
               <FaSearch className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400" />
             </div>
