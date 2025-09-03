@@ -155,7 +155,7 @@ class ClubScraper:
                 # Only update the fields we scraped
                 update_doc = {
                     "name": club_name,
-                    "engage_tags": ", ".join(club_data.get("categories", [])),
+                    "tags": club_data.get("categories", []),
                     "website": club_data.get("website_url"),
                     "mission": club_data.get("mission"),
                     "image_url": club_data.get("logo_url"),
