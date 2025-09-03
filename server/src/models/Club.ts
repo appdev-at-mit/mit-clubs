@@ -20,7 +20,8 @@ export interface Club {
   is_accepting: boolean;
   recruiting_cycle: string[];
   membership_process: string;
-  tags?: string;
+  engage_tags?: string;
+  custom_tags?: string;
   email?: string;
   instagram?: string;
   linkedin?: string;
@@ -97,7 +98,8 @@ const ClubSchema = new mongoose.Schema({
     },
   },
   membership_process: { type: String, default: "Open Membership" },
-  tags: { type: String },
+  engage_tags: { type: String },
+  custom_tags: { type: String },
   email: { type: String },
   instagram: { type: String },
   linkedin: { type: String },
