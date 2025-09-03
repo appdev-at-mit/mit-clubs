@@ -56,7 +56,7 @@ const Clubs: React.FC = () => {
   const recruitingCycles = ["Open", "Fall Semester", "Spring Semester", "IAP"];
 
   useEffect(() => {
-    const loadData = async () => {
+    async function loadData() {
       try {
         setLoading(true);
         const clubsData = await getAllClubs();
@@ -68,13 +68,13 @@ const Clubs: React.FC = () => {
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     loadData();
   }, []);
 
   useEffect(() => {
-    const loadSavedClubs = async () => {
+    async function loadSavedClubs() {
       if (userId) {
         try {
           const savedClubIds = await getSavedClubIds();
@@ -86,7 +86,7 @@ const Clubs: React.FC = () => {
       } else {
         setSavedClubs(new Set());
       }
-    };
+    }
 
     loadSavedClubs();
   }, [userId]);

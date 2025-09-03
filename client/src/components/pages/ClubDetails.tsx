@@ -7,6 +7,7 @@ import {
   getSavedClubIds,
   getClubMembers,
 } from "../../api/clubs";
+import { checkIsAdmin } from "../../api/admin";
 import { UserContext } from "../App";
 import Navbar from "../modules/Navbar";
 import defaultImage from "../../assets/default.png";
@@ -48,9 +49,10 @@ const ClubDetails: React.FC = () => {
   const [isHoveringSave, setIsHoveringSave] = useState<boolean>(false);
   const [isHoveringManage, setIsHoveringManage] = useState<boolean>(false);
   const [hasOwnerPermission, setHasOwnerPermission] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchAllDetails = async () => {
+    async function fetchAllDetails() {
       if (!clubId) return;
 
       setLoading(true);
@@ -84,6 +86,16 @@ const ClubDetails: React.FC = () => {
             );
 
             setHasOwnerPermission(Boolean(userMember));
+            
+            // check if user is an admin
+            try {
+              const adminResponse = await checkIsAdmin();
+              setIsAdmin(adminResponse.isAdmin);
+            } catch (err) {
+              console.error("Error checking admin status:", err);
+              setIsAdmin(false);
+            }
+            
           } catch (err) {
             console.error("Error checking member permissions:", err);
             setHasOwnerPermission(false);
@@ -91,6 +103,7 @@ const ClubDetails: React.FC = () => {
         } else {
           setIsSaved(false);
           setHasOwnerPermission(false);
+          setIsAdmin(false);
         }
       } catch (error) {
         console.error("Error fetching club details or save status:", error);
@@ -98,7 +111,7 @@ const ClubDetails: React.FC = () => {
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     fetchAllDetails();
   }, [clubId, userId, userEmail]);
@@ -298,7 +311,8 @@ const ClubDetails: React.FC = () => {
                 )}
                 <span className="ml-1">{club?.saveCount ?? 0}</span>
               </button>
-              {hasOwnerPermission && (
+              {/* Manage Club Button - show for owners or admins */}
+              {(hasOwnerPermission || isAdmin) && (
                 <button
                   onClick={() => navigate(`/clubs/${clubId}/manage`)}
                   onMouseEnter={() => setIsHoveringManage(true)}
