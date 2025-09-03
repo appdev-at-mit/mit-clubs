@@ -17,9 +17,9 @@ export interface Club {
   club_id: string;
   name: string;
   is_active: boolean;
-  is_accepting: boolean;
-  recruiting_cycle: string[];
-  membership_process: string;
+  is_accepting?: boolean;
+  recruiting_cycle?: string[];
+  membership_process?: string;
   engage_tags?: string;
   custom_tags?: string;
   email?: string;
@@ -29,9 +29,9 @@ export interface Club {
   website?: string;
   mission?: string;
   image_url?: string;
-  saveCount: number;
-  questions: ClubQuestion[];
-  members: ClubMember[];
+  saveCount?: number;
+  questions?: ClubQuestion[];
+  members?: ClubMember[];
 }
 
 const ClubQuestionSchema = new mongoose.Schema({
@@ -73,10 +73,9 @@ const ClubSchema = new mongoose.Schema({
     maxlength: [100, "Club name cannot exceed 100 characters"],
   },
   is_active: { type: Boolean, default: true },
-  is_accepting: { type: Boolean, default: false },
+  is_accepting: { type: Boolean },
   recruiting_cycle: {
     type: [String],
-    default: [],
     validate: {
       validator: function (v: any) {
         // allow either string or array of strings
@@ -97,7 +96,7 @@ const ClubSchema = new mongoose.Schema({
       return v;
     },
   },
-  membership_process: { type: String, default: "Open Membership" },
+  membership_process: { type: String },
   engage_tags: { type: String },
   custom_tags: { type: String },
   email: { type: String },
@@ -110,20 +109,12 @@ const ClubSchema = new mongoose.Schema({
     maxlength: [1000, "Mission statement cannot exceed 1000 characters"],
   },
   image_url: { type: String },
-  saveCount: { type: Number, default: 0 },
+  saveCount: { type: Number },
   questions: {
     type: [ClubQuestionSchema],
-    default: [
-      {
-        question: "What does the time commitment for this club look like?",
-        answer: "",
-      },
-      { question: "When and where does this club meet?", answer: "" },
-    ],
   },
   members: {
     type: [ClubMemberSchema],
-    default: [],
   },
 });
 

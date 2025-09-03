@@ -25,10 +25,10 @@ function ClubCard({
   id: string;
   name: string;
   description: string;
-  isAccepting: boolean;
+  isAccepting?: boolean;
   tags: string[] | string;
   membersRange?: string;
-  recruitmentProcess: string;
+  recruitmentProcess?: string;
   image_url?: string;
   isSavedInitially?: boolean;
 }) {
@@ -56,7 +56,7 @@ function ClubCard({
 
   const tagList =
     typeof tags === "string"
-      ? tags.split(/,\s*/).filter(function(tag) { return tag; })
+      ? tags.split(/,\s*/).filter((tag) => tag)
       : Array.isArray(tags)
       ? tags
       : [];
@@ -81,14 +81,14 @@ function ClubCard({
             {name}
           </h2>
           <div className="mt-3 flex flex-wrap gap-2 min-h-[28px]">
-            {tagList.map(function(tag, index) { return (
+            {tagList.map((tag, index) => (
               <span
                 key={index}
                 className="text-xs bg-appdev-blue/20 text-appdev-blue-dark font-medium rounded-full px-2.5 py-1"
               >
                 {tag}
               </span>
-            ); })}
+            ))}
           </div>
         </div>
         <div className="absolute top-4 right-4">
@@ -110,27 +110,31 @@ function ClubCard({
               {membersRange}
             </span>
           )}
-          <span className={`flex items-center gap-1`}>
-            <FaClipboardCheck className={`text-gray-500`} />
-            {recruitmentProcess}
-          </span>
-          <span
-            className={`flex items-center gap-1 ${
-              isAccepting ? "text-appdev-green-dark" : "text-appdev-red"
-            }`}
-          >
-            {isAccepting ? (
-              <FaCheckCircle className="text-appdev-green-dark" />
-            ) : (
-              <FaTimesCircle className="text-appdev-red" />
-            )}
-            {isAccepting ? "Accepting Members" : "Not Accepting Members"}
-          </span>
+          {recruitmentProcess && (
+            <span className={`flex items-center gap-1`}>
+              <FaClipboardCheck className={`text-gray-500`} />
+              {recruitmentProcess}
+            </span>
+          )}
+          {isAccepting !== undefined && (
+            <span
+              className={`flex items-center gap-1 ${
+                isAccepting ? "text-appdev-green-dark" : "text-appdev-red"
+              }`}
+            >
+              {isAccepting ? (
+                <FaCheckCircle className="text-appdev-green-dark" />
+              ) : (
+                <FaTimesCircle className="text-appdev-red" />
+              )}
+              {isAccepting ? "Accepting Members" : "Not Accepting Members"}
+            </span>
+          )}
         </div>
         <button
           onClick={toggleSave}
-          onMouseEnter={function() { setIsHovering(true); }}
-          onMouseLeave={function() { setIsHovering(false); }}
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
           className="flex-shrink-0 ml-2"
         >
           {isSaved ? (
