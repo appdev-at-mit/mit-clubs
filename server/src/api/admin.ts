@@ -27,7 +27,8 @@ async function ensureOwnerOrAdmin(
       return;
     }
 
-    if (req.user.isAdmin) {
+    const user = req.user;
+    if (user.isAdmin) {
       next();
       return;
     }
@@ -42,7 +43,7 @@ async function ensureOwnerOrAdmin(
       club.members &&
       club.members.some(
         (member: any) =>
-          member.email === req.user!.email && member.permissions === "Owner"
+          member.email === user.email && member.permissions === "Owner"
       );
 
     if (!userMember) {

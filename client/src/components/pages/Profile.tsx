@@ -156,10 +156,10 @@ const Profile: React.FC = () => {
                 <div className="p-6">
                   <div className="flex flex-col items-center">
                     <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 mb-4">
-                      {userEmail?.charAt(0).toUpperCase() || "U"}
+                      {userEmail ? userEmail.charAt(0).toUpperCase() : "U"}
                     </div>
                     <h2 className="text-xl font-bold">
-                      {userEmail?.split("@")[0] || "User"}
+                      {userEmail ? userEmail.split("@")[0] : "User"}
                     </h2>
                     <p className="text-gray-600 text-sm mt-1">
                       {userEmail || "No email"}

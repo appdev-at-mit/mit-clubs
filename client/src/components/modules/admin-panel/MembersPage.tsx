@@ -278,8 +278,9 @@ function MembersPage({ club }: { club: Club }) {
     } catch (error: any) {
       console.error("Error removing member:", error);
       setError(
-        error.response?.data?.error ||
-          "Failed to remove member. Please try again."
+        error.response && error.response.data && error.response.data.error 
+          ? error.response.data.error
+          : "Failed to remove member. Please try again."
       );
       setShowConfirmModal(false);
     }

@@ -46,7 +46,7 @@ const ClubCard = ({
       }
       setIsSaved(!isSaved);
     } catch (error: any) {
-      alert(error.response?.data?.error || "Failed to update save status.");
+      alert(error.response && error.response.data && error.response.data.error ? error.response.data.error : "Failed to update save status.");
     }
   }
 

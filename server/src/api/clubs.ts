@@ -101,12 +101,12 @@ clubRouter.post(
   ensureLoggedIn,
   async (req: Request, res: Response): Promise<void> => {
     const { club_id } = req.body;
-    const user_id = req.user?._id;
-
-    if (!user_id) {
+    if (!req.user) {
       res.status(401).json({ error: "unauthorized" });
       return;
     }
+
+    const user_id = req.user._id;
 
     try {
       // check if already saved
@@ -177,13 +177,13 @@ clubRouter.delete(
   "/unsave-club/:id",
   ensureLoggedIn,
   async (req: Request, res: Response): Promise<void> => {
-    const user_id = req.user?._id;
-    const { id: club_id } = req.params;
-
-    if (!user_id) {
+    if (!req.user) {
       res.status(401).json({ error: "unauthorized" });
       return;
     }
+
+    const user_id = req.user._id;
+    const { id: club_id } = req.params;
 
     try {
       const existing = await SavedClub.findOne({ user_id, club_id });
