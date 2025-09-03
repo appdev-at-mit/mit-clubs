@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../modules/Navbar";
 
-const About: React.FC = () => {
+function About() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Navbar />

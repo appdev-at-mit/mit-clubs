@@ -11,7 +11,7 @@ import { saveClub, unsaveClub } from "../../api/clubs";
 import defaultImage from "../../assets/default.png";
 import { useNavigate } from "react-router-dom";
 
-const ClubCard = ({
+function ClubCard({
   id,
   name,
   description,
@@ -31,7 +31,7 @@ const ClubCard = ({
   recruitmentProcess: string;
   image_url?: string;
   isSavedInitially?: boolean;
-}) => {
+}) {
   const [isSaved, setIsSaved] = useState<boolean>(isSavedInitially);
   const [isHovering, setIsHovering] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ const ClubCard = ({
 
   const tagList =
     typeof tags === "string"
-      ? tags.split(/,\s*/).filter((tag) => tag)
+      ? tags.split(/,\s*/).filter(function(tag) { return tag; })
       : Array.isArray(tags)
       ? tags
       : [];
@@ -81,14 +81,14 @@ const ClubCard = ({
             {name}
           </h2>
           <div className="mt-3 flex flex-wrap gap-2 min-h-[28px]">
-            {tagList.map((tag, index) => (
+            {tagList.map(function(tag, index) { return (
               <span
                 key={index}
                 className="text-xs bg-brand-blue/20 text-brand-blue-dark font-medium rounded-full px-2.5 py-1"
               >
                 {tag}
               </span>
-            ))}
+            ); })}
           </div>
         </div>
         <div className="absolute top-4 right-4">
@@ -129,8 +129,8 @@ const ClubCard = ({
         </div>
         <button
           onClick={toggleSave}
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
+          onMouseEnter={function() { setIsHovering(true); }}
+          onMouseLeave={function() { setIsHovering(false); }}
           className="flex-shrink-0 ml-2"
         >
           {isSaved ? (

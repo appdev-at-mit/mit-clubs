@@ -10,7 +10,7 @@ export const UserContext = createContext<AuthContextType | null>(null);
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-const App: React.FC = () => {
+function App() {
   const [userId, setUserId] = useState<string | undefined>(undefined);
   const [userName, setUserName] = useState<string | undefined>(undefined);
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
@@ -61,7 +61,7 @@ const App: React.FC = () => {
     });
   }
 
-  const authContextValue: AuthContextType = {
+  const authContextValue = {
     userId,
     userName,
     userEmail,
