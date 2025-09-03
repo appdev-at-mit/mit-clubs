@@ -35,7 +35,7 @@ function MembersPage({ club }: { club: Club }) {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   useEffect(() => {
-    const fetchMembers = async () => {
+    async function fetchMembers() {
       if (!clubId) return;
 
       try {
@@ -50,7 +50,7 @@ function MembersPage({ club }: { club: Club }) {
       } finally {
         setIsLoading(false);
       }
-    };
+    }
 
     fetchMembers();
   }, [clubId]);

@@ -24,7 +24,7 @@ const App: React.FC = () => {
           setUserId(user._id);
           setUserName(user.name);
           setUserEmail(user.email);
-          setIsAdmin(!!user.isAdmin);
+          setIsAdmin(Boolean(user.isAdmin));
         }
       })
       .catch((error) => {
@@ -42,7 +42,7 @@ const App: React.FC = () => {
         setUserId(user._id);
         setUserName(user.name);
         setUserEmail(user.email);
-        setIsAdmin(!!user.isAdmin);
+        setIsAdmin(Boolean(user.isAdmin));
 
         navigate("/");
       })

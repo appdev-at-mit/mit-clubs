@@ -38,10 +38,24 @@ async function verify(token: string): Promise<GoogleUser> {
 
 // gets user from DB, or makes a new account if it doesn't exist yet
 async function getOrCreateUser(googleUser: GoogleUser): Promise<AuthResult> {
-  const existingUser = await User.findOne({ googleId: googleUser.sub });
+  let existingUser = await User.findOne({ googleId: googleUser.sub });
+
+  if (!existingUser) {
+    existingUser = await User.findOne({ email: googleUser.email });
+
+    if (existingUser) {
+      existingUser.googleId = googleUser.sub;
+    }
+  }
 
   if (existingUser) {
     let updated = false;
+
+    if (existingUser.googleId !== googleUser.sub) {
+      existingUser.googleId = googleUser.sub;
+      updated = true;
+    }
+
     if (existingUser.email !== googleUser.email) {
       existingUser.email = googleUser.email;
       updated = true;

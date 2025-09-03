@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { getID, updateClub, getClubMembers } from "../../api/clubs";
+import { checkIsAdmin } from "../../api/admin";
 import { UserContext } from "../App";
 import Navbar from "../modules/Navbar";
 import { Club, ClubMember } from "../../types";
@@ -20,7 +21,7 @@ function ClubManage() {
     throw new Error("ClubManage must be used within UserContext");
   }
 
-  const { userId, userEmail } = userContext;
+  const { userId, userEmail, isAdmin: userIsAdmin } = userContext;
   const [club, setClub] = useState<Club | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("edit");
@@ -31,6 +32,7 @@ function ClubManage() {
   } | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hasOwnerPermission, setHasOwnerPermission] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [permissionChecked, setPermissionChecked] = useState(false);
   const [isHoveringViewClub, setIsHoveringViewClub] = useState(false);
 
@@ -46,18 +48,31 @@ function ClubManage() {
       }
 
       try {
+        // check admin status first
+        let adminStatus = false;
+        try {
+          const adminResponse = await checkIsAdmin();
+          adminStatus = adminResponse.isAdmin;
+          setIsAdmin(adminStatus);
+        } catch (err) {
+          console.error("Error checking admin status:", err);
+          setIsAdmin(false);
+        }
+        
         const membersResponse = await getClubMembers(clubId);
         const members = Array.isArray(membersResponse) ? membersResponse : [];
 
         // check if the current user is an owner
         const userMember = members.find(
-          (member) => member.email === userEmail && member.role === "Owner"
+          (member) => member.email === userEmail && member.permissions === "Owner"
         );
 
         setHasOwnerPermission(Boolean(userMember));
+        
+        const hasPermission = Boolean(userMember) || adminStatus;
         setPermissionChecked(true);
 
-        if (!Boolean(userMember)) {
+        if (!hasPermission) {
           setLoading(false);
           return;
         }
@@ -74,24 +89,22 @@ function ClubManage() {
     }
 
     checkPermissionsAndFetchClub();
-  }, [clubId, userId, userEmail, navigate]);
+  }, [clubId, userId, userEmail, navigate, userIsAdmin]);
 
+  // redirect if user doesn't have permission
   useEffect(() => {
-    if (permissionChecked && !hasOwnerPermission && !loading) {
-      navigate(`/club/${clubId}`);
+    if (permissionChecked && !hasOwnerPermission && !isAdmin && !loading) {
+      navigate(`/clubs/${clubId}`);
     }
-  }, [permissionChecked, hasOwnerPermission, loading, navigate, clubId]);
+  }, [permissionChecked, hasOwnerPermission, isAdmin, loading, navigate, clubId]);
 
   // save functionality
   async function handleSave() {
     if (!clubId) return;
-
+    
     // don't allow saving if user doesn't have permission
-    if (!hasOwnerPermission) {
-      setSaveMessage({
-        type: "error",
-        text: "You do not have permission to edit this club.",
-      });
+    if (!hasOwnerPermission && !isAdmin) {
+      setSaveMessage({ type: 'error', text: 'You do not have permission to edit this club.' });
       return;
     }
 

@@ -33,8 +33,8 @@ const UserSavedClubSchema = new mongoose.Schema({
 
 const UserSchema = new mongoose.Schema({
   name: String,
-  email: String,
-  googleId: String,
+  email: { type: String, unique: true, sparse: true },
+  googleId: { type: String, unique: true, sparse: true },
   isAdmin: { type: Boolean, default: false },
   memberOf: [UserClubMembershipSchema],
   savedClubs: [UserSavedClubSchema],

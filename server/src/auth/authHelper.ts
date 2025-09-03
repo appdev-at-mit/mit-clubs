@@ -71,7 +71,7 @@ export function ensureClubOfficer(
 export async function isClubOfficer(userId: string): Promise<boolean> {
   try {
     const officer = await ClubOfficer.findOne({ user_id: userId });
-    return !!officer;
+    return Boolean(officer);
   } catch (error) {
     console.error("Error checking if user is club officer:", error);
     return false;
