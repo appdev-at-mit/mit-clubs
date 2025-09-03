@@ -25,10 +25,10 @@ export type Club = {
   club_id: string;
   name: string;
   is_active: boolean;
-  is_accepting: boolean;
-  recruiting_cycle: "Fall" | "Spring" | "Year-round";
-  membership_process: string;
-  tags: string[] | string;
+  is_accepting?: boolean;
+  recruiting_cycle?: "Fall" | "Spring" | "Year-round" | string | string[];
+  membership_process?: string;
+  tags?: string[] | string;
   email?: string;
   instagram?: string;
   linkedin?: string;
@@ -38,10 +38,10 @@ export type Club = {
   image_url?: string;
   questions?: ClubQuestion[];
   members?: ClubMember[];
-  saveCount: number;
-  savedByUsers: string[];
-  created_at: Date;
-  updated_at: Date;
+  saveCount?: number;
+  savedByUsers?: string[];
+  created_at?: Date;
+  updated_at?: Date;
 };
 
 export type ClubQuestion = {

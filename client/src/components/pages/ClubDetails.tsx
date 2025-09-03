@@ -145,14 +145,15 @@ function ClubDetails() {
           prev
             ? {
                 ...prev,
-                saveCount: isSaved ? prev.saveCount - 1 : prev.saveCount + 1,
+                saveCount: isSaved
+                  ? (prev.saveCount || 0) - 1
+                  : (prev.saveCount || 0) + 1,
               }
             : null
         );
       }
     } catch (error: any) {
-      console.error("Failed to toggle save status:", error);
-      alert(error.response && error.response.data && error.response.data.error ? error.response.data.error : "Failed to update save status.");
+      console.error("Failed to save/unsave club:", error);
     }
   }
 
@@ -347,44 +348,44 @@ function ClubDetails() {
                     )}
                     <span>{club.is_active ? "Active" : "Inactive"}</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    {club.is_accepting ? (
-                      <CheckCircle
+                  {typeof club.is_accepting === "boolean" && (
+                    <div className="flex items-center gap-3">
+                      {club.is_accepting ? (
+                        <CheckCircle
+                          size={18}
+                          className="text-appdev-green-dark flex-shrink-0"
+                        />
+                      ) : (
+                        <XCircle
+                          size={18}
+                          className="text-appdev-red flex-shrink-0"
+                        />
+                      )}
+                      <span>
+                        {club.is_accepting
+                          ? "Currently Accepting Members"
+                          : "Not Currently Accepting Members"}
+                      </span>
+                    </div>
+                  )}
+                  {club.membership_process && (
+                    <div className="flex items-center gap-3">
+                      <ClipboardList
                         size={18}
-                        className="text-appdev-green-dark flex-shrink-0"
+                        className="text-gray-500 flex-shrink-0"
                       />
-                    ) : (
-                      <XCircle
+                      <span>{club.membership_process}</span>
+                    </div>
+                  )}
+                  {club.recruiting_cycle && String(club.recruiting_cycle) && (
+                    <div className="flex items-center gap-3">
+                      <RefreshCw
                         size={18}
-                        className="text-appdev-red flex-shrink-0"
+                        className="text-gray-500 flex-shrink-0"
                       />
-                    )}
-                    <span>
-                      {club.is_accepting
-                        ? "Currently Accepting Members"
-                        : "Not Currently Accepting Members"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <ClipboardList
-                      size={18}
-                      className="text-gray-500 flex-shrink-0"
-                    />
-                    <span>
-                      {club.membership_process ||
-                        "Membership process not specified"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <RefreshCw
-                      size={18}
-                      className="text-gray-500 flex-shrink-0"
-                    />
-                    <span>
-                      {club.recruiting_cycle ||
-                        "Recruiting cycle not specified"}
-                    </span>
-                  </div>
+                      <span>{club.recruiting_cycle}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <div>
@@ -456,6 +457,6 @@ function ClubDetails() {
       </div>
     </div>
   );
-};
+}
 
 export default ClubDetails;

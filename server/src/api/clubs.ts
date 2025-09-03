@@ -135,7 +135,7 @@ clubRouter.post(
       user.savedClubs.push(club);
       await user.save();
 
-      club.saveCount = club.saveCount + 1;
+      club.saveCount = (club.saveCount || 0) + 1;
       await club.save();
 
       res.status(201).json(club);
@@ -192,7 +192,8 @@ clubRouter.delete(
       }
       await user.save();
 
-      club.saveCount = club.saveCount - 1;
+      club.saveCount = (club.saveCount || 0) - 1;
+      if (club.saveCount < 0) club.saveCount = 0;
       await club.save();
       res.status(200).json(club);
     } catch (error) {

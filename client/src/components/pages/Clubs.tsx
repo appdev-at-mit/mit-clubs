@@ -128,8 +128,10 @@ function Clubs() {
       currentFilters.membership_process &&
       currentFilters.membership_process.length > 0
     ) {
-      result = result.filter((club) =>
-        currentFilters.membership_process.includes(club.membership_process)
+      result = result.filter(
+        (club) =>
+          club.membership_process &&
+          currentFilters.membership_process.includes(club.membership_process)
       );
     }
 
@@ -137,9 +139,15 @@ function Clubs() {
       currentFilters.recruiting_cycle &&
       currentFilters.recruiting_cycle.length > 0
     ) {
-      result = result.filter((club) =>
-        currentFilters.recruiting_cycle.includes(club.recruiting_cycle)
-      );
+      result = result.filter((club) => {
+        if (!club.recruiting_cycle) return false;
+        const cycles = Array.isArray(club.recruiting_cycle)
+          ? club.recruiting_cycle
+          : [club.recruiting_cycle];
+        return cycles.some((cycle) =>
+          currentFilters.recruiting_cycle.includes(cycle)
+        );
+      });
     }
 
     if (currentFilters.is_accepting) {
@@ -316,7 +324,9 @@ function Clubs() {
                                 type="checkbox"
                                 id={`tag-${tag}`}
                                 checked={
-                                  filters.selected_tags ? filters.selected_tags.includes(tag) : false
+                                  filters.selected_tags
+                                    ? filters.selected_tags.includes(tag)
+                                    : false
                                 }
                                 onChange={() => handleTagCheckboxChange(tag)}
                                 className="h-3 w-3 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
@@ -353,7 +363,9 @@ function Clubs() {
                         type="checkbox"
                         id={`membership-${process}`}
                         checked={
-                          filters.membership_process ? filters.membership_process.includes(process) : false
+                          filters.membership_process
+                            ? filters.membership_process.includes(process)
+                            : false
                         }
                         onChange={() =>
                           toggleFilter("membership_process", process)
@@ -391,7 +403,9 @@ function Clubs() {
                         type="checkbox"
                         id={`recruiting-${cycle}`}
                         checked={
-                          filters.recruiting_cycle ? filters.recruiting_cycle.includes(cycle) : false
+                          filters.recruiting_cycle
+                            ? filters.recruiting_cycle.includes(cycle)
+                            : false
                         }
                         onChange={() => toggleFilter("recruiting_cycle", cycle)}
                         className="h-3.5 w-3.5 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
@@ -490,7 +504,7 @@ function Clubs() {
                   <ClubCard
                     id={club.club_id}
                     name={club.name}
-                    tags={Array.isArray(club.tags) ? club.tags : []}
+                    tags={club.tags || []}
                     isAccepting={club.is_accepting}
                     image_url={club.image_url}
                     description={club.mission || ""}
