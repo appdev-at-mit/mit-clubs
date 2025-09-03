@@ -1,51 +1,49 @@
 export const tagCategories = {
-  "Academic & Professional": [
-    "Academic",
-    "Pre-Professional",
+  Academic: [
+    "Academic and Pre-Professional",
     "Education",
     "Research",
     "Technology",
     "Entrepreneurship",
     "Engineering",
   ],
-  "Arts & Performance": [
-    "Performing Arts",
+  Creative: [
+    "Arts",
+    "Performance",
     "Music",
     "Visual Arts",
     "Literary Arts",
-    "Media / Publication",
-    "Arts",
+    "Publication",
   ],
-  "Cultural & Identity": [
+  Identity: [
     "Cultural",
     "International Student",
-    "Religious / Spiritual",
+    "Religious and Spiritual",
     "LGBTQ+",
     "Gender-Based",
-    "Diversity & Inclusion",
+    "Diversity and Inclusion",
     "Gender and Sexuality",
   ],
-  "Service & Activism": [
-    "Community Service / Volunteering",
-    "Activism/Advocacy",
+  Service: [
+    "Community Service",
+    "Activism",
     "Political",
-    "Fundraising / Philanthropy",
+    "Fundraising and Philanthropy",
   ],
-  "Sports & Recreation": [
+  Athletics: [
+    "Athletics and Outdoors",
     "Club Sports",
     "Intramural Sports",
     "Recreational",
-    "Athletics and Outdoors",
   ],
-  "Hobbies & Interests": [
-    "Hobby",
-    "Gaming",
-    "Food / Cooking",
-    "Food",
+  Hobbies: [
+    "Hobbies and Special Interests",
     "Games and Puzzles",
+    "Gaming",
+    "Food and Cooking",
   ],
   Social: ["Greek Life"],
-  Other: [],
+  Other: ["Departmental Program", "Resources and Support"],
 };
 
 export const availableRoles = [
