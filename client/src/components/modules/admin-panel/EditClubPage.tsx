@@ -1,17 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { X } from "lucide-react";
 import { Club } from "../../../types";
 import { tagCategories } from "./constants";
 
 function EditClubPage({ club }: { club: Club }) {
-  let clubTagsArray: string[] = [];
-  if (club.tags) {
-    if (typeof club.tags === "string") {
-      clubTagsArray = club.tags.split(/,\s*/).filter(function(tag) { return tag.trim(); });
-    } else {
-      clubTagsArray = club.tags;
-    }
-  }
+  const clubTagsArray: string[] = club.tags || [];
 
   const [selectedTags, setSelectedTags] = useState<string[]>(clubTagsArray);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -20,7 +13,11 @@ function EditClubPage({ club }: { club: Club }) {
 
   function toggleTag(tag: string) {
     if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter(function(t) { return t !== tag; }));
+      setSelectedTags(
+        selectedTags.filter(function (t) {
+          return t !== tag;
+        })
+      );
     } else {
       setSelectedTags([...selectedTags, tag]);
     }
@@ -31,7 +28,11 @@ function EditClubPage({ club }: { club: Club }) {
   }
 
   function removeTag(tag: string) {
-    setSelectedTags(selectedTags.filter(function(t) { return t !== tag; }));
+    setSelectedTags(
+      selectedTags.filter(function (t) {
+        return t !== tag;
+      })
+    );
   }
 
   function getTagsString() {
@@ -52,7 +53,9 @@ function EditClubPage({ club }: { club: Club }) {
                 type="text"
                 className="w-full p-2 border border-gray-300 rounded-md mb-1"
                 value={name}
-                onChange={function(e) { setName(e.target.value); }}
+                onChange={function (e) {
+                  setName(e.target.value);
+                }}
                 maxLength={100}
               />
               <div className="flex flex-col sm:flex-row sm:justify-between">
@@ -75,7 +78,9 @@ function EditClubPage({ club }: { club: Club }) {
                 id="club-mission"
                 className="w-full p-2 border border-gray-300 rounded-md min-h-32 mb-1"
                 value={mission}
-                onChange={function(e) { setMission(e.target.value); }}
+                onChange={function (e) {
+                  setMission(e.target.value);
+                }}
                 placeholder="Enter your club's mission statement here..."
                 maxLength={1000}
               />
@@ -101,20 +106,24 @@ function EditClubPage({ club }: { club: Club }) {
 
               <div className="mb-1 flex flex-wrap gap-2">
                 {selectedTags.length > 0 ? (
-                  selectedTags.map(function(tag) { return (
-                    <div
-                      key={tag}
-                      className="inline-flex items-center bg-appdev-blue/20 text-appdev-blue-dark px-2.5 py-1 rounded-full text-sm"
-                    >
-                      {tag}
-                      <button
-                        onClick={function() { removeTag(tag); }}
-                        className="ml-1 text-appdev-blue-dark hover:text-appdev-blue-dark/80"
+                  selectedTags.map(function (tag) {
+                    return (
+                      <div
+                        key={tag}
+                        className="inline-flex items-center bg-appdev-blue/20 text-appdev-blue-dark px-2.5 py-1 rounded-full text-sm"
                       >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  ); })
+                        {tag}
+                        <button
+                          onClick={function () {
+                            removeTag(tag);
+                          }}
+                          className="ml-1 text-appdev-blue-dark hover:text-appdev-blue-dark/80"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    );
+                  })
                 ) : (
                   <p className="text-sm text-gray-500">
                     No tags selected. Add tags to help students find your club.
@@ -123,41 +132,61 @@ function EditClubPage({ club }: { club: Club }) {
               </div>
 
               <div className="border border-gray-300 rounded-md p-3 max-h-64 overflow-y-auto">
-                {Object.entries(tagCategories).map(function([category, tags]) { return (
-                  <div key={category} className="mb-2 last:mb-0">
-                    <button
-                      onClick={function() { toggleCategory(category); }}
-                      className="w-full text-left mb-1 font-medium text-gray-700 hover:text-gray-900 flex justify-between items-center"
-                    >
-                      {category}
-                      <span className="text-xs text-gray-500">
-                        {expandedCategory === category ? "↑" : "↓"}
-                      </span>
-                    </button>
+                {Object.entries(tagCategories).map(function ([category, tags]) {
+                  return (
+                    <div key={category} className="mb-2 last:mb-0">
+                      <button
+                        onClick={function () {
+                          toggleCategory(category);
+                        }}
+                        className="w-full text-left mb-1 font-medium text-gray-700 hover:text-gray-900 flex justify-between items-center"
+                      >
+                        {category}
+                        <span
+                          className={`text-xs text-gray-500 transition-transform duration-300 ${
+                            expandedCategory === category ? "rotate-180" : ""
+                          }`}
+                        >
+                          ↓
+                        </span>
+                      </button>
 
-                    {expandedCategory === category && tags.length > 0 && (
-                      <div className="ml-2 space-y-1">
-                        {tags.map(function(tag) { return (
-                          <div key={tag} className="flex items-center">
-                            <input
-                              type="checkbox"
-                              id={`tag-${tag}`}
-                              checked={selectedTags.includes(tag)}
-                              onChange={function() { toggleTag(tag); }}
-                              className="h-4 w-4 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
-                            />
-                            <label
-                              htmlFor={`tag-${tag}`}
-                              className="ml-2 text-sm text-gray-700"
-                            >
-                              {tag}
-                            </label>
+                      <div
+                        className={`grid transition-all duration-300 ease-in-out ${
+                          expandedCategory === category && tags.length > 0
+                            ? "grid-rows-[1fr] opacity-100"
+                            : "grid-rows-[0fr] opacity-0"
+                        }`}
+                      >
+                        <div className="overflow-hidden">
+                          <div className="ml-2 space-y-1">
+                            {tags.map(function (tag) {
+                              return (
+                                <div key={tag} className="flex items-center">
+                                  <input
+                                    type="checkbox"
+                                    id={`tag-${tag}`}
+                                    checked={selectedTags.includes(tag)}
+                                    onChange={function () {
+                                      toggleTag(tag);
+                                    }}
+                                    className="h-4 w-4 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
+                                  />
+                                  <label
+                                    htmlFor={`tag-${tag}`}
+                                    className="ml-2 text-sm text-gray-700"
+                                  >
+                                    {tag}
+                                  </label>
+                                </div>
+                              );
+                            })}
                           </div>
-                        ); })}
+                        </div>
                       </div>
-                    )}
-                  </div>
-                ); })}
+                    </div>
+                  );
+                })}
               </div>
               <p className="text-sm text-gray-500 mt-1">
                 Select tags that describe your club. These help students find
