@@ -1,5 +1,4 @@
 import express, { Request, Response } from "express";
-import SavedClub from "../models/SavedClub";
 import Club from "../models/Club";
 import User from "../models/user";
 import { ensureLoggedIn } from "../auth/auth";
@@ -23,17 +22,13 @@ userRouter.get(
     const user_id = req.user._id;
 
     try {
-      const savedClubEntries = await SavedClub.find({ user_id });
-
-      if (savedClubEntries.length === 0) {
+      const user = await User.findById(user_id).populate("savedClubs");
+      if (!user || !user.savedClubs || user.savedClubs.length === 0) {
         res.json([]);
         return;
       }
 
-      const clubIds = savedClubEntries.map((entry: any) => entry.club_id);
-      const clubs = await Club.find({ club_id: { $in: clubIds } });
-
-      res.status(200).json(clubs);
+      res.status(200).json(user.savedClubs);
     } catch (error) {
       console.error("error fetching saved clubs:", error);
       res.status(500).json({ error: "error fetching saved clubs" });
@@ -58,10 +53,16 @@ userRouter.get(
     const user_id = req.user._id;
 
     try {
-      const savedClubEntries = await SavedClub.find({ user_id }).select(
-        "club_id -_id"
-      );
-      res.status(200).json(savedClubEntries);
+      const user = await User.findById(user_id).populate("savedClubs");
+      if (!user || !user.savedClubs) {
+        res.json([]);
+        return;
+      }
+
+      const savedClubIds = user.savedClubs.map((club: any) => ({
+        club_id: club.club_id,
+      }));
+      res.status(200).json(savedClubIds);
     } catch (error) {
       console.error("error fetching saved club ids:", error);
       res.status(500).json({ error: "error fetching saved club ids" });
@@ -139,21 +140,21 @@ userRouter.get(
     const user_id = req.user._id;
 
     try {
-      const user = await User.findById(user_id);
+      const user = await User.findById(user_id).populate("savedClubs");
       if (!user) {
         res.status(404).json({ error: "User not found" });
         return;
       }
 
-      const savedClubEntries = await SavedClub.find({ user_id });
       const memberClubIds =
         user.memberOf && user.memberOf.length > 0
           ? user.memberOf.map((membership: any) => membership.club_id)
           : [];
-      const savedClubIds = savedClubEntries.map((entry: any) => entry.club_id);
-      const allClubIds = [...new Set([...memberClubIds, ...savedClubIds])];
 
-      if (allClubIds.length === 0) {
+      if (
+        memberClubIds.length === 0 &&
+        (!user.savedClubs || user.savedClubs.length === 0)
+      ) {
         res.json({
           memberClubs: [],
           savedClubs: [],
@@ -161,7 +162,10 @@ userRouter.get(
         return;
       }
 
-      const clubs = await Club.find({ club_id: { $in: allClubIds } });
+      const clubs =
+        memberClubIds.length > 0
+          ? await Club.find({ club_id: { $in: memberClubIds } })
+          : [];
 
       let memberClubs: any[] = [];
       if (user.memberOf && user.memberOf.length > 0) {
@@ -185,12 +189,7 @@ userRouter.get(
           .filter(Boolean);
       }
 
-      const savedClubs = savedClubIds
-        .map((clubId: string) => {
-          const club = clubs.find((c) => c.club_id === clubId);
-          return club ? club.toObject() : null;
-        })
-        .filter(Boolean);
+      const savedClubs = user.savedClubs || [];
 
       res.json({
         savedClubs,

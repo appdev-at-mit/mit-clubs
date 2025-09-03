@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import Club from "../models/Club";
-import SavedClub from "../models/SavedClub";
 import User from "../models/user";
 import { ensureLoggedIn } from "../auth/auth";
 
@@ -109,58 +108,37 @@ clubRouter.post(
     const user_id = req.user._id;
 
     try {
-      // check if already saved
-      const existing = await SavedClub.findOne({ user_id, club_id });
-      if (existing) {
-        const currentClub = await Club.findOne({ club_id });
-        res.status(200).json(currentClub);
-        return;
-      }
-
-      // check if user has previously contributed to save count
       const club = await Club.findOne({ club_id });
       if (!club) {
         res.status(404).json({ error: "Club not found" });
         return;
       }
 
-      let updateOperation = {};
-      const userHasSavedBefore = club.savedByUsers.some((id: any) =>
-        id.equals(user_id)
-      );
-
-      if (!userHasSavedBefore) {
-        updateOperation = {
-          $inc: { saveCount: 1 },
-          $addToSet: { savedByUsers: user_id },
-        };
+      const user = await User.findById(user_id);
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
       }
 
-      const updatedClub = await Club.findOneAndUpdate(
-        { club_id: club_id },
-        updateOperation,
-        {
-          new: true,
-        }
-      );
+      const alreadySaved =
+        user.savedClubs &&
+        user.savedClubs.some((saved: any) => saved._id.equals(club._id));
 
-      // create entry in SavedClub collection
-      await SavedClub.create({ user_id, club_id });
+      if (alreadySaved) {
+        res.status(200).json(club);
+        return;
+      }
 
-      // Add to user's savedClubs array
-      await User.updateOne(
-        { _id: user_id },
-        {
-          $addToSet: {
-            savedClubs: {
-              club_id: club_id,
-              saved_date: new Date(),
-            },
-          },
-        }
-      );
+      if (!user.savedClubs) {
+        user.savedClubs = [];
+      }
+      user.savedClubs.push(club);
+      await user.save();
 
-      res.status(201).json(updatedClub);
+      club.saveCount = club.saveCount + 1;
+      await club.save();
+
+      res.status(201).json(club);
     } catch (error) {
       console.error("error saving club:", error);
       res.status(500).json({ error: "error saving club" });
@@ -186,22 +164,33 @@ clubRouter.delete(
     const { id: club_id } = req.params;
 
     try {
-      const existing = await SavedClub.findOne({ user_id, club_id });
+      const user = await User.findById(user_id);
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
 
-      if (!existing) {
+      const hasSaved =
+        user.savedClubs &&
+        user.savedClubs.some((saved: any) => saved.club_id === club_id);
+
+      if (!hasSaved) {
         res.status(404).json({ error: "club not found in saved list" });
         return;
       }
 
-      await SavedClub.deleteOne({ user_id, club_id });
-
-      // remove from user's savedClubs array
-      await User.updateOne(
-        { _id: user_id },
-        { $pull: { savedClubs: { club_id: club_id } } }
-      );
+      if (user.savedClubs) {
+        user.savedClubs = user.savedClubs.filter(
+          (saved: any) => saved.club_id !== club_id
+        );
+      }
+      await user.save();
 
       const currentClub = await Club.findOne({ club_id: club_id });
+      if (currentClub) {
+        currentClub.saveCount = currentClub.saveCount - 1;
+        await currentClub.save();
+      }
       res.status(200).json(currentClub);
     } catch (error) {
       console.error("error unsaving club:", error);

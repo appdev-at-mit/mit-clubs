@@ -28,7 +28,9 @@ const ClubOfficerModel = mongoose.model<ClubOfficer>(
   ClubOfficerSchema
 );
 
-const f = () => new ClubOfficerModel();
-export type ClubOfficerModelType = ReturnType<typeof f>;
+function createClubOfficerModel() {
+  return new ClubOfficerModel();
+}
+export type ClubOfficerModelType = ReturnType<typeof createClubOfficerModel>;
 
 export default ClubOfficerModel;
