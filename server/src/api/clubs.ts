@@ -164,6 +164,12 @@ clubRouter.delete(
     const { id: club_id } = req.params;
 
     try {
+      const club = await Club.findOne({ club_id: club_id });
+      if (!club) {
+        res.status(404).json({ error: "Club not found" });
+        return;
+      }
+
       const user = await User.findById(user_id);
       if (!user) {
         res.status(404).json({ error: "User not found" });
@@ -172,7 +178,7 @@ clubRouter.delete(
 
       const hasSaved =
         user.savedClubs &&
-        user.savedClubs.some((saved: any) => saved.club_id === club_id);
+        user.savedClubs.some((saved: any) => saved._id.equals(club._id));
 
       if (!hasSaved) {
         res.status(404).json({ error: "club not found in saved list" });
@@ -181,17 +187,14 @@ clubRouter.delete(
 
       if (user.savedClubs) {
         user.savedClubs = user.savedClubs.filter(
-          (saved: any) => saved.club_id !== club_id
+          (saved: any) => !saved._id.equals(club._id)
         );
       }
       await user.save();
 
-      const currentClub = await Club.findOne({ club_id: club_id });
-      if (currentClub) {
-        currentClub.saveCount = currentClub.saveCount - 1;
-        await currentClub.save();
-      }
-      res.status(200).json(currentClub);
+      club.saveCount = club.saveCount - 1;
+      await club.save();
+      res.status(200).json(club);
     } catch (error) {
       console.error("error unsaving club:", error);
       res.status(500).json({ error: "error unsaving the club" });
