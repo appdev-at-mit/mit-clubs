@@ -99,9 +99,10 @@ function Profile() {
     return (
       <div className="space-y-3">
         {clubs.map((club) => (
-          <div
+          <Link
             key={club.club_id}
-            className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+            to={`/clubs/${club.club_id}`}
+            className="block bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
           >
             <div className="flex items-start p-4">
               <div className="flex-grow">
@@ -130,15 +131,12 @@ function Profile() {
                 )}
               </div>
 
-              <Link
-                to={`/clubs/${club.club_id}`}
-                className="flex items-center text-sm text-appdev-blue hover:text-appdev-blue-dark"
-              >
+              <div className="flex items-center text-sm text-appdev-blue hover:text-appdev-blue-dark">
                 <span className="mr-1">View</span>
                 <ExternalLink size={14} />
-              </Link>
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     );
@@ -180,7 +178,7 @@ function Profile() {
               </div>
 
               {/* account settings */}
-              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden mt-6">
+              {/* <div className="bg-white rounded-lg border border-gray-200 overflow-hidden mt-6">
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h3 className="font-semibold">Account Settings</h3>
                 </div>
@@ -191,7 +189,7 @@ function Profile() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* tabs and club lists */}
@@ -243,6 +241,6 @@ function Profile() {
       </div>
     </>
   );
-};
+}
 
 export default Profile;
