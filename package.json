@@ -1,5 +1,5 @@
 {
-  "name": "beaver-clubs",
+  "name": "mit-clubs",
   "version": "1.0.0",
   "description": "",
   "main": "server/dist/src/server.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/appdev-at-mit/beaver-clubs"
+    "url": "https://github.com/appdev-at-mit/mit-clubs"
   },
   "author": "",
   "license": "ISC",
