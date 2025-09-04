@@ -10,6 +10,7 @@ import {
 import { checkIsAdmin } from "../../api/admin";
 import { UserContext } from "../App";
 import Navbar from "../modules/Navbar";
+import LoginModal from "../modules/LoginModal";
 import defaultImage from "../../assets/default.png";
 
 import {
@@ -50,6 +51,7 @@ function ClubDetails() {
   const [isHoveringManage, setIsHoveringManage] = useState<boolean>(false);
   const [hasOwnerPermission, setHasOwnerPermission] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchAllDetails() {
@@ -123,7 +125,7 @@ function ClubDetails() {
   // toggle save function
   async function handleToggleSave() {
     if (!userId) {
-      handleLogin({});
+      setShowLoginModal(true);
       return;
     }
 
@@ -455,6 +457,11 @@ function ClubDetails() {
           </div>
         </div>
       </div>
+      
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </div>
   );
 }

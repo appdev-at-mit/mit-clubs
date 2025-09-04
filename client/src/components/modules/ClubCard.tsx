@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   FaRegBookmark,
   FaBookmark,
@@ -10,6 +10,8 @@ import {
 import { saveClub, unsaveClub } from "../../api/clubs";
 import defaultImage from "../../assets/default.png";
 import { useNavigate } from "react-router-dom";
+import LoginModal from "./LoginModal";
+import { UserContext } from "../App";
 
 function ClubCard({
   id,
@@ -34,10 +36,21 @@ function ClubCard({
 }) {
   const [isSaved, setIsSaved] = useState<boolean>(isSavedInitially);
   const [isHovering, setIsHovering] = useState<boolean>(false);
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const navigate = useNavigate();
 
+  const userContext = useContext(UserContext);
+  if (!userContext) {
+    throw new Error("ClubCard must be used within UserContext");
+  }
+  const { userId, handleLogin } = userContext;
+
   async function toggleSave(e: React.MouseEvent): Promise<void> {
-    e.stopPropagation();
+    if (!userId) {
+      setShowLoginModal(true);
+      return;
+    }
+
     try {
       if (!isSaved) {
         await saveClub(id);
@@ -46,7 +59,9 @@ function ClubCard({
       }
       setIsSaved(!isSaved);
     } catch (error: any) {
-      alert(error.response && error.response.data && error.response.data.error ? error.response.data.error : "Failed to update save status.");
+      const errorMessage = 
+        (error.response && error.response.data && error.response.data.error) || "Failed to update save status.";
+      alert(errorMessage);
     }
   }
 
@@ -132,7 +147,10 @@ function ClubCard({
           )}
         </div>
         <button
-          onClick={toggleSave}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleSave(e);
+          }}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
           className="flex-shrink-0 ml-2"
@@ -150,8 +168,13 @@ function ClubCard({
           )}
         </button>
       </div>
+
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </div>
   );
-};
+}
 
 export default ClubCard;
