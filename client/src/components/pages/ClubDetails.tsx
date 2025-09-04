@@ -206,13 +206,13 @@ function ClubDetails() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
-      <div className="flex-grow container mx-auto px-8 py-8 relative pt-28">
+      <div className="flex-grow container mx-auto px-4 md:px-8 py-8 relative pt-20 md:pt-28">
         <div className="mb-4">
           <button
             onClick={() => navigate("/")}
             className="flex items-center gap-2 text-gray-500 hover:text-appdev-blue transition-colors duration-200"
           >
-            <ArrowLeft size={15} className="text-gray-500"/>
+            <ArrowLeft size={15} className="text-gray-500" />
             <span className="font-light text-md">Back to Clubs</span>
           </button>
         </div>

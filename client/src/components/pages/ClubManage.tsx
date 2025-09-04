@@ -268,7 +268,7 @@ function ClubManage() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
-      <div className="container mx-auto px-8 py-6 pt-28">
+      <div className="container mx-auto px-4 md:px-8 py-6 pt-20 md:pt-28">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-2">
           <h1 className="text-2xl font-bold text-gray-800 break-words hyphens-auto overflow-wrap-anywhere max-w-3xl overflow-hidden">
             {club.name}
@@ -290,7 +290,7 @@ function ClubManage() {
         <div className="border-b border-gray-300 mb-6">
           <div className="hidden md:flex space-x-8">
             <button
-              className={`pb-3 font-medium ${
+              className={`pb-4 font-medium ${
                 activeTab === "edit"
                   ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                   : "text-gray-500 hover:text-gray-700"
@@ -300,7 +300,7 @@ function ClubManage() {
               Edit Club Page
             </button>
             <button
-              className={`pb-3 font-medium ${
+              className={`pb-4 font-medium ${
                 activeTab === "recruitment"
                   ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                   : "text-gray-500 hover:text-gray-700"
@@ -310,7 +310,7 @@ function ClubManage() {
               Recruitment
             </button>
             <button
-              className={`pb-3 font-medium ${
+              className={`pb-4 font-medium ${
                 activeTab === "questions"
                   ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                   : "text-gray-500 hover:text-gray-700"
@@ -320,7 +320,7 @@ function ClubManage() {
               Questions
             </button>
             <button
-              className={`pb-3 font-medium ${
+              className={`pb-4 font-medium ${
                 activeTab === "members"
                   ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                   : "text-gray-500 hover:text-gray-700"
@@ -331,21 +331,21 @@ function ClubManage() {
             </button>
           </div>
 
-          <div className="md:hidden">
+          <div className="md:hidden pb-3">
             <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-700">
+                {activeTab === "edit"
+                  ? "Edit Club Page"
+                  : activeTab === "recruitment"
+                  ? "Recruitment"
+                  : activeTab === "questions"
+                  ? "Questions"
+                  : "Members"}
+              </span>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="flex items-center text-gray-700"
+                className="flex items-center text-gray-700 p-2"
               >
-                <span className="mr-2 font-medium">
-                  {activeTab === "edit"
-                    ? "Edit Club Page"
-                    : activeTab === "recruitment"
-                    ? "Recruitment"
-                    : activeTab === "questions"
-                    ? "Questions"
-                    : "Members"}
-                </span>
                 <Menu size={20} />
               </button>
             </div>
