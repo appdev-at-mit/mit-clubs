@@ -1,3 +1,5 @@
+name: mit-clubs
+
 services:
   proxy:
     build:
