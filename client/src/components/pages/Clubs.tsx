@@ -52,8 +52,20 @@ function Clubs() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [isHoveringResetAll, setIsHoveringResetAll] = useState<boolean>(false);
+  const [isMobileView, setIsMobileView] = useState<boolean>(false);
 
   const recruitingCycles = ["Open", "Fall Semester", "Spring Semester", "IAP"];
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -246,44 +258,58 @@ function Clubs() {
       <div className="flex flex-grow overflow-hidden relative pt-16">
         <div
           className={`
-            fixed top-[64px] left-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
+            fixed top-[64px] left-0 bottom-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
             transform transition-transform duration-300 ease-in-out
             ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-            flex flex-col pt-6 pb-4 px-6
+            flex flex-col pt-6 pb-4 px-6 overflow-y-auto
             md:relative md:translate-x-0 md:flex-shrink-0 md:flex md:overflow-y-auto
-            md:top-0 md:pt-6
+            md:top-0 md:pt-6 md:bottom-auto md:h-full
             md:max-w-none
             md:w-64 lg:w-80
           `}
         >
-          <button
-            onClick={toggleMobileSidebar}
-            className="absolute top-6 right-4 md:hidden text-gray-500 hover:text-gray-700 z-40"
-            aria-label="Close filters"
-          >
-            <X size={20} />
-          </button>
           <div className="flex justify-between items-center mb-1 flex-shrink-0">
             <div className="flex items-center gap-2">
               <SlidersHorizontal size={18} className="text-appdev-blue-dark" />
               <span className="text-lg font-bold">Filters</span>
             </div>
-            <button
-              onClick={resetFilters}
-              onMouseEnter={() => setIsHoveringResetAll(true)}
-              onMouseLeave={() => setIsHoveringResetAll(false)}
-              style={{
-                backgroundColor: isHoveringResetAll ? "#E5E7EB" : "#D1D5DB",
-                transition: "background-color 0.1s ease",
-              }}
-              className="px-3 py-1 rounded-md text-xs"
-            >
-              Reset All
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={resetFilters}
+                onMouseEnter={() => setIsHoveringResetAll(true)}
+                onMouseLeave={() => setIsHoveringResetAll(false)}
+                style={{
+                  backgroundColor: isHoveringResetAll ? "#E5E7EB" : "#D1D5DB",
+                  transition: "background-color 0.1s ease",
+                }}
+                className="hidden md:block px-3 py-1 rounded-md text-xs"
+              >
+                Reset All
+              </button>
+              <button
+                onClick={toggleMobileSidebar}
+                className="md:hidden text-gray-500 hover:text-gray-700"
+                aria-label="Close filters"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
-          <p className="text-xs text-gray-500 mb-3 flex-shrink-0">
+          <p className="text-xs text-gray-500 mb-2 flex-shrink-0">
             Showing {filteredClubs.length} of {clubs.length} clubs
           </p>
+          <button
+            onClick={resetFilters}
+            onMouseEnter={() => setIsHoveringResetAll(true)}
+            onMouseLeave={() => setIsHoveringResetAll(false)}
+            style={{
+              backgroundColor: isHoveringResetAll ? "#E5E7EB" : "#D1D5DB",
+              transition: "background-color 0.1s ease",
+            }}
+            className="md:hidden px-3 py-1 rounded-md text-xs mb-3 self-start"
+          >
+            Reset All
+          </button>
           <div className="flex-grow overflow-y-auto space-y-1 scrollbar-hide">
             <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
               <button
@@ -527,7 +553,11 @@ function Clubs() {
             <div className="relative flex-grow">
               <input
                 type="text"
-                placeholder="Search clubs by name or mission..."
+                placeholder={
+                  isMobileView
+                    ? "Search clubs"
+                    : "Search clubs by name or mission"
+                }
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark"
