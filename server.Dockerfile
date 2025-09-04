@@ -24,11 +24,11 @@ COPY package*.json ./
 
 RUN npm install --production
 
-COPY --from=build /usr/local/app/server/dist ./server
+COPY --from=build /usr/local/app/server/dist/src ./server
 
 EXPOSE 1251
 
-CMD ["node", "server/src/server.js"]
+CMD ["node", "server/server.js"]
 
 # todo: make this not broken
 HEALTHCHECK --timeout=2s --retries=3 --interval=5m CMD curl --fail http://localhost:1251 || exit 1
