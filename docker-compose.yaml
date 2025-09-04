@@ -21,5 +21,7 @@ services:
       context: .
       dockerfile: server.Dockerfile
     container_name: mit-clubs-server
+    expose:
+      - "1251"
     env_file:
       - ./.env
