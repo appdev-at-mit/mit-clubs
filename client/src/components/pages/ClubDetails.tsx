@@ -207,6 +207,15 @@ function ClubDetails() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
       <div className="flex-grow container mx-auto px-8 py-8 relative pt-28">
+        <div className="mb-4">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 text-gray-500 hover:text-appdev-blue transition-colors duration-200"
+          >
+            <ArrowLeft size={15} className="text-gray-500"/>
+            <span className="font-light text-md">Back to Clubs</span>
+          </button>
+        </div>
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-3/4 space-y-8">
             <div className="bg-white p-6 rounded-lg border border-gray-200">
@@ -457,7 +466,7 @@ function ClubDetails() {
           </div>
         </div>
       </div>
-      
+
       <LoginModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
