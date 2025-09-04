@@ -1,0 +1,16 @@
+services:
+  proxy:
+    image: mit-clubs-deploy-proxy:latest
+    depends_on:
+      - server
+    ports:
+      - "1250:80"
+    restart: always
+    env_file:
+      - ./.env
+
+  server:
+    image: mit-clubs-deploy-server:latest
+    container_name: mit-clubs-server
+    env_file:
+      - ./.env

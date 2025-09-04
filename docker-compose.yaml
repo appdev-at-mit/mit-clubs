@@ -1,0 +1,25 @@
+services:
+  proxy:
+    build:
+      context: .
+      dockerfile: client.Dockerfile
+    depends_on:
+      - server
+    ports:
+      - "1250:80"
+    restart: always
+    # allow the container to be recognized by traefik for proxying
+    labels:
+      - "traefik.http.routers.proxy.rule=Host(`mitclubs.mitappdev.com`)||Host(`www.mitclubs.com`)||Host(`mitclubs.com`)"
+      - "traefik.enable=true"
+      - "traefik.http.routers.proxy.entrypoints=web,websecure"
+    env_file:
+      - ./.env
+
+  server:
+    build:
+      context: .
+      dockerfile: server.Dockerfile
+    container_name: mit-clubs-server
+    env_file:
+      - ./.env
