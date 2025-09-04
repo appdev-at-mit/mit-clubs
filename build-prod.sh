@@ -18,8 +18,8 @@ docker compose build
 echo 'Build successful.'
 
 echo 'Compiling images...'
-docker save -o ~/images/mit-clubs-deploy-proxy.tar mit-clubs-deploy-proxy
-docker save -o ~/images/mit-clubs-deploy-server.tar mit-clubs-deploy-server
+docker save -o ~/images/mit-clubs-deploy-proxy.tar mit-clubs-proxy
+docker save -o ~/images/mit-clubs-deploy-server.tar mit-clubs-server
 
 echo 'Copying images to production server...'
 scp ~/images/mit-clubs-deploy-proxy.tar mitclubs:~/images/
