@@ -31,7 +31,12 @@ import {
   ArrowLeft,
   ThumbsUp,
 } from "lucide-react";
-import { FaFacebookF, FaRegBookmark, FaBookmark } from "react-icons/fa";
+import {
+  FaRegBookmark,
+  FaBookmark,
+  FaInstagram,
+  FaLinkedinIn,
+} from "react-icons/fa";
 import { Club } from "../../types";
 
 function ClubDetails() {
@@ -404,23 +409,65 @@ function ClubDetails() {
                   Contact
                 </h3>
                 <div className="space-y-3 text-sm text-gray-700">
-                  {club.facebook && (
+                  {club.instagram && (
                     <div className="flex items-center gap-3">
-                      <FaFacebookF
+                      <FaInstagram
                         size={18}
-                        className="text-blue-600 flex-shrink-0"
+                        className="text-gray-500 flex-shrink-0"
                       />
                       <a
                         href={
-                          club.facebook.startsWith("http")
-                            ? club.facebook
-                            : `https://${club.facebook}`
+                          club.instagram.startsWith("http")
+                            ? club.instagram
+                            : club.instagram.startsWith("@")
+                            ? `https://instagram.com/${club.instagram.slice(1)}`
+                            : `https://instagram.com/${club.instagram}`
                         }
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:underline break-all"
                       >
-                        {club.facebook}
+                        {(() => {
+                          if (club.instagram.includes("instagram.com/")) {
+                            const match = club.instagram.match(
+                              /instagram\.com\/([^\/\?]+)/
+                            );
+                            return match ? `@${match[1]}` : club.instagram;
+                          } else if (club.instagram.startsWith("@")) {
+                            return club.instagram;
+                          } else {
+                            return `@${club.instagram}`;
+                          }
+                        })()}
+                      </a>
+                    </div>
+                  )}
+                  {club.linkedin && (
+                    <div className="flex items-center gap-3">
+                      <FaLinkedinIn
+                        size={18}
+                        className="text-gray-500 flex-shrink-0"
+                      />
+                      <a
+                        href={
+                          club.linkedin.startsWith("http")
+                            ? club.linkedin
+                            : `https://${club.linkedin}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline break-all"
+                      >
+                        {(() => {
+                          // extract name from URL
+                          if (club.linkedin.includes("linkedin.com/")) {
+                            const match = club.linkedin.match(
+                              /linkedin\.com\/(?:company|in)\/([^\/\?]+)/
+                            );
+                            return match ? match[1] : club.linkedin;
+                          }
+                          return club.linkedin;
+                        })()}
                       </a>
                     </div>
                   )}
@@ -455,7 +502,12 @@ function ClubDetails() {
                       </a>
                     </div>
                   )}
-                  {!(club.facebook || club.email || club.website) && (
+                  {!(
+                    club.instagram ||
+                    club.linkedin ||
+                    club.email ||
+                    club.website
+                  ) && (
                     <p className="text-gray-500 italic">
                       No contact information provided.
                     </p>

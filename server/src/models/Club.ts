@@ -24,7 +24,6 @@ export interface Club {
   email?: string;
   instagram?: string;
   linkedin?: string;
-  facebook?: string;
   website?: string;
   mission?: string;
   image_url?: string;
@@ -100,7 +99,6 @@ const ClubSchema = new mongoose.Schema({
   email: { type: String },
   instagram: { type: String },
   linkedin: { type: String },
-  facebook: { type: String },
   website: { type: String },
   mission: {
     type: String,

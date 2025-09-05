@@ -32,7 +32,6 @@ export type Club = {
   email?: string;
   instagram?: string;
   linkedin?: string;
-  facebook?: string;
   website?: string;
   mission?: string;
   image_url?: string;

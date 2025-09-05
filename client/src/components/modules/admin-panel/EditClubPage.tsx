@@ -10,6 +10,10 @@ function EditClubPage({ club }: { club: Club }) {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [name, setName] = useState(club.name || "");
   const [mission, setMission] = useState(club.mission || "");
+  const [email, setEmail] = useState(club.email || "");
+  const [instagram, setInstagram] = useState(club.instagram || "");
+  const [linkedin, setLinkedin] = useState(club.linkedin || "");
+  const [website, setWebsite] = useState(club.website || "");
 
   function toggleTag(tag: string) {
     if (selectedTags.includes(tag)) {
@@ -192,6 +196,83 @@ function EditClubPage({ club }: { club: Club }) {
                 Select tags that describe your club. These help students find
                 your club when searching.
               </p>
+            </div>
+          </div>
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Contact & Social Media
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-[150px,1fr] gap-2 md:gap-4 items-start mb-6">
+              <label className="font-medium text-gray-700">Email</label>
+              <div>
+                <input
+                  id="club-email"
+                  type="email"
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  value={email}
+                  onChange={function (e) {
+                    setEmail(e.target.value);
+                  }}
+                  placeholder="club@mit.edu"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Official club email for questions and communication.
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-[150px,1fr] gap-2 md:gap-4 items-start mb-6">
+              <label className="font-medium text-gray-700">Website</label>
+              <div>
+                <input
+                  id="club-website"
+                  type="url"
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  value={website}
+                  onChange={function (e) {
+                    setWebsite(e.target.value);
+                  }}
+                  placeholder="https://yourclub.mit.edu"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Official club website.
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-[150px,1fr] gap-2 md:gap-4 items-start mb-6">
+              <label className="font-medium text-gray-700">Instagram</label>
+              <div>
+                <input
+                  id="club-instagram"
+                  type="text"
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  value={instagram}
+                  onChange={function (e) {
+                    setInstagram(e.target.value);
+                  }}
+                  placeholder="@yourclub or https://instagram.com/yourclub"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Instagram handle or full URL.
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-[150px,1fr] gap-2 md:gap-4 items-start mb-6">
+              <label className="font-medium text-gray-700">LinkedIn</label>
+              <div>
+                <input
+                  id="club-linkedin"
+                  type="text"
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  value={linkedin}
+                  onChange={function (e) {
+                    setLinkedin(e.target.value);
+                  }}
+                  placeholder="https://linkedin.com/company/yourclub"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  LinkedIn company or URL.
+                </p>
+              </div>
             </div>
           </div>
         </div>
