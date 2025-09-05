@@ -1,6 +1,6 @@
 services:
   proxy:
-    image: mit-clubs-deploy-proxy:latest
+    image: mit-clubs-proxy:latest
     depends_on:
       - server
     ports:
@@ -10,7 +10,7 @@ services:
       - ./.env
 
   server:
-    image: mit-clubs-deploy-server:latest
+    image: mit-clubs-server:latest
     container_name: mit-clubs-server
     env_file:
       - ./.env
