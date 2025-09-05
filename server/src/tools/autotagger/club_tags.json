@@ -135,7 +135,11 @@
   {
     "club_id": "53370",
     "club_name": "AppDev@MIT",
-    "existing_tags": ["Academic and Pre-Professional, Education, Technology"],
+    "existing_tags": [
+      "Academic and Pre-Professional",
+      "Education",
+      "Technology"
+    ],
     "suggested_tags": ["Entrepreneurship", "Computer Science"],
     "success": true,
     "error": null
