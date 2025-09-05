@@ -102,7 +102,7 @@ const ClubSchema = new mongoose.Schema({
   website: { type: String },
   mission: {
     type: String,
-    maxlength: [1000, "Mission statement cannot exceed 1000 characters"],
+    maxlength: [1500, "Mission statement cannot exceed 1500 characters"],
   },
   image_url: { type: String },
   saveCount: { type: Number },
