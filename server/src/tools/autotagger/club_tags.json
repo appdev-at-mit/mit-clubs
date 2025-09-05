@@ -1,0 +1,3152 @@
+[
+  {
+    "club_id": "53163",
+    "club_name": "Aca-Sound",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53299",
+    "club_name": "Acroyoga",
+    "existing_tags": ["Athletics and Outdoors"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "f800ee4c-d8b7-444a-87c4-760f4a162ca1",
+    "club_name": "Addir Interfaith Engagement Association",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53399",
+    "club_name": "Afghans@MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52999",
+    "club_name": "African Students Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53298",
+    "club_name": "Allied Scholars for Animal Protection",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52609",
+    "club_name": "Alpha Omega MIT",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52612",
+    "club_name": "American Indian Science and Engineering Society",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Engineering",
+      "Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53307",
+    "club_name": "American Institute of Aeronautics and Astronautics MIT Chapter",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Research",
+      "Engineering",
+      "Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52614",
+    "club_name": "American Institute of Chemical Engineers Student Chapter  MIT",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Engineering", "Science", "Research"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52615",
+    "club_name": "American Nuclear Society",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Engineering", "Science", "Technology"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52616",
+    "club_name": "American Red Cross Team And Network of MIT",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": [
+      "Fundraising and Philanthropy",
+      "Medicine and Health",
+      "Activism"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52617",
+    "club_name": "American Sign Language and Deaf Culture Club",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Education", "Community Service"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53015",
+    "club_name": "Amphibious Achievement",
+    "existing_tags": ["Education"],
+    "suggested_tags": ["Community Service", "Athletics and Outdoors"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53000",
+    "club_name": "Anime Club MIT",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Cultural", "Arts", "Visual Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53370",
+    "club_name": "AppDev@MIT",
+    "existing_tags": ["Academic and Pre-Professional, Education, Technology"],
+    "suggested_tags": ["Entrepreneurship", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52618",
+    "club_name": "Arab Student Organization",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53322",
+    "club_name": "Arabic Debate Club",
+    "existing_tags": ["Education"],
+    "suggested_tags": ["Cultural", "International Student", "Literary Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52620",
+    "club_name": "Armenian Society MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52622",
+    "club_name": "Artificial Intelligence Club at MIT",
+    "existing_tags": ["Technology"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Education",
+      "Research",
+      "Computer Science",
+      "Engineering"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52623",
+    "club_name": "ASHRAE MIT Student Chapter",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Technology", "Engineering", "Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52624",
+    "club_name": "Asian American Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52625",
+    "club_name": "Asian Baptist Student Koinonia",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53103",
+    "club_name": "Asian Baptist Student Koinonia Graduate Division",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53043",
+    "club_name": "Asian Christian Fellowship",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53148",
+    "club_name": "Asian Club MIT",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Cultural", "International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52626",
+    "club_name": "Asian Dance Team MIT",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Cultural", "Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53033",
+    "club_name": "Assassins Guild MIT",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Games and Puzzles", "Gaming"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53309",
+    "club_name": "Assistive Technology Club",
+    "existing_tags": [],
+    "suggested_tags": [
+      "Technology",
+      "Engineering",
+      "Medicine and Health",
+      "Community Service",
+      "Research"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52628",
+    "club_name": "Association of Computational Science and Engineering Students",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Research",
+      "Technology",
+      "Engineering",
+      "Computer Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52629",
+    "club_name": "Association of Indonesian Students at MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52630",
+    "club_name": "Association of Puerto Rican Students",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52632",
+    "club_name": "Association of Taiwanese Students  MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52964",
+    "club_name": "Asymptones",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Music", "Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53241",
+    "club_name": "Australia and New Zealand Club",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53104",
+    "club_name": "Bahai Association MIT",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53074",
+    "club_name": "Ballroom Dance Club",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53075",
+    "club_name": "Ballroom Dance Team MIT",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53081",
+    "club_name": "Bangladeshi Students",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52634",
+    "club_name": "Baptist Student Fellowship",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Community Service"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52635",
+    "club_name": "Battlecode",
+    "existing_tags": ["Technology"],
+    "suggested_tags": ["Computer Science", "Engineering"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52965",
+    "club_name": "Bhangra Club MIT",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52637",
+    "club_name": "Biology Undergraduate Students Association",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Science", "Medicine and Health", "Research"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52638",
+    "club_name": "BioMakers Group",
+    "existing_tags": ["Education"],
+    "suggested_tags": [
+      "Research",
+      "Science",
+      "Medicine and Health",
+      "Technology"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52639",
+    "club_name": "Biotechnology Group MIT",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Research",
+      "Science",
+      "Medicine and Health",
+      "Technology"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52640",
+    "club_name": "Bitcoin Club MIT",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Technology",
+      "Entrepreneurship",
+      "Finance and Consulting",
+      "Business and Economics"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52641",
+    "club_name": "Black Graduate Student Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Activism", "Resources and Support"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52642",
+    "club_name": "Black Students' Union",
+    "existing_tags": ["Activism"],
+    "suggested_tags": [
+      "Cultural",
+      "Community Service",
+      "Resources and Support"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52643",
+    "club_name": "Black Women's Alliance",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Gender-Based", "Community Service"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52645",
+    "club_name": "Borderline",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Visual Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53379",
+    "club_name": "BR@MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52647",
+    "club_name": "Brain and Cognitive Sciences Society",
+    "existing_tags": ["Education"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Research",
+      "Science",
+      "Medicine and Health"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53016",
+    "club_name": "Brain Trust",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Education", "Medicine and Health"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53105",
+    "club_name": "Buddhist Students Club",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53083",
+    "club_name": "Bulgarian Club at MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52660",
+    "club_name": "Camp Kesem MIT",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Fundraising and Philanthropy", "Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52662",
+    "club_name": "Campus Crusade for Cthulhu MIT",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Literary Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53290",
+    "club_name": "Campus Hope",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Community Service"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53084",
+    "club_name": "Canadians Club",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52966",
+    "club_name": "Casino Rueda",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Arts", "Performance"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52991",
+    "club_name": "Caving Club",
+    "existing_tags": ["Athletics and Outdoors"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52967",
+    "club_name": "Cello World",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Music", "Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53377",
+    "club_name": "Central American and Caribbean Friendship & Engagement",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53381",
+    "club_name": "Central Asian Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52664",
+    "club_name": "Centrifugues",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52665",
+    "club_name": "Chabad Student Group",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52667",
+    "club_name": "Chemistry Graduate Student Committee",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": ["Academic and Pre-Professional", "Science", "Research"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52902",
+    "club_name": "Chess Club",
+    "existing_tags": ["Games and Puzzles"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53361",
+    "club_name": "Chi Alpha Christian Fellowship",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52669",
+    "club_name": "China Innovation and Entrepreneurship Forum",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Entrepreneurship",
+      "International Student",
+      "Business and Economics"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52670",
+    "club_name": "Chinese Entrepreneurs Organization",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Entrepreneurship",
+      "Business and Economics",
+      "International Student"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52671",
+    "club_name": "Chinese Students and Scholars Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53002",
+    "club_name": "Chinese Students Club",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52968",
+    "club_name": "Chorallaries of MIT",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53044",
+    "club_name": "Christians on Campus",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52674",
+    "club_name": "Civil and Environmental Engineering Students Association",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Engineering", "Science", "Research"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52677",
+    "club_name": "Climate and Energy Prize",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Research", "Technology", "Entrepreneurship", "Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53287",
+    "club_name": "Climbing Club",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Athletics and Outdoors"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53051",
+    "club_name": "Clubchem",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Science", "Research"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53176",
+    "club_name": "Code for Good",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Technology", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53363",
+    "club_name": "College Republicans",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Political", "Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53086",
+    "club_name": "Colombian Association of MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52969",
+    "club_name": "Concert Band",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53120",
+    "club_name": "Concert Choir Students",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53067",
+    "club_name": "Consulting Club at MIT",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Finance and Consulting", "Business and Economics"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52946",
+    "club_name": "Consulting Group",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Finance and Consulting", "Business and Economics"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53230",
+    "club_name": "Council for Math Majors",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": ["Academic and Pre-Professional", "Math", "Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "3d62d5ba-cee0-46d0-9971-8464757fc933",
+    "club_name": "Cross Products",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Music", "Performance"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53045",
+    "club_name": "Cru",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52971",
+    "club_name": "DanceTroupe",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53035",
+    "club_name": "Debate Team",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Education",
+      "Political",
+      "Literary Arts"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52690",
+    "club_name": "Design Build Fly",
+    "existing_tags": ["Technology"],
+    "suggested_tags": [
+      "Engineering",
+      "Design",
+      "Academic and Pre-Professional",
+      "Technology"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52691",
+    "club_name": "Design for America",
+    "existing_tags": ["Education"],
+    "suggested_tags": [
+      "Design",
+      "Community Service",
+      "Technology",
+      "Engineering",
+      "Entrepreneurship"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52693",
+    "club_name": "Digital Art and Animation at MIT",
+    "existing_tags": ["Arts"],
+    "suggested_tags": [
+      "Technology",
+      "Visual Arts",
+      "Design",
+      "Computer Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53373",
+    "club_name": "Disability Justice Collective",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Community Service", "Resources and Support"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53332",
+    "club_name": "Disabled@MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Community Service", "Resources and Support"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53360",
+    "club_name": "Doctors Without Gravity",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Medicine and Health", "Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53018",
+    "club_name": "dynaMIT",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Education", "Technology", "Engineering"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52972",
+    "club_name": "E33 Productions",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Technology", "Design"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52697",
+    "club_name": "EAPS Student Advisory Committee",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": ["Academic and Pre-Professional", "Education", "Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52708",
+    "club_name": "Educational Studies Program",
+    "existing_tags": ["Education"],
+    "suggested_tags": ["Community Service"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53121",
+    "club_name": "Educational Technologies Group",
+    "existing_tags": ["Resources and Support"],
+    "suggested_tags": ["Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53087",
+    "club_name": "Egyptian Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53338",
+    "club_name": "Electrochemical Society",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Research", "Science", "Engineering"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52712",
+    "club_name": "Electronic Research Society",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Research", "Technology", "Engineering"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52713",
+    "club_name": "EMS MIT",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Medicine and Health", "Resources and Support"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52716",
+    "club_name": "Engineers Without Borders",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": [
+      "Engineering",
+      "Activism",
+      "Fundraising and Philanthropy"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53291",
+    "club_name": "Entrepong",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Entrepreneurship", "Athletics and Outdoors"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52719",
+    "club_name": "Eta Kappa Nu",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52720",
+    "club_name": "Ethiopian Eritrean Students Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53088",
+    "club_name": "European Club",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53004",
+    "club_name": "Filipino Students Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52973",
+    "club_name": "Fixation",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53037",
+    "club_name": "Flying Club",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53356",
+    "club_name": "French Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52722",
+    "club_name": "Fuyun Chinese Comedy Club",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Performance", "Arts", "International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53394",
+    "club_name": "G@MIT",
+    "existing_tags": ["Gender and Sexuality"],
+    "suggested_tags": ["Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53376",
+    "club_name": "Game Developers Guild",
+    "existing_tags": [
+      "Arts",
+      "Games and Puzzles",
+      "Hobbies and Special Interests",
+      "Technology"
+    ],
+    "suggested_tags": ["Computer Science", "Design", "Gaming"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53395",
+    "club_name": "Generational African American Student Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Community Service", "Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53301",
+    "club_name": "GFLI@MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Resources and Support"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53371",
+    "club_name": "Global Startup Workshop",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Entrepreneurship", "Business and Economics"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53025",
+    "club_name": "Go Club",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Games and Puzzles"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52729",
+    "club_name": "Graduate Association of Aeronautics and Astronautics",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Research",
+      "Technology",
+      "Engineering",
+      "Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52730",
+    "club_name": "Graduate Association of Mechanical Engineers",
+    "existing_tags": ["Resources and Support"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Engineering",
+      "Research"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53106",
+    "club_name": "Graduate Christian Fellowship",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52731",
+    "club_name": "Graduate Economics Association",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Business and Economics", "Research"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53107",
+    "club_name": "Graduate Hillel",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52732",
+    "club_name": "Graduate Materials Council",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Research",
+      "Engineering",
+      "Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53405",
+    "club_name": "Graduate Muslim Students Association",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52737",
+    "club_name": "Graduate Women in Aerospace Engineering",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Engineering", "Gender-Based"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52738",
+    "club_name": "Graduate Women of Course 6",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Gender-Based", "Engineering", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52739",
+    "club_name": "Greater China Student Network",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53126",
+    "club_name": "Hacking Medicine",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Technology", "Entrepreneurship", "Medicine and Health"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52741",
+    "club_name": "Harvard MIT Mathematics Tournament",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Math", "Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53006",
+    "club_name": "Hawaii Club",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52742",
+    "club_name": "Hellenic Students Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53047",
+    "club_name": "Hillel MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Religious and Spiritual"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52743",
+    "club_name": "Hindu Students Council",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53380",
+    "club_name": "HongKong@MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53392",
+    "club_name": "Horology Club",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Design", "Engineering"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53110",
+    "club_name": "HST Student Community",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": ["Medicine and Health", "Academic and Pre-Professional"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53177",
+    "club_name": "IAP Web Programming Competition",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Technology", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52746",
+    "club_name": "IDSS Student Council",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Research",
+      "Technology"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52974",
+    "club_name": "Imobilare",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Performance"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52961",
+    "club_name": "Impact@MIT",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Entrepreneurship", "Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53359",
+    "club_name": "Individualized Tutoring for English and Citizenship",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52747",
+    "club_name": "Infinite Magazine",
+    "existing_tags": ["Arts"],
+    "suggested_tags": [
+      "Media and Journalism",
+      "Publication",
+      "Literary Arts",
+      "Design",
+      "Visual Arts"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53068",
+    "club_name": "Informs MIT",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Research",
+      "Business and Economics"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52748",
+    "club_name": "Institute of Electrical & Electronics Engineers",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Technology", "Engineering", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52750",
+    "club_name": "International Students Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52751",
+    "club_name": "Intervarsity",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53313",
+    "club_name": "iQuHACK",
+    "existing_tags": ["Education"],
+    "suggested_tags": ["Technology", "Engineering", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53308",
+    "club_name": "Irish Dance Club",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52752",
+    "club_name": "Japanese Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53007",
+    "club_name": "Japanese Society of Undergraduates",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53347",
+    "club_name": "Jews for Collective Liberation",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Religious and Spiritual", "Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53386",
+    "club_name": "Kehillah",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53383",
+    "club_name": "Kenyan Students’ Club",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53388",
+    "club_name": "Kidney Disease Screening and Awareness Program at MIT",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Medicine and Health", "Education", "Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53331",
+    "club_name": "Knitting and Crochet Club",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52756",
+    "club_name": "Korean Cultural Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52754",
+    "club_name": "Korean Graduate Students Association",
+    "existing_tags": ["Resources and Support"],
+    "suggested_tags": ["Cultural", "International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53039",
+    "club_name": "Laboratory for Chocolate Science",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Food and Cooking", "Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53406",
+    "club_name": "Latin Music Society",
+    "existing_tags": ["Arts", "Cultural", "Performance"],
+    "suggested_tags": ["Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53008",
+    "club_name": "Latino Cultural Center",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52760",
+    "club_name": "LatinX Graduate Student Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53372",
+    "club_name": "Latte Lab",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Food and Cooking"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52761",
+    "club_name": "Latter day Saint Student Association",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52763",
+    "club_name": "Leadership Training Institute",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53089",
+    "club_name": "Lebanese Club at MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52765",
+    "club_name": "Lecture Series Committee",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Education", "Academic and Pre-Professional"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53100",
+    "club_name": "LGBT Grad",
+    "existing_tags": ["Gender and Sexuality"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52903",
+    "club_name": "Life on Stage Theatre",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53076",
+    "club_name": "Lindy Hop Society",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52975",
+    "club_name": "Lion Dance Group",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52767",
+    "club_name": "Live Action Mafia",
+    "existing_tags": ["Games and Puzzles"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52768",
+    "club_name": "Live Music Connection",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Music", "Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53222",
+    "club_name": "Locksport",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Games and Puzzles"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52770",
+    "club_name": "Logarhythms",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Music", "Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52772",
+    "club_name": "LUCHA",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Resources and Support"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52773",
+    "club_name": "Lutheran Episcopal Ministry",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52759",
+    "club_name": "MAES Latinos in Science & Engineering",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Engineering",
+      "Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53355",
+    "club_name": "Maghreb Students Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52775",
+    "club_name": "Mahjong Club",
+    "existing_tags": ["Games and Puzzles"],
+    "suggested_tags": ["Cultural", "Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52976",
+    "club_name": "Marching Band",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53122",
+    "club_name": "Medlinks",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Medicine and Health", "Resources and Support"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52778",
+    "club_name": "MentorConnection",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53069",
+    "club_name": "Microbiome Club",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Research", "Science", "Medicine and Health"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52779",
+    "club_name": "Middle East Entrepreneurs of Tomorrow",
+    "existing_tags": ["Education"],
+    "suggested_tags": [
+      "Entrepreneurship",
+      "International Student",
+      "Business and Economics"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53378",
+    "club_name": "MINCE",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Food and Cooking"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52977",
+    "club_name": "Mirchi",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52978",
+    "club_name": "MissBehavior",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts", "Gender-Based"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53397",
+    "club_name": "MIT African Graduate Association",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Cultural", "International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53336",
+    "club_name": "MIT AI Alignment",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Research", "Technology", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53234",
+    "club_name": "MIT Albanian Students Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53009",
+    "club_name": "MIT Asian American Initiative",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53040",
+    "club_name": "MIT Bridge Club",
+    "existing_tags": ["Games and Puzzles"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53326",
+    "club_name": "MIT Capital Partners",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Entrepreneurship",
+      "Business and Economics",
+      "Finance and Consulting"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53283",
+    "club_name": "MIT Climbing Team",
+    "existing_tags": ["Athletics and Outdoors"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53393",
+    "club_name": "MIT Democrats",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Political"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52784",
+    "club_name": "MIT Divest",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Political"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52715",
+    "club_name": "MIT Energy and Climate Club",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Research", "Science", "Activism", "Engineering"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "beed6adc-02b8-4b04-b793-1b64197d3058",
+    "club_name": "MIT Entrepreneurship Club",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Entrepreneurship",
+      "Business and Economics",
+      "Technology"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52714",
+    "club_name": "MIT Every Nation Campus (ENC)",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53233",
+    "club_name": "MIT Film Makers Association",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Media and Journalism", "Visual Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53344",
+    "club_name": "MIT Flow",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53318",
+    "club_name": "MIT Forecasting Group",
+    "existing_tags": ["Education"],
+    "suggested_tags": [
+      "Research",
+      "Business and Economics",
+      "Finance and Consulting",
+      "Math",
+      "Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53389",
+    "club_name": "MIT Gala",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Visual Arts", "Design"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53341",
+    "club_name": "MIT Georgian Society",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52786",
+    "club_name": "MIT Global Health Alliance",
+    "existing_tags": ["Activism"],
+    "suggested_tags": [
+      "Medicine and Health",
+      "Community Service",
+      "Education",
+      "Research"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52963",
+    "club_name": "MIT Guild of Bellringers",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Music", "Performance"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "6995cfb8-4c6b-465c-9bca-e3bbfb56de72",
+    "club_name": "MIT Informatics Tournament Club",
+    "existing_tags": ["Technology"],
+    "suggested_tags": ["Academic and Pre-Professional", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53330",
+    "club_name": "MIT Israel Alliance",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Political"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53350",
+    "club_name": "MIT Kendo Club",
+    "existing_tags": ["Athletics and Outdoors"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53090",
+    "club_name": "MIT Latin Dance Club",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Cultural", "Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53305",
+    "club_name": "MIT LIVE",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52780",
+    "club_name": "MIT Minority Association of Pre-Medical Students",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Medicine and Health", "Community Service"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52799",
+    "club_name": "MIT Model United Nations",
+    "existing_tags": ["Education"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Literary Arts",
+      "Political"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53400",
+    "club_name": "MIT Nordic Club",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52979",
+    "club_name": "MIT Nritya",
+    "existing_tags": ["Arts", "Cultural", "Performance"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53403",
+    "club_name": "MIT Pre-Law Society",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Political"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52830",
+    "club_name": "MIT QuestBridge Scholars Network",
+    "existing_tags": ["Resources and Support"],
+    "suggested_tags": ["Community Service", "Academic and Pre-Professional"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53402",
+    "club_name": "MIT ROTC Association",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53343",
+    "club_name": "MIT Saudi Students Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53080",
+    "club_name": "MIT Science Policy Review",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Education",
+      "Research",
+      "Science",
+      "Political",
+      "Publication"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53053",
+    "club_name": "MIT Student Veterans Association",
+    "existing_tags": ["Resources and Support"],
+    "suggested_tags": ["Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53155",
+    "club_name": "MIT Sustainability Summit",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Education", "Research", "Science", "Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52795",
+    "club_name": "MIT Sustainable Energy Alliance",
+    "existing_tags": [],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Research",
+      "Technology",
+      "Engineering",
+      "Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52980",
+    "club_name": "MIT Ukrainian Folk Dance Ensemble",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Arts", "Performance", "International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53292",
+    "club_name": "MIT Wind Club",
+    "existing_tags": ["Technology"],
+    "suggested_tags": ["Engineering", "Science", "Research"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52797",
+    "club_name": "MITALY - Italian Student Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53337",
+    "club_name": "MITap",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53010",
+    "club_name": "MITeri",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53019",
+    "club_name": "MITVote",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Political"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53153",
+    "club_name": "MITxHarvard Women in AI",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Technology", "Computer Science", "Gender-Based"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52789",
+    "club_name": "MIXED",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53185",
+    "club_name": "Mobin",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52982",
+    "club_name": "Mocha Moves Dance Squad",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts", "Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52948",
+    "club_name": "Mock Trial Team",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Political", "Literary Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53237",
+    "club_name": "Mongolian Student Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52800",
+    "club_name": "moveMENtality",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Gender-Based"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53011",
+    "club_name": "Mujeres Latinas",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Gender-Based", "International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52983",
+    "club_name": "Muses",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Music", "Gender-Based"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52802",
+    "club_name": "Music Production Collaborative",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Music", "Technology"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52803",
+    "club_name": "Musical Theatre Guild",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts", "Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52905",
+    "club_name": "Muslim Students Association",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52804",
+    "club_name": "National Society of Black Engineers",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Engineering"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53171",
+    "club_name": "Native American & Indigenous Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52809",
+    "club_name": "Next Act",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts", "Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53189",
+    "club_name": "Next Sing",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53229",
+    "club_name": "Ninja Warrior Club",
+    "existing_tags": ["Athletics and Outdoors"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52984",
+    "club_name": "Ohms",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Performance", "Music", "Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53310",
+    "club_name": "Open Discourse Society",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Education", "Political"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53329",
+    "club_name": "OpenCode Club",
+    "existing_tags": ["Technology"],
+    "suggested_tags": ["Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52816",
+    "club_name": "OrigaMIT",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Design", "Visual Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53108",
+    "club_name": "Origins",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53247",
+    "club_name": "Orthodox Christian Fellowship of the Massachusetts Institute of Technology",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural", "Community Service"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53244",
+    "club_name": "OSU!MIT",
+    "existing_tags": ["Games and Puzzles"],
+    "suggested_tags": ["Gaming"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52817",
+    "club_name": "Outing Club",
+    "existing_tags": ["Athletics and Outdoors"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52818",
+    "club_name": "Palestine at MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student", "Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53375",
+    "club_name": "Paraguayan Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53123",
+    "club_name": "PLEASURE at MIT",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Education", "Gender and Sexuality"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53028",
+    "club_name": "Pokemon League",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Gaming"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52825",
+    "club_name": "Poker Club",
+    "existing_tags": ["Games and Puzzles"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52826",
+    "club_name": "Pokerbots",
+    "existing_tags": ["Education"],
+    "suggested_tags": ["Technology", "Computer Science", "Games and Puzzles"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53369",
+    "club_name": "Polish Club",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52827",
+    "club_name": "Polymer Graduate Student Association",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Research", "Science", "Engineering"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52950",
+    "club_name": "PreMedical Society",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Medicine and Health", "Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53048",
+    "club_name": "ProLife",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Political"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53027",
+    "club_name": "Puzzle Club",
+    "existing_tags": ["Games and Puzzles"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52952",
+    "club_name": "Quiz Bowl Team",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Games and Puzzles", "Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53059",
+    "club_name": "Radio Society W1MX",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Technology", "Engineering", "Media and Journalism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53285",
+    "club_name": "Reading for Revolution",
+    "existing_tags": ["Education"],
+    "suggested_tags": ["Activism", "Political", "Literary Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52832",
+    "club_name": "Reformed University Fellowship",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52985",
+    "club_name": "Resonance of MIT",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53021",
+    "club_name": "Ribotones",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Music", "Performance"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52833",
+    "club_name": "Ridonkulous",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts", "Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52986",
+    "club_name": "Roadkill Buffet",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53061",
+    "club_name": "Robotics Team",
+    "existing_tags": ["Technology"],
+    "suggested_tags": [
+      "Engineering",
+      "Research",
+      "Academic and Pre-Professional"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52835",
+    "club_name": "Rocket Team",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Engineering", "Technology", "Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52836",
+    "club_name": "ROCSA",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53092",
+    "club_name": "Romanian Student Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52994",
+    "club_name": "Rune",
+    "existing_tags": ["Publication"],
+    "suggested_tags": ["Media and Journalism", "Literary Arts", "Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52837",
+    "club_name": "Russian Connection",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52838",
+    "club_name": "Sakata Afrique",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Cultural", "International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "774849a9-50bd-4d74-98f1-4be44ef08b41",
+    "club_name": "Sangam",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53055",
+    "club_name": "SaveTFP",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53219",
+    "club_name": "Scholars of Finance",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Finance and Consulting", "Business and Economics"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52810",
+    "club_name": "Science Bowl",
+    "existing_tags": ["Education"],
+    "suggested_tags": ["Science", "Math"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53295",
+    "club_name": "Science Club for Girls at MIT",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Education", "Science", "Gender-Based"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52839",
+    "club_name": "Science Fiction Society",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Literary Arts", "Publication", "Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52840",
+    "club_name": "Science Olympiad at MIT",
+    "existing_tags": ["Education"],
+    "suggested_tags": ["Science", "Engineering", "Math"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52841",
+    "club_name": "Science Policy Initiative",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Science", "Political", "Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53334",
+    "club_name": "Scuba Club",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Athletics and Outdoors"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52987",
+    "club_name": "Shakespeare Ensemble",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts", "Literary Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52843",
+    "club_name": "SHINE for Girls",
+    "existing_tags": ["Education"],
+    "suggested_tags": ["Math", "Gender-Based", "Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52844",
+    "club_name": "SIAM",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Math", "Engineering", "Science", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53095",
+    "club_name": "Singapore Students Society",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52848",
+    "club_name": "Sloan Business Club",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Business and Economics",
+      "Finance and Consulting",
+      "Entrepreneurship"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53180",
+    "club_name": "Smash UltiMIT",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Gaming"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52849",
+    "club_name": "Society of Hispanic Professional Engineers",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Engineering", "Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52953",
+    "club_name": "Society of Physics Students",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Science", "Research", "Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52852",
+    "club_name": "Society of Women Engineers",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Engineering", "Gender-Based"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52854",
+    "club_name": "South Asian Association of Students",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53346",
+    "club_name": "South Slavic Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53323",
+    "club_name": "Southeast Asia Society",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53112",
+    "club_name": "Spain at MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52856",
+    "club_name": "Spinning Arts Club",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts", "Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52857",
+    "club_name": "Sporting Clays Association",
+    "existing_tags": ["Athletics and Outdoors"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53173",
+    "club_name": "Sri Lankan Students Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53013",
+    "club_name": "Stammtisch",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53248",
+    "club_name": "Stand-Up CoMITy",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52954",
+    "club_name": "StartLabs",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Entrepreneurship"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52859",
+    "club_name": "Strategic Games Society",
+    "existing_tags": ["Games and Puzzles"],
+    "suggested_tags": ["Gaming", "Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52862",
+    "club_name": "Student Information Processing Board",
+    "existing_tags": ["Technology"],
+    "suggested_tags": ["Academic and Pre-Professional", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52863",
+    "club_name": "Student Juggling Club",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "62a8c23d-b57b-4c9b-9c36-6891d188ef47",
+    "club_name": "Student Sustainability Coalition",
+    "existing_tags": ["Resources and Support"],
+    "suggested_tags": ["Activism", "Community Service", "Science", "Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52867",
+    "club_name": "Students for the Exploration and Development of Space",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Science", "Technology", "Engineering", "Research"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53314",
+    "club_name": "Students of Open and Universal Learning",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53404",
+    "club_name": "Sudanese@MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52868",
+    "club_name": "Swara",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["Arts", "Performance", "Music"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "7d9ef8cc-980c-4f5e-bbe1-47ccbd0dc9a9",
+    "club_name": "Syncopasian",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Music", "Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53335",
+    "club_name": "Taara",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Gender-Based", "Gender and Sexuality", "Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53077",
+    "club_name": "Tango Club",
+    "existing_tags": ["Arts", "Cultural", "Hobbies and Special Interests"],
+    "suggested_tags": ["Performance"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53109",
+    "club_name": "Tech Catholic Community",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Technology", "Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52871",
+    "club_name": "Tech Model Railroad Club",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Technology", "Engineering"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52872",
+    "club_name": "Tech Squares",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Performance"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53311",
+    "club_name": "Technicolor Furs",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52996",
+    "club_name": "Technique Yearbook",
+    "existing_tags": ["Arts"],
+    "suggested_tags": ["Media and Journalism", "Publication", "Visual Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52873",
+    "club_name": "Technology Policy Student Society",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Technology", "Research", "Political"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52874",
+    "club_name": "TechSec",
+    "existing_tags": ["Technology"],
+    "suggested_tags": ["Academic and Pre-Professional", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53062",
+    "club_name": "TechX",
+    "existing_tags": ["Technology"],
+    "suggested_tags": ["Entrepreneurship", "Engineering", "Computer Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52875",
+    "club_name": "TEDxMIT",
+    "existing_tags": ["Education"],
+    "suggested_tags": [
+      "Technology",
+      "Media and Journalism",
+      "Academic and Pre-Professional"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53096",
+    "club_name": "Thai Students at MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53250",
+    "club_name": "The Bike Lab",
+    "existing_tags": ["Community Service"],
+    "suggested_tags": ["Engineering", "Athletics and Outdoors"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52876",
+    "club_name": "The F Word",
+    "existing_tags": ["Activism"],
+    "suggested_tags": ["Gender and Sexuality"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52997",
+    "club_name": "The Tech",
+    "existing_tags": ["Publication"],
+    "suggested_tags": ["Media and Journalism", "Literary Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53302",
+    "club_name": "Thirsty Ear Programming Committee",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52989",
+    "club_name": "Toons",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Music", "Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52879",
+    "club_name": "Traders at MIT",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Math", "Finance and Consulting"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53345",
+    "club_name": "TransMIT",
+    "existing_tags": ["Gender and Sexuality"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53097",
+    "club_name": "Turkish Student Association",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52884",
+    "club_name": "UHF Repeater Assn W1XM",
+    "existing_tags": ["Technology"],
+    "suggested_tags": ["Engineering", "Hobbies and Special Interests"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53249",
+    "club_name": "Ukraine@MIT",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student", "Activism"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52885",
+    "club_name": "Ultimate PickUp",
+    "existing_tags": ["Athletics and Outdoors"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52956",
+    "club_name": "Undergraduate Economics Association",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Business and Economics",
+      "Finance and Consulting"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53118",
+    "club_name": "Undergraduate Mathematics Association",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Math", "Education"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52887",
+    "club_name": "Undergraduate Research Journal",
+    "existing_tags": ["Publication"],
+    "suggested_tags": [
+      "Academic and Pre-Professional",
+      "Research",
+      "Education",
+      "Science",
+      "Media and Journalism"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52888",
+    "club_name": "Undergraduate Research Technology Club",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Research",
+      "Technology",
+      "Engineering",
+      "Computer Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52889",
+    "club_name": "Undergraduate Society for Women in Mathematics",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": ["Math", "Gender-Based", "Academic and Pre-Professional"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53124",
+    "club_name": "Undergraduate Women in Physics",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Science", "Gender-Based"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53183",
+    "club_name": "Vedic Vision Forum",
+    "existing_tags": ["Religious and Spiritual"],
+    "suggested_tags": ["Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52892",
+    "club_name": "Video Game Orchestra",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Music", "Gaming"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53231",
+    "club_name": "Video Gamers Alliance",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": ["Gaming", "Technology"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53014",
+    "club_name": "Vietnamese Students",
+    "existing_tags": ["Cultural"],
+    "suggested_tags": ["International Student"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53374",
+    "club_name": "Voltage",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Technology",
+      "Engineering",
+      "Science",
+      "Computer Science"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52893",
+    "club_name": "VR/AR at MIT",
+    "existing_tags": ["Technology"],
+    "suggested_tags": ["Research", "Engineering", "Computer Science", "Design"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53071",
+    "club_name": "Water Club",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Research", "Technology"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53113",
+    "club_name": "WHOI Student Organization",
+    "existing_tags": ["Departmental Program"],
+    "suggested_tags": ["Research", "Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52895",
+    "club_name": "Women Business Leaders",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Business and Economics",
+      "Finance and Consulting",
+      "Gender-Based"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52896",
+    "club_name": "Women in Aerospace Engineering",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Engineering", "Gender-Based"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52897",
+    "club_name": "Women in Electrical Engineering and Computer Science",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": [
+      "Technology",
+      "Engineering",
+      "Computer Science",
+      "Gender-Based"
+    ],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53398",
+    "club_name": "Women+ in Chemistry",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Science", "Gender-Based"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52998",
+    "club_name": "Woop Garoo Magazine",
+    "existing_tags": ["Publication"],
+    "suggested_tags": ["Media and Journalism", "Literary Arts", "Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53358",
+    "club_name": "Written Revolution",
+    "existing_tags": ["Publication"],
+    "suggested_tags": ["Media and Journalism", "Literary Arts"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "52899",
+    "club_name": "Wuming Theater Club",
+    "existing_tags": ["Performance"],
+    "suggested_tags": ["Arts", "Cultural"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53063",
+    "club_name": "Xapiens @ MIT",
+    "existing_tags": ["Academic and Pre-Professional"],
+    "suggested_tags": ["Research", "Technology", "Science"],
+    "success": true,
+    "error": null
+  },
+  {
+    "club_id": "53102",
+    "club_name": "Yesplus at MIT",
+    "existing_tags": ["Hobbies and Special Interests"],
+    "suggested_tags": [],
+    "success": true,
+    "error": null
+  }
+]
