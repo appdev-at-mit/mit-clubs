@@ -140,10 +140,18 @@ function ClubManage() {
               "#club-tags"
             ) as HTMLInputElement;
 
+            const tagsString = tagsInput ? tagsInput.value : "";
+            const tagsArray = tagsString
+              ? tagsString
+                  .split(",")
+                  .map((tag) => tag.trim())
+                  .filter((tag) => tag)
+              : [];
+
             updateData = {
               name: nameInput ? nameInput.value : "",
               mission: missionInput ? missionInput.value : "",
-              tags: tagsInput ? tagsInput.value : "",
+              tags: tagsArray,
             };
           }
           break;
