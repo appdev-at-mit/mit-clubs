@@ -27,9 +27,7 @@ export const tagCategories = {
     "Cultural",
     "International Student",
     "Religious and Spiritual",
-    "LGBTQ+",
     "Gender-Based",
-    "Diversity and Inclusion",
     "Gender and Sexuality",
   ],
   Service: [
@@ -38,12 +36,7 @@ export const tagCategories = {
     "Political",
     "Fundraising and Philanthropy",
   ],
-  Athletics: [
-    "Athletics and Outdoors",
-    "Club Sports",
-    "Intramural Sports",
-    "Recreational",
-  ],
+  Athletics: ["Athletics and Outdoors", "Intramural Sports"],
   Hobbies: [
     "Hobbies and Special Interests",
     "Games and Puzzles",
