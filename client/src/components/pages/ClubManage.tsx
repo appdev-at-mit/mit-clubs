@@ -139,6 +139,18 @@ function ClubManage() {
             const tagsInput = editComponent.querySelector(
               "#club-tags"
             ) as HTMLInputElement;
+            const emailInput = editComponent.querySelector(
+              "#club-email"
+            ) as HTMLInputElement;
+            const websiteInput = editComponent.querySelector(
+              "#club-website"
+            ) as HTMLInputElement;
+            const instagramInput = editComponent.querySelector(
+              "#club-instagram"
+            ) as HTMLInputElement;
+            const linkedinInput = editComponent.querySelector(
+              "#club-linkedin"
+            ) as HTMLInputElement;
 
             const tagsString = tagsInput ? tagsInput.value : "";
             const tagsArray = tagsString
@@ -152,6 +164,10 @@ function ClubManage() {
               name: nameInput ? nameInput.value : "",
               mission: missionInput ? missionInput.value : "",
               tags: tagsArray,
+              email: emailInput ? emailInput.value : "",
+              website: websiteInput ? websiteInput.value : "",
+              instagram: instagramInput ? instagramInput.value : "",
+              linkedin: linkedinInput ? linkedinInput.value : "",
             };
           }
           break;
