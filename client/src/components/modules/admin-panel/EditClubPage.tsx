@@ -14,6 +14,11 @@ function EditClubPage({ club }: { club: Club }) {
   const [instagram, setInstagram] = useState(club.instagram || "");
   const [linkedin, setLinkedin] = useState(club.linkedin || "");
   const [website, setWebsite] = useState(club.website || "");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(
+    club.image_url || ""
+  );
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
 
   function toggleTag(tag: string) {
     if (selectedTags.includes(tag)) {
@@ -41,6 +46,62 @@ function EditClubPage({ club }: { club: Club }) {
 
   function getTagsString() {
     return selectedTags.join(", ");
+  }
+
+  async function handleFileSelect(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.includes("image")) {
+      alert("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5000000) {
+      alert("File is too large, please keep it under 5MB");
+      return;
+    }
+
+    setSelectedFile(file);
+
+    // show preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target && e.target.result) {
+        setImagePreview(e.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+
+    // upload to server
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUploadedImageUrl(data.url);
+      } else {
+        throw new Error();
+      }
+    } catch {
+      alert("Something went wrong uploading your image");
+      setSelectedFile(null);
+      setImagePreview("");
+    }
+  }
+
+  function getS3ImageUrl() {
+    return (
+      uploadedImageUrl ||
+      club.image_url ||
+      "https://engage.mit.edu/images/default_club_logo_square.png"
+    );
   }
 
   return (
@@ -198,6 +259,64 @@ function EditClubPage({ club }: { club: Club }) {
               </p>
             </div>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-[150px,1fr] gap-2 md:gap-4 items-start">
+            <label className="font-medium text-gray-700">Club Image</label>
+            <div>
+              <div className="mb-3">
+                <input
+                  id="club-image-file"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Upload an image as png, jpg, or jpeg (max 5MB)
+                </p>
+              </div>
+
+              {imagePreview && (
+                <div className="mb-3">
+                  <p className="text-sm font-medium text-gray-700 mb-2">
+                    Preview:
+                  </p>
+                  <div className="relative w-32 h-32 border border-gray-300 rounded-md overflow-hidden">
+                    <img
+                      src={imagePreview}
+                      alt="Club preview"
+                      className="w-full h-full object-cover"
+                      onError={() => setImagePreview("")}
+                    />
+                    <button
+                      onClick={() => {
+                        setImagePreview("");
+                        setSelectedFile(null);
+                        setUploadedImageUrl("");
+                        const fileInput = document.getElementById(
+                          "club-image-file"
+                        ) as HTMLInputElement;
+                        if (fileInput) fileInput.value = "";
+                      }}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <input
+                type="hidden"
+                id="club-image-url-final"
+                value={getS3ImageUrl()}
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Club logo or representative image.
+              </p>
+            </div>
+          </div>
+
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Contact & Social Media

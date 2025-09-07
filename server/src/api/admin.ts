@@ -1,9 +1,23 @@
 import express, { Request, Response, NextFunction } from "express";
+import multer from "multer";
 import { ensureLoggedIn } from "../auth/auth";
+import { S3Service } from "../services/s3Service";
 import Club from "../models/Club";
 import User from "../models/user";
 
 export const adminRouter = express.Router();
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5000000 },
+  fileFilter: (_, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only images allowed"));
+    }
+  },
+});
 
 /**
  * Check that the user is owner of club or admin
@@ -77,6 +91,35 @@ adminRouter.get(
       res.json({ isAdmin });
     } catch (error) {
       res.status(500).json({ error: "Error checking admin status" });
+    }
+  }
+);
+
+/**
+ * POST /api/admin/upload
+ *
+ * Upload club profile picture to S3
+ */
+adminRouter.post(
+  "/upload",
+  ensureLoggedIn,
+  upload.single("image"),
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (!req.file) {
+        res.status(400).json({ error: "No file uploaded" });
+        return;
+      }
+
+      const result = await S3Service.uploadFile(req.file);
+
+      res.json({
+        success: true,
+        url: result.url,
+        filename: result.filename,
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Upload failed" });
     }
   }
 );
