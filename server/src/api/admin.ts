@@ -103,11 +103,27 @@ adminRouter.get(
 adminRouter.post(
   "/upload",
   ensureLoggedIn,
-  upload.single("image"),
+  (req: Request, res: Response, next: Function) => {
+    upload.single("image")(req, res, (err: any) => {
+      if (err) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          res.status(413).json({ error: "File too large (max 5MB)" });
+          return;
+        }
+        if (err.message === "Only images allowed") {
+          res.status(400).json({ error: "Only image files are allowed" });
+          return;
+        }
+        res.status(400).json({ error: err.message || "Upload error" });
+        return;
+      }
+      next();
+    });
+  },
   async (req: Request, res: Response): Promise<void> => {
     try {
       if (!req.file) {
-        res.status(400).json({ error: "No file uploaded" });
+        res.status(400).json({ error: "No file selected" });
         return;
       }
 
@@ -119,7 +135,8 @@ adminRouter.post(
         filename: result.filename,
       });
     } catch (error) {
-      res.status(500).json({ error: "Upload failed" });
+      console.error("S3 upload error:", error);
+      res.status(500).json({ error: "Failed to upload image to storage" });
     }
   }
 );
