@@ -409,6 +409,19 @@ function ClubDetails() {
                   Contact
                 </h3>
                 <div className="space-y-3 text-sm text-gray-700">
+                  {club.mailing_list && (
+                    <div className="flex items-center gap-3">
+                      <Bell size={18} className="text-gray-500 flex-shrink-0" />
+                      <a
+                        href={club.mailing_list}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline break-all"
+                      >
+                        Mailing List
+                      </a>
+                    </div>
+                  )}
                   {club.instagram && (
                     <div className="flex items-center gap-3">
                       <FaInstagram
@@ -503,6 +516,7 @@ function ClubDetails() {
                     </div>
                   )}
                   {!(
+                    club.mailing_list ||
                     club.instagram ||
                     club.linkedin ||
                     club.email ||

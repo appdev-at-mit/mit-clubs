@@ -14,6 +14,7 @@ function EditClubPage({ club }: { club: Club }) {
   const [instagram, setInstagram] = useState(club.instagram || "");
   const [linkedin, setLinkedin] = useState(club.linkedin || "");
   const [website, setWebsite] = useState(club.website || "");
+  const [mailingList, setMailingList] = useState(club.mailing_list || "");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(
     club.image_url || ""
@@ -390,6 +391,24 @@ function EditClubPage({ club }: { club: Club }) {
                 />
                 <p className="text-sm text-gray-500 mt-1">
                   LinkedIn company or URL.
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-[150px,1fr] gap-2 md:gap-4 items-start mb-6">
+              <label className="font-medium text-gray-700">Mailing List</label>
+              <div>
+                <input
+                  id="club-mailing-list"
+                  type="url"
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  value={mailingList}
+                  onChange={function (e) {
+                    setMailingList(e.target.value);
+                  }}
+                  placeholder="Mailing list address or signup link."
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Link to join your club's mailing list.
                 </p>
               </div>
             </div>
