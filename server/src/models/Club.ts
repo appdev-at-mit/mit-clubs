@@ -25,6 +25,7 @@ export interface Club {
   instagram?: string;
   linkedin?: string;
   website?: string;
+  mailing_list?: string;
   mission?: string;
   image_url?: string;
   saveCount?: number;
@@ -100,6 +101,7 @@ const ClubSchema = new mongoose.Schema({
   instagram: { type: String },
   linkedin: { type: String },
   website: { type: String },
+  mailing_list: { type: String },
   mission: {
     type: String,
     maxlength: [1500, "Mission statement cannot exceed 1500 characters"],

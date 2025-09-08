@@ -151,6 +151,9 @@ function ClubManage() {
             const linkedinInput = editComponent.querySelector(
               "#club-linkedin"
             ) as HTMLInputElement;
+            const mailingListInput = editComponent.querySelector(
+              "#club-mailing-list"
+            ) as HTMLInputElement;
             const imageUrlInput = editComponent.querySelector(
               "#club-image-url-final"
             ) as HTMLInputElement;
@@ -171,7 +174,10 @@ function ClubManage() {
               website: websiteInput ? websiteInput.value : "",
               instagram: instagramInput ? instagramInput.value : "",
               linkedin: linkedinInput ? linkedinInput.value : "",
-              image_url: imageUrlInput ? imageUrlInput.value : "https://engage.mit.edu/images/default_club_logo_square.png",
+              mailing_list: mailingListInput ? mailingListInput.value : "",
+              image_url: imageUrlInput
+                ? imageUrlInput.value
+                : "https://engage.mit.edu/images/default_club_logo_square.png",
             };
           }
           break;

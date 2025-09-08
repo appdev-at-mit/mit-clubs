@@ -33,6 +33,7 @@ export type Club = {
   instagram?: string;
   linkedin?: string;
   website?: string;
+  mailing_list?: string;
   mission?: string;
   image_url?: string;
   questions?: ClubQuestion[];
