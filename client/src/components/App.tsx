@@ -15,6 +15,7 @@ function App() {
   const [userName, setUserName] = useState<string | undefined>(undefined);
   const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [authChecked, setAuthChecked] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,6 +30,9 @@ function App() {
       })
       .catch((error) => {
         console.log("User not logged in:", error);
+      })
+      .finally(() => {
+        setAuthChecked(true);
       });
   }, []);
 
@@ -37,7 +41,6 @@ function App() {
     post("/api/login", { token: userToken })
       .then((response: any) => {
         const user = response.user;
-        const isNewUser = response.isNewUser;
 
         setUserId(user._id);
         setUserName(user.name);
@@ -66,6 +69,7 @@ function App() {
     userName,
     userEmail,
     isAdmin,
+    authChecked,
     handleLogin,
     handleLogout,
   };
@@ -77,6 +81,6 @@ function App() {
       </UserContext.Provider>
     </GoogleOAuthProvider>
   );
-};
+}
 
 export default App;
