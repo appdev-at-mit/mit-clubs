@@ -56,12 +56,10 @@ export const availableRoles = [
 ];
 
 export const membershipProcessOptions = [
-  "Open Membership",
-  "Application Required",
-  "Tryout Required",
-  "Audition Required",
-  "Application and Interview Required",
-  "Invite-only",
+  "Open",
+  "Application",
+  "Tryout",
+  "Interview",
 ];
 
 export const recruitmentCycles = [

@@ -26,8 +26,8 @@ export type Club = {
   name: string;
   is_active: boolean;
   is_accepting?: boolean;
-  recruiting_cycle?: "Fall" | "Spring" | "Year-round" | string | string[];
-  membership_process?: string;
+  recruiting_cycle?: string[];
+  membership_process?: string[];
   tags?: string[];
   email?: string;
   instagram?: string;

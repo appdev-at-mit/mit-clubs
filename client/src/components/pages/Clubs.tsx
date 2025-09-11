@@ -54,7 +54,7 @@ function Clubs() {
   const [isHoveringResetAll, setIsHoveringResetAll] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
 
-  const recruitingCycles = ["Open", "Fall Semester", "Spring Semester", "IAP"];
+  const recruitingCycles = ["Year-round", "Fall", "Spring", "IAP"];
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -136,11 +136,18 @@ function Clubs() {
       currentFilters.membership_process &&
       currentFilters.membership_process.length > 0
     ) {
-      result = result.filter(
-        (club) =>
-          club.membership_process &&
-          currentFilters.membership_process.includes(club.membership_process)
-      );
+      result = result.filter((club) => {
+        if (!club.membership_process) return false;
+        let processes;
+        if (Array.isArray(club.membership_process)) {
+          processes = club.membership_process;
+        } else {
+          processes = [club.membership_process];
+        }
+        return processes.some((process) =>
+          currentFilters.membership_process.includes(process)
+        );
+      });
     }
 
     if (
@@ -149,9 +156,12 @@ function Clubs() {
     ) {
       result = result.filter((club) => {
         if (!club.recruiting_cycle) return false;
-        const cycles = Array.isArray(club.recruiting_cycle)
-          ? club.recruiting_cycle
-          : [club.recruiting_cycle];
+        let cycles;
+        if (Array.isArray(club.recruiting_cycle)) {
+          cycles = club.recruiting_cycle;
+        } else {
+          cycles = [club.recruiting_cycle];
+        }
         return cycles.some((cycle) =>
           currentFilters.recruiting_cycle.includes(cycle)
         );
@@ -589,7 +599,7 @@ function Clubs() {
                     isAccepting={club.is_accepting}
                     image_url={club.image_url}
                     description={club.mission || ""}
-                    recruitmentProcess={club.membership_process}
+                    membershipProcess={club.membership_process}
                     isSavedInitially={savedClubs.has(club.club_id)}
                   />
                 </div>
