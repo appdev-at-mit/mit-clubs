@@ -43,7 +43,7 @@ function ClubCard({
   if (!userContext) {
     throw new Error("ClubCard must be used within UserContext");
   }
-  const { userId, handleLogin } = userContext;
+  const { userId } = userContext;
 
   async function toggleSave(e: React.MouseEvent): Promise<void> {
     if (!userId) {
@@ -59,8 +59,9 @@ function ClubCard({
       }
       setIsSaved(!isSaved);
     } catch (error: any) {
-      const errorMessage = 
-        (error.response && error.response.data && error.response.data.error) || "Failed to update save status.";
+      const errorMessage =
+        (error.response && error.response.data && error.response.data.error) ||
+        "Failed to update save status.";
       alert(errorMessage);
     }
   }

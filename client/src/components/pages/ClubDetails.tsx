@@ -48,7 +48,7 @@ function ClubDetails() {
     throw new Error("ClubDetails must be used within UserContext");
   }
 
-  const { userId, handleLogin, userEmail } = userContext;
+  const { userId, userEmail } = userContext;
   const [club, setClub] = useState<Club | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isSaved, setIsSaved] = useState<boolean>(false);

@@ -87,6 +87,5 @@ export type AuthContextType = {
   userEmail?: string;
   isAdmin: boolean;
   authChecked: boolean;
-  handleLogin: (credentialResponse: any) => void;
   handleLogout: () => void;
 };

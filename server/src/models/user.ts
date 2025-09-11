@@ -10,7 +10,7 @@ export interface UserClubMembership {
 export interface User {
   name: string | undefined;
   email: string | undefined;
-  googleId: string | undefined;
+  mitId: string | undefined;
   isAdmin?: boolean;
   memberOf?: UserClubMembership[];
   savedClubs?: Club[];
@@ -25,7 +25,7 @@ const UserClubMembershipSchema = new mongoose.Schema({
 const UserSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true, sparse: true },
-  googleId: { type: String, unique: true, sparse: true },
+  mitId: { type: String, unique: true, sparse: true },
   isAdmin: { type: Boolean, default: false },
   memberOf: [UserClubMembershipSchema],
   savedClubs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'club' }],
