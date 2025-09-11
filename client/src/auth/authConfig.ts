@@ -50,7 +50,7 @@ export const AUTH_CONFIG: AuthConfig = {
 
   //Client-specific configs
   redirect_uri: DOMAIN_URI + "/oidc-response",
-  login_uri: import.meta.env.VITE_API_BASE_URL + "/api/login",
+  login_uri: DOMAIN_URI + "/api/login",
   client_id: "7C6WMoPPT3v0", //Safe to save client-side
   scope: "openid email profile", //depends on your application needs
 
