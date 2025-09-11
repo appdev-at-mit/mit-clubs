@@ -14,9 +14,17 @@ function RecruitmentPage({ club }: { club: Club }) {
 
   const [cycles, setCycles] = useState<string[]>(initialCycles);
   const [isActive, setIsActive] = useState(club.is_active || false);
-  const [isAccepting, setIsAccepting] = useState(club.is_accepting || false);
-  const [membershipProcess, setMembershipProcess] = useState(
-    club.membership_process || "Open Membership"
+  const [isAccepting, setIsAccepting] = useState(club.is_accepting);
+  let initialMembershipProcess: string[] = [];
+  if (club.membership_process) {
+    if (Array.isArray(club.membership_process)) {
+      initialMembershipProcess = club.membership_process;
+    } else {
+      initialMembershipProcess = [club.membership_process];
+    }
+  }
+  const [membershipProcess, setMembershipProcess] = useState<string[]>(
+    initialMembershipProcess
   );
 
   function toggleCycle(cycle: string) {
@@ -24,6 +32,14 @@ function RecruitmentPage({ club }: { club: Club }) {
       setCycles(cycles.filter((c) => c !== cycle));
     } else {
       setCycles([...cycles, cycle]);
+    }
+  }
+
+  function toggleMembershipProcess(process: string) {
+    if (membershipProcess.includes(process)) {
+      setMembershipProcess(membershipProcess.filter((p) => p !== process));
+    } else {
+      setMembershipProcess([...membershipProcess, process]);
     }
   }
 
@@ -39,17 +55,26 @@ function RecruitmentPage({ club }: { club: Club }) {
             Status<span className="text-red-500">*</span>
           </label>
           <div className="space-y-3">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
+            <div>
+              <select
                 id="is_accepting"
-                checked={isAccepting}
-                onChange={(e) => setIsAccepting(e.target.checked)}
-                className="h-4 w-4 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
-              />
-              <label htmlFor="is_accepting" className="ml-2 text-gray-700">
-                Currently accepting members
-              </label>
+                value={isAccepting === undefined ? "" : isAccepting.toString()}
+                onChange={(e) => {
+                  if (e.target.value === "") {
+                    setIsAccepting(undefined);
+                  } else {
+                    setIsAccepting(e.target.value === "true");
+                  }
+                }}
+                className="w-full p-2 border border-gray-300 rounded-md mb-2"
+              >
+                <option value="">Not Set</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+              <p className="text-sm text-gray-500">
+                Whether your club is currently accepting new members.
+              </p>
             </div>
             <div className="flex items-center">
               <input
@@ -68,23 +93,30 @@ function RecruitmentPage({ club }: { club: Club }) {
 
         <div className="grid grid-cols-1 md:grid-cols-[150px,1fr] gap-2 md:gap-4 items-start">
           <label className="font-medium text-gray-700">
-            Membership<span className="text-red-500">*</span>
+            Membership Process<span className="text-red-500">*</span>
           </label>
           <div>
-            <select
-              id="membership-process"
-              className="w-full p-2 border border-gray-300 rounded-md mb-1"
-              value={membershipProcess}
-              onChange={(e) => setMembershipProcess(e.target.value)}
-            >
-              {membershipProcessOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
+            <div className="space-y-2">
+              {membershipProcessOptions.map((process) => (
+                <div key={process} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`membership-${process}`}
+                    checked={membershipProcess.includes(process)}
+                    onChange={() => toggleMembershipProcess(process)}
+                    className="h-4 w-4 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
+                  />
+                  <label
+                    htmlFor={`membership-${process}`}
+                    className="ml-2 text-gray-700"
+                  >
+                    {process}
+                  </label>
+                </div>
               ))}
-            </select>
+            </div>
             <p className="text-sm text-gray-500 mt-1">
-              Select how new members join your club.
+              Select all that apply to your club's membership process.
             </p>
           </div>
         </div>
@@ -94,19 +126,22 @@ function RecruitmentPage({ club }: { club: Club }) {
             Recruitment Cycle<span className="text-red-500">*</span>
           </label>
           <div className="space-y-2">
-            {recruitmentCycles.map((cycle) => (
-              <div key={cycle.id} className="flex items-center">
+            {["Year-round", "Fall", "Spring", "IAP"].map((cycle) => (
+              <div key={cycle} className="flex items-center">
                 <input
                   type="checkbox"
-                  id={cycle.id}
+                  id={`cycle-${cycle}`}
                   name="recruitment_cycle"
-                  value={cycle.value}
-                  checked={cycles.includes(cycle.value)}
-                  onChange={() => toggleCycle(cycle.value)}
+                  value={cycle}
+                  checked={cycles.includes(cycle)}
+                  onChange={() => toggleCycle(cycle)}
                   className="h-4 w-4 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
                 />
-                <label htmlFor={cycle.id} className="ml-2 text-gray-700">
-                  {cycle.label}
+                <label
+                  htmlFor={`cycle-${cycle}`}
+                  className="ml-2 text-gray-700"
+                >
+                  {cycle}
                 </label>
               </div>
             ))}

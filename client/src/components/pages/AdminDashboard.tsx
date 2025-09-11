@@ -54,7 +54,11 @@ function AdminDashboard() {
     loadDashboard();
   }, [userId, userEmail, navigate, authChecked]);
 
-  function handleFieldChange(clubId: string, field: keyof Club, value: string) {
+  function handleFieldChange(
+    clubId: string,
+    field: keyof Club,
+    value: string | string[]
+  ) {
     setEditingClubs((prev) => ({
       ...prev,
       [clubId]: {
@@ -75,17 +79,61 @@ function AdminDashboard() {
     }
 
     if (Array.isArray(value)) {
-      return value.length > 0 ? String(value[0]) : "";
+      if (value.length > 0) {
+        return String(value[0]);
+      }
+      return "";
     }
 
     return String(value || "");
+  }
+
+  function getCurrentArray(
+    club: Club,
+    field: "membership_process" | "recruiting_cycle"
+  ): string[] {
+    const editedClub = editingClubs[club.club_id];
+    const value =
+      editedClub && editedClub[field] !== undefined
+        ? editedClub[field]
+        : club[field];
+    return Array.isArray(value) ? value : [];
+  }
+
+  function renderCheckboxGroup(
+    club: Club,
+    field: "membership_process" | "recruiting_cycle",
+    options: string[]
+  ) {
+    const currentArray = getCurrentArray(club, field);
+
+    return (
+      <div className="space-y-1">
+        {options.map((option) => (
+          <label key={option} className="flex items-center gap-1 text-xs">
+            <input
+              type="checkbox"
+              checked={currentArray.includes(option)}
+              onChange={(e) => {
+                const newArray = e.target.checked
+                  ? [...currentArray.filter((item) => item !== option), option]
+                  : currentArray.filter((item) => item !== option);
+                handleFieldChange(club.club_id, field, newArray);
+              }}
+              className="w-3 h-3"
+            />
+            <span>{option}</span>
+          </label>
+        ))}
+      </div>
+    );
   }
 
   async function handleImageUpload(
     clubId: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) {
-    const file = event.target.files?.[0];
+    const file = event.target.files && event.target.files[0];
     if (!file) return;
 
     setUploadError((prev) => ({ ...prev, [clubId]: "" }));
@@ -126,7 +174,8 @@ function AdminDashboard() {
     try {
       const updatePromises = Object.entries(editingClubs).map(
         async ([clubId, changes]) => {
-          return updateClub({ ...changes, club_id: clubId });
+          const cleanChanges = { ...changes, club_id: clubId };
+          return updateClub(cleanChanges);
         }
       );
 
@@ -216,6 +265,9 @@ function AdminDashboard() {
                   <th className="text-left p-3 font-medium text-gray-700 min-w-[120px]">
                     Status
                   </th>
+                  <th className="text-left p-3 font-medium text-gray-700 min-w-[140px]">
+                    Accepting Members
+                  </th>
                   <th className="text-left p-3 font-medium text-gray-700 min-w-[150px]">
                     Membership Process
                   </th>
@@ -281,40 +333,36 @@ function AdminDashboard() {
                     </td>
                     <td className="p-3">
                       <select
-                        value={getDisplayValue(club, "membership_process")}
+                        value={getDisplayValue(club, "is_accepting")}
                         onChange={(e) =>
                           handleFieldChange(
                             club.club_id,
-                            "membership_process",
+                            "is_accepting",
                             e.target.value
                           )
                         }
                         className="w-full p-1 border border-gray-300 rounded text-sm"
                       >
-                        <option value="">Select Process</option>
-                        <option value="Open">Open</option>
-                        <option value="Application">Application</option>
-                        <option value="Interview">Interview</option>
-                        <option value="Tryout">Tryout</option>
+                        <option value="">Not Set</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
                       </select>
                     </td>
                     <td className="p-3">
-                      <select
-                        value={getDisplayValue(club, "recruiting_cycle")}
-                        onChange={(e) =>
-                          handleFieldChange(
-                            club.club_id,
-                            "recruiting_cycle",
-                            e.target.value
-                          )
-                        }
-                        className="w-full p-1 border border-gray-300 rounded text-sm"
-                      >
-                        <option value="">Select Cycle</option>
-                        <option value="Fall">Fall</option>
-                        <option value="Spring">Spring</option>
-                        <option value="Year-round">Year-round</option>
-                      </select>
+                      {renderCheckboxGroup(club, "membership_process", [
+                        "Open",
+                        "Application",
+                        "Tryout",
+                        "Interview",
+                      ])}
+                    </td>
+                    <td className="p-3">
+                      {renderCheckboxGroup(club, "recruiting_cycle", [
+                        "Year-round",
+                        "Fall",
+                        "Spring",
+                        "IAP",
+                      ])}
                     </td>
                     <td className="p-3">
                       <div className="flex items-center gap-1">

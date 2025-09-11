@@ -19,7 +19,7 @@ export interface Club {
   is_active: boolean;
   is_accepting?: boolean;
   recruiting_cycle?: string[];
-  membership_process?: string;
+  membership_process?: string[];
   tags?: string[];
   email?: string;
   instagram?: string;
@@ -95,7 +95,28 @@ const ClubSchema = new mongoose.Schema({
       return v;
     },
   },
-  membership_process: { type: String },
+  membership_process: {
+    type: [String],
+    validate: {
+      validator: function (v: any) {
+        // allow either string or array of strings
+        return (
+          v === undefined ||
+          v === null ||
+          v === "" ||
+          (Array.isArray(v) &&
+            v.every((item: any) => typeof item === "string")) ||
+          typeof v === "string"
+        );
+      },
+      message: "Invalid membership process format",
+    },
+    // convert single string to array when saving
+    set: function (v: any) {
+      if (typeof v === "string") return [v];
+      return v;
+    },
+  },
   tags: { type: [String] },
   email: { type: String },
   instagram: { type: String },

@@ -175,7 +175,7 @@ function ClubDetails() {
   // process tags
   const tagList =
     club && typeof club.tags === "string"
-      ? club.tags.split(/,\s*/).filter((tag) => tag)
+      ? club.tags.split(/,\s*/).filter((tag: string) => tag)
       : club && Array.isArray(club.tags)
       ? club.tags
       : [];
@@ -242,7 +242,7 @@ function ClubDetails() {
                     {club.name}
                   </h1>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {tagList.map((tag, index) => (
+                    {tagList.map((tag: string, index: number) => (
                       <span
                         key={index}
                         className="text-sm bg-appdev-blue/20 text-appdev-blue-dark font-medium rounded-full px-3 py-1"
@@ -396,22 +396,26 @@ function ClubDetails() {
                       </span>
                     </div>
                   )}
-                  {club.membership_process && (
+                  {club.membership_process && club.membership_process.length > 0 && (
                     <div className="flex items-center gap-3">
                       <ClipboardList
                         size={18}
                         className="text-gray-500 flex-shrink-0"
                       />
-                      <span>{club.membership_process}</span>
+                      <span>
+                        {club.membership_process.join(", ")}
+                      </span>
                     </div>
                   )}
-                  {club.recruiting_cycle && String(club.recruiting_cycle) && (
+                  {club.recruiting_cycle && club.recruiting_cycle.length > 0 && (
                     <div className="flex items-center gap-3">
                       <RefreshCw
                         size={18}
                         className="text-gray-500 flex-shrink-0"
                       />
-                      <span>{club.recruiting_cycle}</span>
+                      <span>
+                        {club.recruiting_cycle.join(", ")}
+                      </span>
                     </div>
                   )}
                 </div>

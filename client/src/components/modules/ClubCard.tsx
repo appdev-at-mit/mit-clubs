@@ -20,7 +20,7 @@ function ClubCard({
   isAccepting,
   tags,
   membersRange,
-  recruitmentProcess,
+  membershipProcess,
   image_url,
   isSavedInitially = false,
 }: {
@@ -30,7 +30,7 @@ function ClubCard({
   isAccepting?: boolean;
   tags: string[] | string;
   membersRange?: string;
-  recruitmentProcess?: string;
+  membershipProcess?: string[];
   image_url?: string;
   isSavedInitially?: boolean;
 }) {
@@ -126,10 +126,10 @@ function ClubCard({
               {membersRange}
             </span>
           )}
-          {recruitmentProcess && (
-            <span className={`flex items-center gap-1`}>
-              <FaClipboardCheck className={`text-gray-500`} />
-              {recruitmentProcess}
+          {membershipProcess && membershipProcess.length > 0 && (
+            <span className="flex items-center gap-1">
+              <FaClipboardCheck className="text-gray-500" />
+              {membershipProcess.join(", ")}
             </span>
           )}
           {isAccepting !== undefined && (
