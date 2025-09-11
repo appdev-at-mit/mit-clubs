@@ -106,7 +106,7 @@ app.get("*", (_req: Request, res: Response) => {
   });
 });
 
-const port = process.env["SERVER_PORT"] || process.env["PORT"];
+const port = process.env["SERVER_PORT"];
 if (!port) {
   assert.fail("Missing SERVER_PORT or PORT environment variable!");
 }

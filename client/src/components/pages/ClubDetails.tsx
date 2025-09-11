@@ -11,6 +11,7 @@ import { checkIsAdmin } from "../../api/admin";
 import { UserContext } from "../App";
 import Navbar from "../modules/Navbar";
 import LoginModal from "../modules/LoginModal";
+import NotFound from "./NotFound";
 import defaultImage from "../../assets/default.png";
 
 import {
@@ -57,6 +58,7 @@ function ClubDetails() {
   const [hasOwnerPermission, setHasOwnerPermission] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
+  const [notFound, setNotFound] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchAllDetails() {
@@ -111,8 +113,14 @@ function ClubDetails() {
           setHasOwnerPermission(false);
           setIsAdmin(false);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching club details or save status:", error);
+        if (
+          error.includes &&
+          (error.includes("404") || error.includes("Not Found"))
+        ) {
+          setNotFound(true);
+        }
         setClub(null);
       } finally {
         setLoading(false);
@@ -193,6 +201,10 @@ function ClubDetails() {
         </div>
       </div>
     );
+  }
+
+  if (notFound) {
+    return <NotFound />;
   }
 
   if (!club) {
