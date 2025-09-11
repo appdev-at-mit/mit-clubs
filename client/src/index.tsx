@@ -8,6 +8,7 @@ import Profile from "./components/pages/Profile";
 import ClubManage from "./components/pages/ClubManage";
 import AdminDashboard from "./components/pages/AdminDashboard";
 import About from "./components/pages/About";
+import { OidcResponseHandler } from "./auth/auth";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/about" element={<About />} />
+      <Route path="/oidc-response" element={<OidcResponseHandler />} />
     </Route>
   )
 );
@@ -35,6 +37,4 @@ if (!rootElement) {
   throw new Error("Root element not found");
 }
 
-ReactDOM.createRoot(rootElement).render(
-  <RouterProvider router={router} />
-);
+ReactDOM.createRoot(rootElement).render(<RouterProvider router={router} />);

@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import React, { useContext, useState } from "react";
 import { UserContext } from "../App";
-import { GoogleLogin, googleLogout } from "@react-oauth/google";
+import { redirectToLogin } from "../../auth/auth";
 import { Menu, X } from "lucide-react";
 import logo from "../../assets/logo.png";
 
@@ -13,7 +13,7 @@ function Navbar() {
     throw new Error("Navbar must be used within UserContext");
   }
 
-  const { userId, handleLogin, handleLogout } = userContext;
+  const { userId, handleLogout } = userContext;
   const isAuth = Boolean(userId);
 
   const toggleMenu = () => {
@@ -61,7 +61,6 @@ function Navbar() {
                 </NavLink>
                 <button
                   onClick={() => {
-                    googleLogout();
                     handleLogout();
                   }}
                   className="text-gray-600 hover:text-gray-900 no-underline font-semibold"
@@ -83,12 +82,12 @@ function Navbar() {
                 >
                   About
                 </NavLink>
-                <GoogleLogin
-                  onSuccess={handleLogin}
-                  onError={() => {
-                    console.error("Google login error");
-                  }}
-                />
+                <button
+                  onClick={() => redirectToLogin()}
+                  className="bg-appdev-blue text-white px-4 py-2 rounded-md hover:bg-appdev-blue-dark font-semibold"
+                >
+                  Login
+                </button>
               </>
             )}
           </div>
@@ -139,7 +138,6 @@ function Navbar() {
                   </NavLink>
                   <button
                     onClick={() => {
-                      googleLogout();
                       handleLogout();
                       setIsMenuOpen(false);
                     }}
@@ -150,15 +148,15 @@ function Navbar() {
                 </>
               ) : (
                 <div className="py-2">
-                  <GoogleLogin
-                    onSuccess={(response) => {
-                      handleLogin(response);
+                  <button
+                    onClick={() => {
+                      redirectToLogin();
                       setIsMenuOpen(false);
                     }}
-                    onError={() => {
-                      console.error("Google login error");
-                    }}
-                  />
+                    className="bg-appdev-blue text-white px-4 py-2 rounded-md hover:bg-appdev-blue-dark font-semibold w-full"
+                  >
+                    Login
+                  </button>
                 </div>
               )}
             </div>

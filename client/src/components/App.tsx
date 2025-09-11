@@ -1,14 +1,12 @@
 import React, { useState, useEffect, createContext } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { AuthProvider } from "../auth/authProvider";
 
 import "../utilities.css";
 import { get, post } from "../utilities";
 import { AuthContextType, User } from "../types";
 
 export const UserContext = createContext<AuthContextType | null>(null);
-
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 function App() {
   const [userId, setUserId] = useState<string | undefined>(undefined);
@@ -17,6 +15,7 @@ function App() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [authChecked, setAuthChecked] = useState<boolean>(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     get("/api/whoami")
@@ -34,25 +33,7 @@ function App() {
       .finally(() => {
         setAuthChecked(true);
       });
-  }, []);
-
-  function handleLogin(credentialResponse: any): void {
-    const userToken = credentialResponse.credential;
-    post("/api/login", { token: userToken })
-      .then((response: any) => {
-        const user = response.user;
-
-        setUserId(user._id);
-        setUserName(user.name);
-        setUserEmail(user.email);
-        setIsAdmin(Boolean(user.isAdmin));
-
-        navigate("/");
-      })
-      .catch((err) => {
-        console.error("Login failed:", err);
-      });
-  }
+  }, [location.state]); // Re-run when location.state changes (from nanoid)
 
   function handleLogout(): void {
     setUserId(undefined);
@@ -70,16 +51,15 @@ function App() {
     userEmail,
     isAdmin,
     authChecked,
-    handleLogin,
     handleLogout,
   };
 
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <AuthProvider>
       <UserContext.Provider value={authContextValue}>
         <Outlet />
       </UserContext.Provider>
-    </GoogleOAuthProvider>
+    </AuthProvider>
   );
 }
 

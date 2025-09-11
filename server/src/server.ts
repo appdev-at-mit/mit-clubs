@@ -8,6 +8,7 @@ import session from "express-session";
 import mongoose from "mongoose";
 import assert from "assert";
 import path from "path";
+import cors from "cors";
 import { checkRoutes, checkSetup } from "./validator";
 import apiRouter from "./api";
 import { clubRouter } from "./api/clubs";
@@ -36,6 +37,15 @@ mongoose
   .catch((err: any) => console.log(`Error connecting to MongoDB: ${err}`));
 
 const app = express();
+
+const corsOptions = {
+  origin: process.env["CLIENT_URL"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+};
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(checkRoutes);
 app.use(express.json());

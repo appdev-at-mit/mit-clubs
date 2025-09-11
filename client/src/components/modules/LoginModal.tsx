@@ -1,7 +1,5 @@
-import React, { useContext } from "react";
 import { createPortal } from "react-dom";
-import { GoogleLogin } from "@react-oauth/google";
-import { UserContext } from "../App";
+import { redirectToLogin } from "../../auth/auth";
 import { FaTimes } from "react-icons/fa";
 
 type LoginModalProps = {
@@ -10,19 +8,10 @@ type LoginModalProps = {
 };
 
 function LoginModal({ isOpen, onClose }: LoginModalProps) {
-  const userContext = useContext(UserContext);
-
-    if (!userContext) {
-        throw new Error("LoginModal must be used within UserContext");
-    }
-
-  const { handleLogin } = userContext;
-
   if (!isOpen) return null;
 
-  const handleLoginSuccess = (credentialResponse: any) => {
-    handleLogin(credentialResponse);
-    onClose();
+  const handleLoginClick = () => {
+    redirectToLogin();
   };
 
   const modalContent = (
@@ -56,12 +45,12 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
         </div>
 
         <div className="flex justify-center">
-          <GoogleLogin
-            onSuccess={handleLoginSuccess}
-            onError={() => {
-              console.error("Google login error");
-            }}
-          />
+          <button
+            onClick={handleLoginClick}
+            className="bg-appdev-blue text-white px-6 py-3 rounded-md hover:bg-appdev-blue-dark font-semibold"
+          >
+            Login
+          </button>
         </div>
       </div>
     </div>
