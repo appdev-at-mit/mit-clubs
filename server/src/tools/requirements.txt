@@ -4,3 +4,4 @@ pymongo
 dotenv
 openai
 python-dotenv
+selenium
