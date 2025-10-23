@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DataSource {
+  DORMSPAM
+  MANUAL_INPUT
+}
+
+model Event {
+  id          Int        @id @default(autoincrement())
+  source      DataSource
+  // For dormspam, this is the email that the event was scraped from.
+  fromEmail   Email?     @relation(fields: [fromEmailId], references: [messageId])
+  fromEmailId String
+  text        String
+
+  title     String
+  organizer String
+  date      DateTime
+  location  String
+  duration  Int      @default(60)
+  gcalId    String?
+
+  liked EmailSender[]
+
+  tags            Tag[]
+  tagsProcessedBy String?
+
+  comments Comment[]
+}
+
+model Tag {
+  id       Int    @id @default(autoincrement())
+  name     String @unique
+  category String
+  icon     String
+  color    String
+
+  events Event[]
+}
+
+model Email {
+  // The account used to scrape the email, i.e., macy404@mit.edu
+  scrapedBy String
+  // The uid of this email in the account's mailbox.
+  uid       Int
+
+  messageId   String  @id
+  inReplyTo   Email?  @relation("InReplyTo", fields: [inReplyToId], references: [messageId])
+  inReplyToId String?
+  replies     Email[] @relation("InReplyTo")
+
+  receivedAt  DateTime
+  sender      EmailSender @relation(fields: [senderEmail], references: [email])
+  senderEmail String
+  subject     String
+  body        String
+
+  processedBody String?
+
+  // The name of the model-prompt used to process this event. E.g. "GPT3.5-prompt-0514"
+  // In this way when we get better models we can reprocess the same events with the new model.
+  modelName String?
+
+  event Event[]
+
+  @@unique([scrapedBy, uid])
+}
+
+// Also record emails we looked at but ignored. This prevents us from looking at them again.
+// Stores less information for privacy reasons.
+model IgnoredEmail {
+  scrapedBy  String
+  uid        Int
+  receivedAt DateTime
+
+  @@unique([scrapedBy, uid])
+}
+
+// Actually user.
+model EmailSender {
+  email  String  @id
+  name   String?
+  emails Email[]
+  likes  Event[]
+
+  subscribed Boolean @default(false)
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  text      String
+  userName  String
+  createdAt DateTime  @default(now())
+  eventId   Int
+  parentId  Int? // For replies, null for top-level comments
+  event     Event     @relation(fields: [eventId], references: [id])
+  parent    Comment?  @relation("ReplyToParent", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("ReplyToParent")
+}
