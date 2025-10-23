@@ -8,6 +8,7 @@ import Profile from "./components/pages/Profile";
 import ClubManage from "./components/pages/ClubManage";
 import AdminDashboard from "./components/pages/AdminDashboard";
 import About from "./components/pages/About";
+import Events from "./components/pages/Events";
 import { OidcResponseHandler } from "./auth/auth";
 import {
   createBrowserRouter,
@@ -27,6 +28,7 @@ const router = createBrowserRouter(
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/about" element={<About />} />
+      <Route path="/events" element={<Events />} />
       <Route path="/oidc-response" element={<OidcResponseHandler />} />
     </Route>
   )

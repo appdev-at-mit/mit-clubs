@@ -1,5 +1,33 @@
-name: mit-clubs
+# name: mit-clubs
 
+# services:
+#   proxy:
+#     build:
+#       context: .
+#       dockerfile: client.Dockerfile
+#     depends_on:
+#       - server
+#     ports:
+#       - "1250:80"
+#     restart: always
+#     # allow the container to be recognized by traefik for proxying
+#     labels:
+#       - "traefik.http.routers.proxy.rule=Host(`mitclubs.mitappdev.com`)||Host(`www.mitclubs.com`)||Host(`mitclubs.com`)"
+#       - "traefik.enable=true"
+#       - "traefik.http.routers.proxy.entrypoints=web,websecure"
+#     env_file:
+#       - ./.env
+
+#   server:
+#     build:
+#       context: .
+#       dockerfile: server.Dockerfile
+#     container_name: mit-clubs-server
+#     expose:
+#       - "1251"
+#     env_file:
+#       - ./.env
+name: mit-clubs
 services:
   proxy:
     build:
@@ -10,13 +38,21 @@ services:
     ports:
       - "1250:80"
     restart: always
-    # allow the container to be recognized by traefik for proxying
     labels:
       - "traefik.http.routers.proxy.rule=Host(`mitclubs.mitappdev.com`)||Host(`www.mitclubs.com`)||Host(`mitclubs.com`)"
       - "traefik.enable=true"
       - "traefik.http.routers.proxy.entrypoints=web,websecure"
     env_file:
       - ./.env
+    develop:
+      watch:
+        - action: sync
+          path: ./client/src
+          target: /app/src
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./client/package.json
 
   server:
     build:
@@ -27,3 +63,13 @@ services:
       - "1251"
     env_file:
       - ./.env
+    develop:
+      watch:
+        - action: sync
+          path: ./server
+          target: /app
+          ignore:
+            - node_modules/
+            - "*.log"
+        - action: rebuild
+          path: ./server/package.json
