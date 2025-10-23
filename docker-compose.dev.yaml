@@ -1,0 +1,37 @@
+name: mit-clubs
+
+services:
+  proxy:
+    build:
+      context: .
+      dockerfile: client.Dockerfile
+      target: build
+    depends_on:
+      - server
+    ports:
+      - "1250:1250"
+    volumes:
+      - ./client/src:/usr/local/app/client/src
+      - ./client/index.html:/usr/local/app/client/index.html
+      - /usr/local/app/node_modules
+    command: npm run dev
+    environment:
+      - VITE_API_BASE_URL=http://mit-clubs-server:1251
+    env_file:
+      - ./.env
+
+  server:
+    build:
+      context: .
+      dockerfile: server.Dockerfile
+      target: build
+    container_name: mit-clubs-server
+    ports:
+      - "1251:1251"
+    volumes:
+      - ./server/src:/usr/local/app/server/src
+      - ./server/tsconfig.json:/usr/local/app/server/tsconfig.json
+      - /usr/local/app/node_modules
+    command: npm run start
+    env_file:
+      - ./.env
