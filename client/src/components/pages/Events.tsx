@@ -5,6 +5,7 @@ import ClubCard from "../modules/ClubCard";
 import Navbar from "../modules/Navbar";
 import { UserContext } from "../App";
 import { getAllClubs, getSavedClubIds } from "../../api/clubs";
+import { getMockEvents } from '../../api/mock-events';
 import { Club } from "../../types";
 import {
   tagCategories,
