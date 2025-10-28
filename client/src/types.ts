@@ -74,6 +74,24 @@ export type Event = {
   updated_at: Date;
 };
 
+export type MockEvent = {
+  event_id: string;
+  name: string;
+  description: string;
+  date: string; // YYYY-MM-DD
+  startTime: string; // HH:MM
+  endTime: string; // HH:MM
+  location: string;
+  organizerId: string;
+  organizerName: string;
+  attendeeCount: number;
+  maxAttendees?: number;
+  imageUrl?: string;
+  tags: string[];
+  category: string;
+  isRegistered?: boolean;
+};
+
 export type SavedClub = {
   _id: string;
   user_id: string;
