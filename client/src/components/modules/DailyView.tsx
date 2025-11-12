@@ -222,7 +222,7 @@ function DailyView() {
               onClick={() => setIsCategorySectionOpen(!isCategorySectionOpen)}
               className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
             >
-              <span>Category</span>
+              <span>Club Category</span>
               <FaChevronDown
                 size={12}
                 className={`transition-transform duration-300 ${
