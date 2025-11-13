@@ -82,7 +82,7 @@ function DailyView() {
     let result = [...eventsList];
 
     // For list view: show all upcoming events from today onwards
-    // For calendar view: show events for the selected date only
+    // For calendar view: show events for the selected date only (including multi-day events)
     if (viewMode === 'list') {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -90,7 +90,29 @@ function DailyView() {
       result = result.filter(event => event.date >= todayStr);
     } else {
       const selectedDateStr = selectedDate.toISOString().split('T')[0];
-      result = result.filter(event => event.date === selectedDateStr);
+      result = result.filter(event => {
+        // Show events that start on this day
+        if (event.date === selectedDateStr) return true;
+
+        // Check if this is a multi-day event that continues into this day
+        const eventDate = new Date(event.date + 'T00:00:00');
+        const eventStartMinutes = timeToMinutes(event.startTime);
+        const eventEndMinutes = timeToMinutes(event.endTime);
+
+        let duration = eventEndMinutes - eventStartMinutes;
+        if (duration === 0) duration = 24 * 60; // 24-hour event
+        else if (duration < 0) duration += 24 * 60; // Spans past midnight
+
+        // Calculate if event extends to the next day
+        if (eventStartMinutes + duration > 24 * 60) {
+          const nextDay = new Date(eventDate);
+          nextDay.setDate(nextDay.getDate() + 1);
+          const nextDayStr = nextDay.toISOString().split('T')[0];
+          return nextDayStr === selectedDateStr;
+        }
+
+        return false;
+      });
     }
 
     if (currentSearchTerm) {
@@ -171,29 +193,63 @@ function DailyView() {
   }
 
   // Calculate position and height for timeline
-  function getEventStyles(event: MockEvent) {
+  function getEventStyles(event: MockEvent, isCurrentDay: boolean = true) {
     const startMinutes = timeToMinutes(event.startTime);
-    const endMinutes = timeToMinutes(event.endTime);
+    let endMinutes = timeToMinutes(event.endTime);
 
-    const calendarStart = 8 * 60; // 8:00 AM
+    const calendarStart = 0; // 12:00 AM (midnight)
+    const calendarEnd = 24 * 60; // 12:00 AM next day (midnight)
     const hourHeight = 80; // pixels per hour
 
-    const top = ((startMinutes - calendarStart) / 60) * hourHeight;
-
     let duration = endMinutes - startMinutes;
-    if (duration < 0) duration += 24 * 60;
-    const height = (duration / 60) * hourHeight;
+    // If end time equals start time, it's a 24-hour event
+    if (duration === 0) {
+      duration = 24 * 60;
+    } else if (duration < 0) {
+      // Event spans past midnight - add 24 hours
+      duration += 24 * 60;
+    }
+
+    // Check if this event started on a previous day (continuation event)
+    const selectedDateStr = selectedDate.toISOString().split('T')[0];
+    const eventDate = event.date;
+    const isContinuation = eventDate !== selectedDateStr;
+
+    let top, height;
+
+    if (isContinuation) {
+      // Event continues from previous day - start at midnight
+      top = 0;
+      // Calculate remaining duration from the event
+      const totalEventDuration = startMinutes + duration;
+      const remainingDuration = totalEventDuration - calendarEnd;
+      height = (Math.min(remainingDuration, calendarEnd) / 60) * hourHeight;
+    } else {
+      // Event starts today
+      top = ((startMinutes - calendarStart) / 60) * hourHeight;
+
+      // Cap the event at end of day (midnight)
+      const eventEndMinutes = startMinutes + duration;
+      if (eventEndMinutes > calendarEnd) {
+        duration = calendarEnd - startMinutes;
+      }
+
+      height = (duration / 60) * hourHeight;
+    }
 
     return { top, height };
   }
 
-  // Generate hour labels for timeline
+  // Generate hour labels for timeline (12 AM to 11 PM)
   function generateHourLabels() {
     const hours = [];
-    for (let i = 8; i <= 29; i++) {
-      const hour = i % 24;
-      const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-      hours.push({ value: i, display: `${String(displayHour).padStart(2, '0')}:00` });
+    for (let i = 0; i < 24; i++) {
+      const displayHour = i === 0 ? 12 : i > 12 ? i - 12 : i;
+      const period = i < 12 ? 'AM' : 'PM';
+      hours.push({
+        value: i,
+        display: `${displayHour}:00 ${period}`
+      });
     }
     return hours;
   }
