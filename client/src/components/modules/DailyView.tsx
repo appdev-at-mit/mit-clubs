@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { FaSearch, FaChevronDown } from "react-icons/fa";
+import { FaSearch, FaChevronDown, FaBookmark } from "react-icons/fa";
 import { SlidersHorizontal, X } from "lucide-react";
 import { UserContext } from "../App";
 import { getMockEvents } from '../../api/mock-events';
@@ -13,6 +13,8 @@ type FilterState = {
   selected_tags: string[];
 };
 
+type DailyViewMode = 'list' | 'calendar';
+
 function DailyView() {
   const userContext = useContext(UserContext);
 
@@ -21,6 +23,8 @@ function DailyView() {
   }
 
   const { userId } = userContext;
+  const [viewMode, setViewMode] = useState<DailyViewMode>('list');
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [filters, setFilters] = useState<FilterState>({
     selected_tags: [],
   });
@@ -77,12 +81,17 @@ function DailyView() {
   ) {
     let result = [...eventsList];
 
-    // Show all upcoming events from today onwards
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayStr = today.toISOString().split('T')[0];
-
-    result = result.filter(event => event.date >= todayStr);
+    // For list view: show all upcoming events from today onwards
+    // For calendar view: show events for the selected date only
+    if (viewMode === 'list') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayStr = today.toISOString().split('T')[0];
+      result = result.filter(event => event.date >= todayStr);
+    } else {
+      const selectedDateStr = selectedDate.toISOString().split('T')[0];
+      result = result.filter(event => event.date === selectedDateStr);
+    }
 
     if (currentSearchTerm) {
       const lowerSearchTerm = currentSearchTerm.toLowerCase();
@@ -153,7 +162,91 @@ function DailyView() {
     if (events.length > 0) {
       applyFilters(events, filters, searchTerm);
     }
-  }, [filters, searchTerm, events]);
+  }, [filters, searchTerm, events, viewMode, selectedDate]);
+
+  // Convert time string (HH:MM) to minutes from midnight
+  function timeToMinutes(time: string): number {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+
+  // Calculate position and height for timeline
+  function getEventStyles(event: MockEvent) {
+    const startMinutes = timeToMinutes(event.startTime);
+    const endMinutes = timeToMinutes(event.endTime);
+
+    const calendarStart = 8 * 60; // 8:00 AM
+    const hourHeight = 80; // pixels per hour
+
+    const top = ((startMinutes - calendarStart) / 60) * hourHeight;
+
+    let duration = endMinutes - startMinutes;
+    if (duration < 0) duration += 24 * 60;
+    const height = (duration / 60) * hourHeight;
+
+    return { top, height };
+  }
+
+  // Generate hour labels for timeline
+  function generateHourLabels() {
+    const hours = [];
+    for (let i = 8; i <= 29; i++) {
+      const hour = i % 24;
+      const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+      hours.push({ value: i, display: `${String(displayHour).padStart(2, '0')}:00` });
+    }
+    return hours;
+  }
+
+  // Calculate overlapping events and their positions
+  function calculateEventLayout(events: MockEvent[]) {
+    const sortedEvents = [...events].sort((a, b) => {
+      const aStart = timeToMinutes(a.startTime);
+      const bStart = timeToMinutes(b.startTime);
+      if (aStart !== bStart) return aStart - bStart;
+      return timeToMinutes(b.endTime) - timeToMinutes(a.endTime); // Longer events first
+    });
+
+    const columns: MockEvent[][] = [];
+
+    sortedEvents.forEach(event => {
+      const eventStart = timeToMinutes(event.startTime);
+      const eventEnd = timeToMinutes(event.endTime);
+
+      // Find the first column where this event doesn't overlap
+      let placed = false;
+      for (let i = 0; i < columns.length; i++) {
+        const column = columns[i];
+        const lastEventInColumn = column[column.length - 1];
+        const lastEventEnd = timeToMinutes(lastEventInColumn.endTime);
+
+        if (eventStart >= lastEventEnd) {
+          column.push(event);
+          placed = true;
+          break;
+        }
+      }
+
+      // If no suitable column found, create a new one
+      if (!placed) {
+        columns.push([event]);
+      }
+    });
+
+    // Create a map of event to its position
+    const eventPositions = new Map<string, { column: number, totalColumns: number }>();
+
+    columns.forEach((column, columnIndex) => {
+      column.forEach(event => {
+        eventPositions.set(event.event_id, {
+          column: columnIndex,
+          totalColumns: columns.length
+        });
+      });
+    });
+
+    return eventPositions;
+  }
 
   if (loading) {
     return (
@@ -166,15 +259,18 @@ function DailyView() {
     );
   }
 
+  const hourLabels = viewMode === 'calendar' ? generateHourLabels() : [];
+  const eventLayout = viewMode === 'calendar' ? calculateEventLayout(filteredEvents) : new Map();
+
   return (
-    <div className="flex flex-grow overflow-hidden relative">
+    <div className="flex h-screen overflow-hidden relative" style={{ height: 'calc(100vh - 64px)' }}>
       {/* filter panel */}
       <div
         className={`
-          fixed top-[128px] left-0 bottom-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
+          fixed top-16 left-0 bottom-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
           transform transition-transform duration-300 ease-in-out
           ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0 md:static md:w-64 flex flex-col
+          md:translate-x-0 md:sticky md:top-16 md:h-screen md:w-64 flex flex-col
         `}
       >
         <div className="px-4 py-3 border-b border-gray-200 flex-shrink-0">
@@ -371,7 +467,7 @@ function DailyView() {
       {/* overlay for mobile sidebar */}
       {isMobileSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden top-[128px]"
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden top-16"
           onClick={toggleMobileSidebar}
           aria-hidden="true"
         />
@@ -379,33 +475,96 @@ function DailyView() {
 
       {/* main content */}
       <div className="flex-grow overflow-y-auto p-6 w-full bg-gray-50">
-        {/* Search Bar */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="relative flex-grow">
-            <input
-              type="text"
-              placeholder={
-                isMobileView
-                  ? "Search events"
-                  : "Search events by name or description"
-              }
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark"
-            />
-            <FaSearch className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400" />
+        {/* View Toggle and Search Bar */}
+        <div className="mb-6 space-y-4">
+          {/* View Mode Toggle */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-white text-gray-900 shadow'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                List View
+              </button>
+              <button
+                onClick={() => setViewMode('calendar')}
+                className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                  viewMode === 'calendar'
+                    ? 'bg-white text-gray-900 shadow'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Calendar View
+              </button>
+            </div>
+            {viewMode === 'calendar' && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const newDate = new Date(selectedDate);
+                    newDate.setDate(newDate.getDate() - 1);
+                    setSelectedDate(newDate);
+                  }}
+                  className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+                  aria-label="Previous day"
+                >
+                  <span className="text-lg">←</span>
+                </button>
+                <input
+                  type="date"
+                  value={selectedDate.toISOString().split('T')[0]}
+                  onChange={(e) => setSelectedDate(new Date(e.target.value + 'T00:00:00'))}
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark"
+                />
+                <button
+                  onClick={() => {
+                    const newDate = new Date(selectedDate);
+                    newDate.setDate(newDate.getDate() + 1);
+                    setSelectedDate(newDate);
+                  }}
+                  className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+                  aria-label="Next day"
+                >
+                  <span className="text-lg">→</span>
+                </button>
+              </div>
+            )}
           </div>
-          <button
-            onClick={toggleMobileSidebar}
-            className="ml-4 md:hidden p-2 rounded-md border border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
-            aria-label="Open filters"
-          >
-            <SlidersHorizontal size={20} />
-          </button>
+
+          {/* Search Bar */}
+          <div className="flex items-center justify-between">
+            <div className="relative flex-grow">
+              <input
+                type="text"
+                placeholder={
+                  isMobileView
+                    ? "Search events"
+                    : "Search events by name or description"
+                }
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark"
+              />
+              <FaSearch className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400" />
+            </div>
+            <button
+              onClick={toggleMobileSidebar}
+              className="ml-4 md:hidden p-2 rounded-md border border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
+              aria-label="Open filters"
+            >
+              <SlidersHorizontal size={20} />
+            </button>
+          </div>
         </div>
 
-        {/* events list (grouped by date */}
-        {filteredEvents.length > 0 ? (
+        {/* Conditional rendering based on view mode */}
+        {viewMode === 'list' ? (
+          <>
+          {filteredEvents.length > 0 ? (
           <div className="space-y-8">
             {Object.entries(
               filteredEvents.reduce((groups, event) => {
@@ -419,9 +578,9 @@ function DailyView() {
             ).map(([date, dateEvents]) => (
               <div key={date}>
                 {/* date header */}
-                <div className="sticky top-0 bg-gray-50 py-3 mb-4 border-b-2 border-blue-500">
+                <div className="bg-gray-50 py-3 mb-4 border-b-2" style={{ borderColor: '#5b8fb9' }}>
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {new Date(date).toLocaleDateString('en-US', {
+                    {new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
                       weekday: 'long',
                       month: 'long',
                       day: 'numeric',
@@ -441,12 +600,12 @@ function DailyView() {
                       className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 flex gap-6"
                     >
                       {/* Time Badge */}
-                      <div className="flex-shrink-0 text-center bg-blue-50 rounded-lg p-4 min-w-[100px]">
-                        <div className="text-2xl font-bold text-blue-600">
+                      <div className="flex-shrink-0 flex flex-col justify-center text-center rounded-lg p-4 min-w-[100px]" style={{ backgroundColor: '#dbe9f4' }}>
+                        <div className="text-2xl font-bold" style={{ color: '#2c5f7f' }}>
                           {event.startTime}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">to</div>
-                        <div className="text-lg font-semibold text-gray-700">
+                        <div className="text-lg font-semibold" style={{ color: '#2c5f7f' }}>
                           {event.endTime}
                         </div>
                       </div>
@@ -519,6 +678,114 @@ function DailyView() {
               Try adjusting your filters or check back later
             </p>
           </div>
+        )
+          }
+          </>
+        ) : (
+          <>
+            {/* Calendar Header */}
+            <div className="bg-white rounded-lg shadow mb-6 p-6">
+              <h2 className="text-3xl font-bold text-gray-900">
+                {selectedDate.toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
+              </h2>
+            </div>
+
+            {/* Timeline Calendar */}
+            <div className="bg-white rounded-lg shadow">
+              <div className="flex">
+                {/* Time labels */}
+                <div className="flex-shrink-0 w-20 border-r border-gray-200">
+                  {hourLabels.map((hour) => (
+                    <div
+                      key={hour.value}
+                      className="h-20 border-b border-gray-100 flex items-start justify-end pr-2 pt-1"
+                      style={{ height: '80px' }}
+                    >
+                      <span className="text-xs text-gray-500">{hour.display}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Events timeline */}
+                <div className="flex-grow relative" style={{ minHeight: `${hourLabels.length * 80}px` }}>
+                  {/* Hour lines */}
+                  {hourLabels.map((hour, index) => (
+                    <div
+                      key={hour.value}
+                      className="absolute left-0 right-0 border-b border-gray-100"
+                      style={{ top: `${index * 80}px`, height: '80px' }}
+                    />
+                  ))}
+
+                  {/* Events */}
+                  {filteredEvents.length > 0 ? (
+                    filteredEvents.map((event) => {
+                      const { top, height } = getEventStyles(event);
+                      const layout = eventLayout.get(event.event_id);
+                      const column = layout?.column ?? 0;
+                      const totalColumns = layout?.totalColumns ?? 1;
+
+                      // Calculate horizontal positioning for overlapping events
+                      const widthPercent = 100 / totalColumns;
+                      const leftPercent = (column * widthPercent);
+
+                      const bgColor = event.isRegistered ? '#fecdd3' : '#dbe9f4';
+                      const borderColor = event.isRegistered ? '#db2777' : '#5b8fb9';
+
+                      return (
+                        <div
+                          key={event.event_id}
+                          className="absolute border-l-4 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
+                          style={{
+                            top: `${top}px`,
+                            height: `${Math.max(height, 60)}px`,
+                            left: `calc(${leftPercent}% + 8px)`,
+                            width: `calc(${widthPercent}% - 16px)`,
+                            backgroundColor: bgColor,
+                            borderColor: borderColor,
+                          }}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-grow min-w-0">
+                              <h3 className="font-semibold text-gray-900 text-sm truncate">
+                                {event.name}
+                              </h3>
+                              <p className="text-xs text-gray-600 truncate">
+                                {event.organizerName}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {event.startTime} - {event.endTime}
+                              </p>
+                              {height > 100 && (
+                                <p className="text-xs text-gray-600 mt-2 line-clamp-2">
+                                  {event.location}
+                                </p>
+                              )}
+                            </div>
+                            {event.isRegistered && (
+                              <FaBookmark className="text-pink-600 flex-shrink-0" size={12} />
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">📅</div>
+                        <p className="text-gray-500">No events on this day</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>
