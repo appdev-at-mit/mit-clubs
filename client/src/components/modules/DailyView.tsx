@@ -256,25 +256,61 @@ function DailyView() {
 
   // Calculate overlapping events and their positions
   function calculateEventLayout(events: MockEvent[]) {
+    const selectedDateStr = selectedDate.toISOString().split('T')[0];
+
+    // Sort events, accounting for continuation events starting at midnight
     const sortedEvents = [...events].sort((a, b) => {
-      const aStart = timeToMinutes(a.startTime);
-      const bStart = timeToMinutes(b.startTime);
+      const aIsContinuation = a.date !== selectedDateStr;
+      const bIsContinuation = b.date !== selectedDateStr;
+
+      const aStart = aIsContinuation ? 0 : timeToMinutes(a.startTime);
+      const bStart = bIsContinuation ? 0 : timeToMinutes(b.startTime);
+
       if (aStart !== bStart) return aStart - bStart;
-      return timeToMinutes(b.endTime) - timeToMinutes(a.endTime); // Longer events first
+
+      // For events starting at same time, prioritize longer events
+      const aEnd = aIsContinuation ? timeToMinutes(a.endTime) : timeToMinutes(a.endTime);
+      const bEnd = bIsContinuation ? timeToMinutes(b.endTime) : timeToMinutes(b.endTime);
+      return bEnd - aEnd;
     });
 
     const columns: MockEvent[][] = [];
 
     sortedEvents.forEach(event => {
-      const eventStart = timeToMinutes(event.startTime);
-      const eventEnd = timeToMinutes(event.endTime);
+      const isContinuation = event.date !== selectedDateStr;
+      const eventStart = isContinuation ? 0 : timeToMinutes(event.startTime);
+      let eventEnd = timeToMinutes(event.endTime);
+
+      // Handle 24-hour events and events spanning past midnight
+      if (eventEnd === eventStart && !isContinuation) {
+        eventEnd = 24 * 60; // 24-hour event
+      } else if (eventEnd < eventStart && !isContinuation) {
+        eventEnd += 24 * 60; // Spans past midnight
+      }
+
+      // Cap at end of day
+      eventEnd = Math.min(eventEnd, 24 * 60);
 
       // Find the first column where this event doesn't overlap
       let placed = false;
       for (let i = 0; i < columns.length; i++) {
         const column = columns[i];
         const lastEventInColumn = column[column.length - 1];
-        const lastEventEnd = timeToMinutes(lastEventInColumn.endTime);
+        const lastIsContinuation = lastEventInColumn.date !== selectedDateStr;
+
+        // Calculate the end time of the last event in this column
+        let lastEventEnd = timeToMinutes(lastEventInColumn.endTime);
+        const lastEventStart = lastIsContinuation ? 0 : timeToMinutes(lastEventInColumn.startTime);
+
+        // Handle 24-hour events and events spanning past midnight for the last event
+        if (lastEventEnd === lastEventStart && !lastIsContinuation) {
+          lastEventEnd = 24 * 60; // 24-hour event
+        } else if (lastEventEnd < lastEventStart && !lastIsContinuation) {
+          lastEventEnd += 24 * 60; // Spans past midnight
+        }
+
+        // Cap at end of day
+        lastEventEnd = Math.min(lastEventEnd, 24 * 60);
 
         if (eventStart >= lastEventEnd) {
           column.push(event);
@@ -740,8 +776,8 @@ function DailyView() {
         ) : (
           <>
             {/* Calendar Header */}
-            <div className="bg-white rounded-lg shadow mb-6 p-6">
-              <h2 className="text-3xl font-bold text-gray-900">
+            <div className="bg-gray-50 py-3 mb-4 border-b-2" style={{ borderColor: '#5b8fb9' }}>
+              <h2 className="text-2xl font-bold text-gray-900">
                 {selectedDate.toLocaleDateString('en-US', {
                   weekday: 'long',
                   month: 'long',
@@ -749,6 +785,9 @@ function DailyView() {
                   year: 'numeric'
                 })}
               </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
+              </p>
             </div>
 
             {/* Timeline Calendar */}
