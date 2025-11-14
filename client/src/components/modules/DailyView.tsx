@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaSearch, FaChevronDown, FaBookmark } from "react-icons/fa";
 import { SlidersHorizontal, X } from "lucide-react";
 import { UserContext } from "../App";
@@ -19,6 +20,7 @@ type CalendarMode = 'day' | 'week';
 
 function DailyView() {
   const userContext = useContext(UserContext);
+  const navigate = useNavigate();
 
   if (!userContext) {
     throw new Error("DailyView must be used within UserContext");
@@ -217,6 +219,10 @@ function DailyView() {
 
   function toggleMobileSidebar() {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
+  }
+
+  function handleEventClick(eventId: string) {
+    navigate(`/events/${eventId}`);
   }
 
   useEffect(() => {
@@ -900,6 +906,7 @@ function DailyView() {
                       return (
                         <div
                           key={event.event_id}
+                          onClick={() => handleEventClick(event.event_id)}
                           className="absolute border-l-4 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
                           style={{
                             top: `${top}px`,
@@ -1089,6 +1096,7 @@ function DailyView() {
                               return (
                                 <div
                                   key={event.event_id}
+                                  onClick={() => handleEventClick(event.event_id)}
                                   className="absolute border-l-4 rounded-lg p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
                                   style={{
                                     top: `${top}px`,
