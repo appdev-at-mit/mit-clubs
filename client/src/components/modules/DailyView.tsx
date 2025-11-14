@@ -803,10 +803,10 @@ function DailyView() {
                       );
                     })
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-4xl mb-2">📅</div>
-                        <p className="text-gray-500">No events on this day</p>
+                    <div className="absolute inset-0 flex items-center justify-center p-8">
+                      <div className="text-center max-w-md">
+                        <p className="text-gray-500 mb-2">No events found for this date</p>
+                        <p className="text-sm text-gray-400">Try selecting a different day or adjusting your filters</p>
                       </div>
                     </div>
                   )}
