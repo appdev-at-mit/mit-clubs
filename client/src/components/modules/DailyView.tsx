@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaSearch, FaChevronDown, FaBookmark } from "react-icons/fa";
 import { SlidersHorizontal, X } from "lucide-react";
 import { UserContext } from "../App";
@@ -21,15 +21,33 @@ type CalendarMode = 'day' | 'week';
 function DailyView() {
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   if (!userContext) {
     throw new Error("DailyView must be used within UserContext");
   }
 
   const { userId } = userContext;
-  const [viewMode, setViewMode] = useState<DailyViewMode>('list');
-  const [calendarMode, setCalendarMode] = useState<CalendarMode>('day');
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+  // Initialize state from URL parameters or use defaults
+  const [viewMode, setViewMode] = useState<DailyViewMode>(() => {
+    const view = searchParams.get('view');
+    return (view === 'list' || view === 'calendar') ? view : 'list';
+  });
+
+  const [calendarMode, setCalendarMode] = useState<CalendarMode>(() => {
+    const mode = searchParams.get('mode');
+    return (mode === 'day' || mode === 'week') ? mode : 'day';
+  });
+
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    const dateParam = searchParams.get('date');
+    if (dateParam) {
+      const parsedDate = new Date(dateParam + 'T00:00:00');
+      return isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+    }
+    return new Date();
+  });
   const [filters, setFilters] = useState<FilterState>({
     selected_tags: [],
   });
@@ -60,6 +78,23 @@ function DailyView() {
 
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
+
+  // Update URL when view mode, calendar mode, or selected date changes
+  useEffect(() => {
+    const newParams = new URLSearchParams(searchParams);
+
+    newParams.set('view', viewMode);
+
+    if (viewMode === 'calendar') {
+      newParams.set('mode', calendarMode);
+      newParams.set('date', selectedDate.toISOString().split('T')[0]);
+    } else {
+      newParams.delete('mode');
+      newParams.delete('date');
+    }
+
+    setSearchParams(newParams, { replace: true });
+  }, [viewMode, calendarMode, selectedDate]);
 
   useEffect(() => {
     async function loadData() {
