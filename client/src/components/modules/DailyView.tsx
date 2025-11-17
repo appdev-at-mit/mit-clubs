@@ -364,12 +364,19 @@ function DailyView() {
           fixed top-16 left-0 bottom-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
           transform transition-transform duration-300 ease-in-out
           ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0 md:sticky md:top-16 md:h-screen md:w-64 flex flex-col
+          flex flex-col pt-6 pb-4 px-6 overflow-y-auto
+          md:relative md:translate-x-0 md:flex-shrink-0 md:flex md:overflow-y-auto
+          md:top-0 md:pt-6 md:bottom-auto md:h-full
+          md:max-w-none
+          md:w-64 lg:w-80
         `}
       >
-        <div className="px-4 py-3 border-b border-gray-200 flex-shrink-0">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-semibold text-gray-700">Filters</h2>
+        <div className="flex justify-between items-center mb-1 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <SlidersHorizontal size={18} className="text-appdev-blue-dark" />
+            <span className="text-lg font-bold">Filters</span>
+          </div>
+          <div className="flex items-center gap-2">
             <button
               onClick={resetFilters}
               onMouseEnter={() => setIsHoveringResetAll(true)}
@@ -391,7 +398,7 @@ function DailyView() {
             </button>
           </div>
         </div>
-        <p className="text-xs text-gray-500 mb-2 flex-shrink-0 px-4 pt-2">
+        <p className="text-xs text-gray-500 mb-2 flex-shrink-0">
           Showing {filteredEvents.length} upcoming events
         </p>
         <button
@@ -402,11 +409,11 @@ function DailyView() {
             backgroundColor: isHoveringResetAll ? "#E5E7EB" : "#D1D5DB",
             transition: "background-color 0.1s ease",
           }}
-          className="md:hidden px-3 py-1 rounded-md text-xs mb-3 self-start mx-4"
+          className="md:hidden px-3 py-1 rounded-md text-xs mb-3 self-start"
         >
           Reset All
         </button>
-        <div className="flex-grow overflow-y-auto space-y-1 scrollbar-hide px-4">
+        <div className="flex-grow overflow-y-auto space-y-1 scrollbar-hide">
           <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
             <button
               onClick={() => setIsCategorySectionOpen(!isCategorySectionOpen)}
@@ -573,6 +580,7 @@ function DailyView() {
         <div className="mb-6 space-y-4">
           {/* View Mode Toggle */}
           <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-gray-900">Events</h1>
             <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
               <button
                 onClick={() => setViewMode('list')}
@@ -595,38 +603,6 @@ function DailyView() {
                 Calendar View
               </button>
             </div>
-            {viewMode === 'calendar' && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    const newDate = new Date(selectedDate);
-                    newDate.setDate(newDate.getDate() - 1);
-                    setSelectedDate(newDate);
-                  }}
-                  className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
-                  aria-label="Previous day"
-                >
-                  <span className="text-lg">←</span>
-                </button>
-                <input
-                  type="date"
-                  value={selectedDate.toISOString().split('T')[0]}
-                  onChange={(e) => setSelectedDate(new Date(e.target.value + 'T00:00:00'))}
-                  className="px-4 py-2 border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark"
-                />
-                <button
-                  onClick={() => {
-                    const newDate = new Date(selectedDate);
-                    newDate.setDate(newDate.getDate() + 1);
-                    setSelectedDate(newDate);
-                  }}
-                  className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
-                  aria-label="Next day"
-                >
-                  <span className="text-lg">→</span>
-                </button>
-              </div>
-            )}
           </div>
 
           {/* Search Bar */}
@@ -710,17 +686,51 @@ function DailyView() {
           <>
             {/* Calendar Header */}
             <div className="bg-gray-50 py-3 mb-4 border-b-2" style={{ borderColor: '#5b8fb9' }}>
-              <h2 className="text-2xl font-bold text-gray-900">
-                {selectedDate.toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric'
-                })}
-              </h2>
-              <p className="text-sm text-gray-600 mt-1">
-                {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
-              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {selectedDate.toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })}
+                  </h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      const newDate = new Date(selectedDate);
+                      newDate.setDate(newDate.getDate() - 1);
+                      setSelectedDate(newDate);
+                    }}
+                    className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+                    aria-label="Previous day"
+                  >
+                    <span className="text-lg">←</span>
+                  </button>
+                  <input
+                    type="date"
+                    value={selectedDate.toISOString().split('T')[0]}
+                    onChange={(e) => setSelectedDate(new Date(e.target.value + 'T00:00:00'))}
+                    className="px-4 py-2 border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark"
+                  />
+                  <button
+                    onClick={() => {
+                      const newDate = new Date(selectedDate);
+                      newDate.setDate(newDate.getDate() + 1);
+                      setSelectedDate(newDate);
+                    }}
+                    className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+                    aria-label="Next day"
+                  >
+                    <span className="text-lg">→</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Timeline Calendar */}
