@@ -44,7 +44,7 @@ function DailyView() {
   const [filteredEvents, setFilteredEvents] = useState<MockEvent[]>([]);
   const [weekStart, setWeekStart] = useState<Date>(() => {
     const d = new Date();
-    const day = (d.getDay() + 6) % 7; // Monday = 0
+    const day = d.getDay(); // Sunday = 0
     d.setDate(d.getDate() - day);
     d.setHours(0, 0, 0, 0);
     return d;
@@ -204,7 +204,7 @@ function DailyView() {
 
   function getStartOfWeek(d: Date) {
     const copy = new Date(d);
-    const day = (copy.getDay() + 6) % 7; // Monday = 0
+    const day = copy.getDay(); // Sunday = 0
     copy.setDate(copy.getDate() - day);
     copy.setHours(0, 0, 0, 0);
     return copy;
@@ -409,6 +409,29 @@ function DailyView() {
   const weekFilteredEvents = filteredEvents.filter(
     (ev) => ev.date >= weekStartIso && ev.date <= weekEndIso
   );
+
+  // Navigation availability
+  const todayStart = getStartOfWeek(new Date());
+  const minWeekStart = addDays(todayStart, -14); // 2 weeks ago
+  const canPrev = weekStart.getTime() > minWeekStart.getTime();
+
+  // Determine if there are any events after the end of the current week
+  const hasMoreFutureEvents = events.some((ev) => {
+    // apply simple search + tag filters so navigation respects current filters
+    if (searchTerm) {
+      const q = searchTerm.toLowerCase();
+      const matchesName = ev.name && ev.name.toLowerCase().includes(q);
+      const matchesDesc = ev.description && ev.description.toLowerCase().includes(q);
+      if (!matchesName && !matchesDesc) return false;
+    }
+    if (filters.selected_tags && filters.selected_tags.length > 0) {
+      if (!ev.tags) return false;
+      const eventTags = ev.tags.map((t) => t.toLowerCase());
+      if (!filters.selected_tags.every((t) => eventTags.includes(t.toLowerCase()))) return false;
+    }
+    return ev.date > weekEndIso;
+  });
+  const canNext = hasMoreFutureEvents;
 
   return (
     <div className="flex h-screen overflow-hidden relative" style={{ height: 'calc(100vh - 64px)' }}>
@@ -702,9 +725,15 @@ function DailyView() {
               {/* Week navigation (visible on all sizes; compact on mobile) */}
               <div className="flex items-center gap-2 ml-0 md:ml-4">
                 <button
-                  onClick={prevWeek}
+                  onClick={() => canPrev && prevWeek()}
                   aria-label="Previous week"
-                  className="px-2 py-1 md:px-3 md:py-2 rounded bg-blue-600 text-white hover:bg-blue-700 text-sm"
+                  disabled={!canPrev}
+                  aria-disabled={!canPrev}
+                  className={`px-2 py-1 md:px-3 md:py-2 rounded text-sm transition-colors ${
+                    canPrev
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-blue-200 text-white cursor-not-allowed opacity-60'
+                  }`}
                 >
                   ←
                 </button>
@@ -716,9 +745,15 @@ function DailyView() {
                   This Week
                 </button>
                 <button
-                  onClick={nextWeek}
+                  onClick={() => canNext && nextWeek()}
                   aria-label="Next week"
-                  className="px-2 py-1 md:px-3 md:py-2 rounded bg-blue-600 text-white hover:bg-blue-700 text-sm"
+                  disabled={!canNext}
+                  aria-disabled={!canNext}
+                  className={`px-2 py-1 md:px-3 md:py-2 rounded text-sm transition-colors ${
+                    canNext
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-blue-200 text-white cursor-not-allowed opacity-60'
+                  }`}
                 >
                   →
                 </button>
