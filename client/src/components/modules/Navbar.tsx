@@ -94,18 +94,6 @@ function Navbar() {
                 >
                   About
                 </NavLink>
-                <NavLink
-                  to="/events"
-                  className={({ isActive }) =>
-                    `no-underline font-semibold ${
-                      isActive
-                        ? "text-appdev-blue-dark"
-                        : "text-gray-600 hover:text-gray-900"
-                    }`
-                  }
-                >
-                  Events
-                </NavLink>
                 <button
                   onClick={() => redirectToLogin()}
                   className="bg-appdev-blue text-white px-4 py-2 rounded-md hover:bg-appdev-blue-dark font-semibold"
