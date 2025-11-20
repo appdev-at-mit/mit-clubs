@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaSearch, FaChevronDown, FaBookmark } from "react-icons/fa";
 import { SlidersHorizontal, X } from "lucide-react";
 import { UserContext } from "../App";
 import { getMockEvents } from '../../api/mock-events';
-import EventCard from './EventCard';
 import EventCard from './EventCard';
 import { MockEvent } from "../../types";
 import {
@@ -16,17 +16,38 @@ type FilterState = {
 };
 
 type DailyViewMode = 'list' | 'calendar';
+type CalendarMode = 'day' | 'week';
 
 function DailyView() {
   const userContext = useContext(UserContext);
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   if (!userContext) {
     throw new Error("DailyView must be used within UserContext");
   }
 
   const { userId } = userContext;
-  const [viewMode, setViewMode] = useState<DailyViewMode>('list');
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+  // Initialize state from URL parameters or use defaults
+  const [viewMode, setViewMode] = useState<DailyViewMode>(() => {
+    const view = searchParams.get('view');
+    return (view === 'list' || view === 'calendar') ? view : 'list';
+  });
+
+  const [calendarMode, setCalendarMode] = useState<CalendarMode>(() => {
+    const mode = searchParams.get('mode');
+    return (mode === 'day' || mode === 'week') ? mode : 'day';
+  });
+
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    const dateParam = searchParams.get('date');
+    if (dateParam) {
+      const parsedDate = new Date(dateParam + 'T00:00:00');
+      return isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+    }
+    return new Date();
+  });
   const [filters, setFilters] = useState<FilterState>({
     selected_tags: [],
   });
@@ -42,6 +63,13 @@ function DailyView() {
 
   const [events, setEvents] = useState<MockEvent[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<MockEvent[]>([]);
+  const [weekStart, setWeekStart] = useState<Date>(() => {
+    const d = new Date();
+    const day = d.getDay(); // Sunday = 0
+    d.setDate(d.getDate() - day);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [isHoveringResetAll, setIsHoveringResetAll] = useState<boolean>(false);
@@ -57,6 +85,23 @@ function DailyView() {
 
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
+
+  // Update URL when view mode, calendar mode, or selected date changes
+  useEffect(() => {
+    const newParams = new URLSearchParams(searchParams);
+
+    newParams.set('view', viewMode);
+
+    if (viewMode === 'calendar') {
+      newParams.set('mode', calendarMode);
+      newParams.set('date', selectedDate.toISOString().split('T')[0]);
+    } else {
+      newParams.delete('mode');
+      newParams.delete('date');
+    }
+
+    setSearchParams(newParams, { replace: true });
+  }, [viewMode, calendarMode, selectedDate]);
 
   useEffect(() => {
     async function loadData() {
@@ -84,13 +129,13 @@ function DailyView() {
     let result = [...eventsList];
 
     // For list view: show all upcoming events from today onwards
-    // For calendar view: show events for the selected date only (including multi-day events)
+    // For calendar view: show events based on calendar mode (day/week)
     if (viewMode === 'list') {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const todayStr = today.toISOString().split('T')[0];
-      result = result.filter(event => event.date >= todayStr);
-    } else {
+      // List view: show events in the currently selected week (Monday - Sunday)
+      const startIso = weekStart.toISOString().split('T')[0];
+      const endIso = addDays(weekStart, 6).toISOString().split('T')[0];
+      result = result.filter((event) => event.date >= startIso && event.date <= endIso);
+    } else if (calendarMode === 'day') {
       const selectedDateStr = selectedDate.toISOString().split('T')[0];
       result = result.filter(event => {
         // Show events that start on this day
@@ -111,6 +156,41 @@ function DailyView() {
           nextDay.setDate(nextDay.getDate() + 1);
           const nextDayStr = nextDay.toISOString().split('T')[0];
           return nextDayStr === selectedDateStr;
+        }
+
+        return false;
+      });
+    } else {
+      // Week view: show events for the entire week (Sunday - Saturday)
+      const weekStart = new Date(selectedDate);
+      weekStart.setDate(selectedDate.getDate() - selectedDate.getDay());
+      weekStart.setHours(0, 0, 0, 0);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      weekEnd.setHours(23, 59, 59, 999);
+
+      const weekStartStr = weekStart.toISOString().split('T')[0];
+      const weekEndStr = weekEnd.toISOString().split('T')[0];
+
+      result = result.filter(event => {
+        // Show events that start within this week
+        if (event.date >= weekStartStr && event.date <= weekEndStr) return true;
+
+        // Check if this is a multi-day event that continues into this week
+        const eventDate = new Date(event.date + 'T00:00:00');
+        const eventStartMinutes = timeToMinutes(event.startTime);
+        const eventEndMinutes = timeToMinutes(event.endTime);
+
+        let duration = eventEndMinutes - eventStartMinutes;
+        if (duration === 0) duration = 24 * 60; // 24-hour event
+        else if (duration < 0) duration += 24 * 60; // Spans past midnight
+
+        // Calculate if event extends into this week
+        if (eventStartMinutes + duration > 24 * 60) {
+          const nextDay = new Date(eventDate);
+          nextDay.setDate(nextDay.getDate() + 1);
+          const nextDayStr = nextDay.toISOString().split('T')[0];
+          return nextDayStr >= weekStartStr && nextDayStr <= weekEndStr;
         }
 
         return false;
@@ -182,16 +262,77 @@ function DailyView() {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
   }
 
+  function handleEventClick(eventId: string) {
+    navigate(`/events/${eventId}`);
+  }
+
   useEffect(() => {
     if (events.length > 0) {
       applyFilters(events, filters, searchTerm);
     }
-  }, [filters, searchTerm, events, viewMode, selectedDate]);
+  }, [filters, searchTerm, events, viewMode, selectedDate, weekStart]);
 
-  // Convert time string (HH:MM) to minutes from midnight
+  function addDays(date: Date, days: number) {
+    const d = new Date(date);
+    d.setDate(d.getDate() + days);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  function getStartOfWeek(d: Date) {
+    const copy = new Date(d);
+    const day = copy.getDay(); // Sunday = 0
+    copy.setDate(copy.getDate() - day);
+    copy.setHours(0, 0, 0, 0);
+    return copy;
+  }
+
+  function isoDate(d: Date) {
+    return d.toISOString().split('T')[0];
+  }
+
+  function prevWeek() {
+    const todayStart = getStartOfWeek(new Date());
+    const min = addDays(todayStart, -14); // allow up to 2 weeks in past
+    setWeekStart((s: Date) => {
+      const candidate = addDays(s, -7);
+      return candidate < min ? min : candidate;
+    });
+  }
+
+  function nextWeek() {
+    setWeekStart((s: Date) => addDays(s, 7));
+  }
+
+  function goToThisWeek() {
+    const d = new Date();
+    const day = (d.getDay() + 6) % 7;
+    d.setDate(d.getDate() - day);
+    d.setHours(0, 0, 0, 0);
+    setWeekStart(d);
+  }
+
+  // Convert time string (HH:MM or HH:MM AM/PM) to minutes from midnight
   function timeToMinutes(time: string): number {
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
+    // Handle AM/PM format
+    const timeLower = time.toLowerCase();
+    const isPM = timeLower.includes('pm');
+    const isAM = timeLower.includes('am');
+
+    // Remove AM/PM and trim
+    const timeOnly = time.replace(/\s*(am|pm)/gi, '').trim();
+    const timeParts = timeOnly.split(':').map(Number);
+    const hours = timeParts[0] || 0;
+    const minutes = timeParts[1] || 0;
+
+    let adjustedHours = hours;
+    if (isPM && hours !== 12) {
+      adjustedHours = hours + 12;
+    } else if (isAM && hours === 12) {
+      adjustedHours = 0; // 12 AM is midnight
+    }
+
+    return adjustedHours * 60 + minutes;
   }
 
   // Calculate position and height for timeline
@@ -356,6 +497,36 @@ function DailyView() {
   const hourLabels = viewMode === 'calendar' ? generateHourLabels() : [];
   const eventLayout = viewMode === 'calendar' ? calculateEventLayout(filteredEvents) : new Map();
 
+  // weekFilteredEvents: events within the currently selected week (Monday - Sunday)
+  const weekStartIso = weekStart.toISOString().split('T')[0];
+  const weekEndIso = addDays(weekStart, 6).toISOString().split('T')[0];
+  const weekFilteredEvents = filteredEvents.filter(
+    (ev) => ev.date >= weekStartIso && ev.date <= weekEndIso
+  );
+
+  // Navigation availability
+  const todayStart = getStartOfWeek(new Date());
+  const minWeekStart = addDays(todayStart, -14); // 2 weeks ago
+  const canPrev = weekStart.getTime() > minWeekStart.getTime();
+
+  // Determine if there are any events after the end of the current week
+  const hasMoreFutureEvents = events.some((ev) => {
+    // apply simple search + tag filters so navigation respects current filters
+    if (searchTerm) {
+      const q = searchTerm.toLowerCase();
+      const matchesName = ev.name && ev.name.toLowerCase().includes(q);
+      const matchesDesc = ev.description && ev.description.toLowerCase().includes(q);
+      if (!matchesName && !matchesDesc) return false;
+    }
+    if (filters.selected_tags && filters.selected_tags.length > 0) {
+      if (!ev.tags) return false;
+      const eventTags = ev.tags.map((t) => t.toLowerCase());
+      if (!filters.selected_tags.every((t) => eventTags.includes(t.toLowerCase()))) return false;
+    }
+    return ev.date > weekEndIso;
+  });
+  const canNext = hasMoreFutureEvents;
+
   return (
     <div className="flex h-screen overflow-hidden relative" style={{ height: 'calc(100vh - 64px)' }}>
       {/* filter panel */}
@@ -399,7 +570,7 @@ function DailyView() {
           </div>
         </div>
         <p className="text-xs text-gray-500 mb-2 flex-shrink-0">
-          Showing {filteredEvents.length} upcoming events
+          Showing {viewMode === 'list' ? weekFilteredEvents.length : filteredEvents.length} upcoming events
         </p>
         <button
           onClick={resetFilters}
@@ -603,6 +774,40 @@ function DailyView() {
                 Calendar View
               </button>
             </div>
+            {viewMode === 'calendar' && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const newDate = new Date(selectedDate);
+                    const increment = calendarMode === 'week' ? 7 : 1;
+                    newDate.setDate(newDate.getDate() - increment);
+                    setSelectedDate(newDate);
+                  }}
+                  className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+                  aria-label={calendarMode === 'week' ? 'Previous week' : 'Previous day'}
+                >
+                  <span className="text-lg">←</span>
+                </button>
+                <input
+                  type="date"
+                  value={selectedDate.toISOString().split('T')[0]}
+                  onChange={(e) => setSelectedDate(new Date(e.target.value + 'T00:00:00'))}
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark"
+                />
+                <button
+                  onClick={() => {
+                    const newDate = new Date(selectedDate);
+                    const increment = calendarMode === 'week' ? 7 : 1;
+                    newDate.setDate(newDate.getDate() + increment);
+                    setSelectedDate(newDate);
+                  }}
+                  className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+                  aria-label={calendarMode === 'week' ? 'Next week' : 'Next day'}
+                >
+                  <span className="text-lg">→</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Search Bar */}
@@ -621,6 +826,42 @@ function DailyView() {
               />
               <FaSearch className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400" />
             </div>
+              {/* Week navigation (visible on all sizes; compact on mobile) */}
+              <div className="flex items-center gap-2 ml-0 md:ml-4">
+                <button
+                  onClick={() => canPrev && prevWeek()}
+                  aria-label="Previous week"
+                  disabled={!canPrev}
+                  aria-disabled={!canPrev}
+                  className={`px-2 py-1 md:px-3 md:py-2 rounded text-sm transition-colors ${
+                    canPrev
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-blue-200 text-white cursor-not-allowed opacity-60'
+                  }`}
+                >
+                  ←
+                </button>
+                <button
+                  onClick={goToThisWeek}
+                  aria-label="This week"
+                  className="px-2 py-1 md:px-3 md:py-2 rounded bg-gray-100 text-gray-800 border hover:bg-gray-200 text-sm"
+                >
+                  This Week
+                </button>
+                <button
+                  onClick={() => canNext && nextWeek()}
+                  aria-label="Next week"
+                  disabled={!canNext}
+                  aria-disabled={!canNext}
+                  className={`px-2 py-1 md:px-3 md:py-2 rounded text-sm transition-colors ${
+                    canNext
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-blue-200 text-white cursor-not-allowed opacity-60'
+                  }`}
+                >
+                  →
+                </button>
+              </div>
             <button
               onClick={toggleMobileSidebar}
               className="ml-4 md:hidden p-2 rounded-md border border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
@@ -637,7 +878,7 @@ function DailyView() {
           {filteredEvents.length > 0 ? (
           <div className="space-y-8">
             {Object.entries(
-              filteredEvents.reduce((groups, event) => {
+              weekFilteredEvents.reduce((groups, event) => {
                 const date = event.date;
                 if (!groups[date]) {
                   groups[date] = [];
@@ -673,7 +914,7 @@ function DailyView() {
           </div>
         ) : (
           <div className="text-center py-16 bg-white rounded-lg shadow">
-            <div className="text-6xl mb-4">📅</div>
+            <div className="text-6xl mb-4"></div>
             <p className="text-gray-500 text-xl mb-2">No upcoming events found</p>
             <p className="text-gray-400 mb-6">
               Try adjusting your filters or check back later
@@ -684,9 +925,53 @@ function DailyView() {
           </>
         ) : (
           <>
-            {/* Calendar Header */}
-            <div className="bg-gray-50 py-3 mb-4 border-b-2" style={{ borderColor: '#5b8fb9' }}>
-              <div className="flex items-center justify-between">
+            {/* Calendar Header - Week view only */}
+            {calendarMode === 'week' && (
+              <div className="bg-gray-50 py-3 mb-4 border-b-2 flex items-center justify-between" style={{ borderColor: '#5b8fb9' }}>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {(() => {
+                      const weekStart = new Date(selectedDate);
+                      weekStart.setDate(selectedDate.getDate() - selectedDate.getDay());
+                      const weekEnd = new Date(weekStart);
+                      weekEnd.setDate(weekStart.getDate() + 6);
+                      return `${weekStart.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+                    })()}
+                  </h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+
+                {/* Day/Week Toggle */}
+                <div className="flex items-center gap-2 bg-white rounded-lg p-1 border border-gray-300">
+                  <button
+                    onClick={() => setCalendarMode('day')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      calendarMode === 'day'
+                        ? 'bg-appdev-blue-dark text-white'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    Day
+                  </button>
+                  <button
+                    onClick={() => setCalendarMode('week')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      calendarMode === 'week'
+                        ? 'bg-appdev-blue-dark text-white'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    Week
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Day view header and toggle */}
+            {calendarMode === 'day' && (
+              <div className="bg-gray-50 py-3 mb-4 border-b-2 flex items-start justify-between" style={{ borderColor: '#5b8fb9' }}>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
                     {selectedDate.toLocaleDateString('en-US', {
@@ -700,42 +985,38 @@ function DailyView() {
                     {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+
+                {/* Day/Week Toggle */}
+                <div className="flex items-center gap-2 bg-white rounded-lg p-1 border border-gray-300">
                   <button
-                    onClick={() => {
-                      const newDate = new Date(selectedDate);
-                      newDate.setDate(newDate.getDate() - 1);
-                      setSelectedDate(newDate);
-                    }}
-                    className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
-                    aria-label="Previous day"
+                    onClick={() => setCalendarMode('day')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      calendarMode === 'day'
+                        ? 'bg-appdev-blue-dark text-white'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
-                    <span className="text-lg">←</span>
+                    Day
                   </button>
-                  <input
-                    type="date"
-                    value={selectedDate.toISOString().split('T')[0]}
-                    onChange={(e) => setSelectedDate(new Date(e.target.value + 'T00:00:00'))}
-                    className="px-4 py-2 border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark"
-                  />
                   <button
-                    onClick={() => {
-                      const newDate = new Date(selectedDate);
-                      newDate.setDate(newDate.getDate() + 1);
-                      setSelectedDate(newDate);
-                    }}
-                    className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
-                    aria-label="Next day"
+                    onClick={() => setCalendarMode('week')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      calendarMode === 'week'
+                        ? 'bg-appdev-blue-dark text-white'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
-                    <span className="text-lg">→</span>
+                    Week
                   </button>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Timeline Calendar */}
-            <div className="bg-white rounded-lg shadow">
-              <div className="flex">
+            {calendarMode === 'day' ? (
+              <div className="bg-white rounded-lg shadow overflow-hidden max-h-[calc(100vh-280px)] overflow-y-auto">
+
+                <div className="flex">
                 {/* Time labels */}
                 <div className="flex-shrink-0 w-20 border-r border-gray-200">
                   {hourLabels.map((hour) => (
@@ -761,8 +1042,7 @@ function DailyView() {
                   ))}
 
                   {/* Events */}
-                  {filteredEvents.length > 0 ? (
-                    filteredEvents.map((event) => {
+                  {filteredEvents.map((event) => {
                       const { top, height } = getEventStyles(event);
                       const layout = eventLayout.get(event.event_id);
                       const column = layout?.column ?? 0;
@@ -778,6 +1058,7 @@ function DailyView() {
                       return (
                         <div
                           key={event.event_id}
+                          onClick={() => handleEventClick(event.event_id)}
                           className="absolute border-l-4 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
                           style={{
                             top: `${top}px`,
@@ -811,18 +1092,207 @@ function DailyView() {
                           </div>
                         </div>
                       );
-                    })
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center p-8">
-                      <div className="text-center max-w-md">
-                        <p className="text-gray-500 mb-2">No events found for this date</p>
-                        <p className="text-sm text-gray-400">Try selecting a different day or adjusting your filters</p>
-                      </div>
-                    </div>
-                  )}
+                    })}
                 </div>
               </div>
-            </div>
+              </div>
+            ) : (
+              // Week View
+              <div className="bg-white rounded-lg shadow overflow-hidden max-h-[calc(100vh-200px)] overflow-y-auto">
+                {/* Sticky Header Row */}
+                <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+                  <div className="flex min-w-max overflow-x-auto">
+                    {/* Empty corner for time label column */}
+                    <div className="flex-shrink-0 w-20 border-r border-gray-200 h-16"></div>
+
+                    {/* Day headers */}
+                    {(() => {
+                      const weekStart = new Date(selectedDate);
+                      weekStart.setDate(selectedDate.getDate() - selectedDate.getDay());
+                      const headers = [];
+
+                      for (let i = 0; i < 7; i++) {
+                        const currentDay = new Date(weekStart);
+                        currentDay.setDate(weekStart.getDate() + i);
+
+                        headers.push(
+                          <div key={i} className="flex-1 border-r border-gray-200 last:border-r-0 px-2 py-2 text-center" style={{ minWidth: '150px' }}>
+                            <div className="text-xs font-semibold text-gray-600">
+                              {currentDay.toLocaleDateString('en-US', { weekday: 'short' })}
+                            </div>
+                            <div className={`text-lg font-bold ${
+                              currentDay.toDateString() === new Date().toDateString()
+                                ? 'text-appdev-blue-dark'
+                                : 'text-gray-900'
+                            }`}>
+                              {currentDay.getDate()}
+                            </div>
+                          </div>
+                        );
+                      }
+                      return headers;
+                    })()}
+                  </div>
+                </div>
+
+                {/* Scrollable content */}
+                <div className="overflow-x-auto">
+                  <div className="flex min-w-max">
+                    {/* Time labels */}
+                    <div className="flex-shrink-0 w-20 border-r border-gray-200">
+                      {hourLabels.map((hour) => (
+                        <div
+                          key={hour.value}
+                          className="h-20 border-b border-gray-100 flex items-start justify-end pr-2 pt-1"
+                          style={{ height: '80px' }}
+                        >
+                          <span className="text-xs text-gray-500">{hour.display}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Days of the week (Sunday - Saturday) */}
+                    {(() => {
+                    const weekStart = new Date(selectedDate);
+                    weekStart.setDate(selectedDate.getDate() - selectedDate.getDay());
+                    const days = [];
+
+                    for (let i = 0; i < 7; i++) {
+                      const currentDay = new Date(weekStart);
+                      currentDay.setDate(weekStart.getDate() + i);
+                      const dayStr = currentDay.toISOString().split('T')[0];
+
+                      // Filter events for this specific day (including multi-day events)
+                      const dayEvents = filteredEvents.filter(event => {
+                        // Show events that start on this day
+                        if (event.date === dayStr) return true;
+
+                        // Check if this is a multi-day event that continues into this day
+                        const eventDate = new Date(event.date + 'T00:00:00');
+                        const eventStartMinutes = timeToMinutes(event.startTime);
+                        const eventEndMinutes = timeToMinutes(event.endTime);
+
+                        let duration = eventEndMinutes - eventStartMinutes;
+                        if (duration === 0) duration = 24 * 60; // 24-hour event
+                        else if (duration < 0) duration += 24 * 60; // Spans past midnight
+
+                        // Calculate if event extends to this day
+                        if (eventStartMinutes + duration > 24 * 60) {
+                          const nextDay = new Date(eventDate);
+                          nextDay.setDate(nextDay.getDate() + 1);
+                          const nextDayStr = nextDay.toISOString().split('T')[0];
+                          return nextDayStr === dayStr;
+                        }
+
+                        return false;
+                      });
+
+                      const dayEventLayout = calculateEventLayout(dayEvents);
+
+                      days.push(
+                        <div key={i} className="flex-1 border-r border-gray-200 last:border-r-0" style={{ minWidth: '150px' }}>
+                          {/* Events timeline for this day */}
+                          <div className="relative" style={{ minHeight: `${hourLabels.length * 80}px` }}>
+                            {/* Hour lines */}
+                            {hourLabels.map((hour, index) => (
+                              <div
+                                key={hour.value}
+                                className="absolute left-0 right-0 border-b border-gray-100"
+                                style={{ top: `${index * 80}px`, height: '80px' }}
+                              />
+                            ))}
+
+                            {/* Events */}
+                            {dayEvents.map((event) => {
+                              // Calculate event styles for this specific day
+                              const startMinutes = timeToMinutes(event.startTime);
+                              let endMinutes = timeToMinutes(event.endTime);
+                              const hourHeight = 80;
+
+                              // Check if this is a continuation event (started on a previous day)
+                              const isContinuation = event.date !== dayStr;
+
+                              let top, height;
+                              if (isContinuation) {
+                                // Event continues from previous day - start at midnight
+                                top = 0;
+                                const totalDuration = endMinutes - startMinutes;
+                                const remainingDuration = (startMinutes + (totalDuration === 0 ? 24 * 60 : totalDuration > 0 ? totalDuration : totalDuration + 24 * 60)) - 24 * 60;
+                                height = (Math.min(remainingDuration, 24 * 60) / 60) * hourHeight;
+                              } else {
+                                // Event starts today
+                                top = (startMinutes / 60) * hourHeight;
+
+                                let duration = endMinutes - startMinutes;
+                                if (duration === 0) duration = 24 * 60; // 24-hour event
+                                else if (duration < 0) duration += 24 * 60; // Spans past midnight
+
+                                // Cap at end of day
+                                if (startMinutes + duration > 24 * 60) {
+                                  duration = 24 * 60 - startMinutes;
+                                }
+
+                                height = (duration / 60) * hourHeight;
+                              }
+
+                              const layout = dayEventLayout.get(event.event_id);
+                              const column = layout?.column ?? 0;
+                              const totalColumns = layout?.totalColumns ?? 1;
+
+                              const widthPercent = 100 / totalColumns;
+                              const leftPercent = (column * widthPercent);
+
+                              const bgColor = event.isRegistered ? '#fecdd3' : '#dbe9f4';
+                              const borderColor = event.isRegistered ? '#db2777' : '#5b8fb9';
+
+                              return (
+                                <div
+                                  key={event.event_id}
+                                  onClick={() => handleEventClick(event.event_id)}
+                                  className="absolute border-l-4 rounded-lg p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
+                                  style={{
+                                    top: `${top}px`,
+                                    height: `${Math.max(height, 60)}px`,
+                                    left: `calc(${leftPercent}% + 2px)`,
+                                    width: `calc(${widthPercent}% - 4px)`,
+                                    backgroundColor: bgColor,
+                                    borderColor: borderColor,
+                                  }}
+                                >
+                                  <div className="flex items-start justify-between gap-2">
+                                    <div className="flex-grow min-w-0">
+                                      <h3 className="font-semibold text-gray-900 text-sm truncate">
+                                        {event.name}
+                                      </h3>
+                                      <p className="text-xs text-gray-600 truncate">
+                                        {event.organizerName}
+                                      </p>
+                                      <p className="text-xs text-gray-500 mt-1">
+                                        {event.startTime} - {event.endTime}
+                                      </p>
+                                      {height > 100 && (
+                                        <p className="text-xs text-gray-600 mt-2 line-clamp-2">
+                                          {event.location}
+                                        </p>
+                                      )}
+                                    </div>
+                                    {event.isRegistered && (
+                                      <FaBookmark className="text-pink-600 flex-shrink-0" size={12} />
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    }
+                    return days;
+                  })()}
+                </div>
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>
