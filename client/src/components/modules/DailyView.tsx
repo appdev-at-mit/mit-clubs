@@ -63,6 +63,13 @@ function DailyView() {
 
   const [events, setEvents] = useState<MockEvent[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<MockEvent[]>([]);
+  const [weekStart, setWeekStart] = useState<Date>(() => {
+    const d = new Date();
+    const day = d.getDay(); // Sunday = 0
+    d.setDate(d.getDate() - day);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [isHoveringResetAll, setIsHoveringResetAll] = useState<boolean>(false);
@@ -124,12 +131,11 @@ function DailyView() {
     // For list view: show all upcoming events from today onwards
     // For calendar view: show events based on calendar mode (day/week)
     if (viewMode === 'list') {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const todayStr = today.toISOString().split('T')[0];
-      result = result.filter(event => event.date >= todayStr);
-    } else if (calendarMode === 'day') {
-      // Day view: show events for the selected date only (including multi-day events)
+      // List view: show events in the currently selected week (Monday - Sunday)
+      const startIso = weekStart.toISOString().split('T')[0];
+      const endIso = addDays(weekStart, 6).toISOString().split('T')[0];
+      result = result.filter((event) => event.date >= startIso && event.date <= endIso);
+    } else {
       const selectedDateStr = selectedDate.toISOString().split('T')[0];
       result = result.filter(event => {
         // Show events that start on this day
@@ -264,7 +270,47 @@ function DailyView() {
     if (events.length > 0) {
       applyFilters(events, filters, searchTerm);
     }
-  }, [filters, searchTerm, events, viewMode, selectedDate, calendarMode]);
+  }, [filters, searchTerm, events, viewMode, selectedDate, weekStart]);
+
+  function addDays(date: Date, days: number) {
+    const d = new Date(date);
+    d.setDate(d.getDate() + days);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  function getStartOfWeek(d: Date) {
+    const copy = new Date(d);
+    const day = copy.getDay(); // Sunday = 0
+    copy.setDate(copy.getDate() - day);
+    copy.setHours(0, 0, 0, 0);
+    return copy;
+  }
+
+  function isoDate(d: Date) {
+    return d.toISOString().split('T')[0];
+  }
+
+  function prevWeek() {
+    const todayStart = getStartOfWeek(new Date());
+    const min = addDays(todayStart, -14); // allow up to 2 weeks in past
+    setWeekStart((s: Date) => {
+      const candidate = addDays(s, -7);
+      return candidate < min ? min : candidate;
+    });
+  }
+
+  function nextWeek() {
+    setWeekStart((s: Date) => addDays(s, 7));
+  }
+
+  function goToThisWeek() {
+    const d = new Date();
+    const day = (d.getDay() + 6) % 7;
+    d.setDate(d.getDate() - day);
+    d.setHours(0, 0, 0, 0);
+    setWeekStart(d);
+  }
 
   // Convert time string (HH:MM or HH:MM AM/PM) to minutes from midnight
   function timeToMinutes(time: string): number {
@@ -451,6 +497,36 @@ function DailyView() {
   const hourLabels = viewMode === 'calendar' ? generateHourLabels() : [];
   const eventLayout = viewMode === 'calendar' ? calculateEventLayout(filteredEvents) : new Map();
 
+  // weekFilteredEvents: events within the currently selected week (Monday - Sunday)
+  const weekStartIso = weekStart.toISOString().split('T')[0];
+  const weekEndIso = addDays(weekStart, 6).toISOString().split('T')[0];
+  const weekFilteredEvents = filteredEvents.filter(
+    (ev) => ev.date >= weekStartIso && ev.date <= weekEndIso
+  );
+
+  // Navigation availability
+  const todayStart = getStartOfWeek(new Date());
+  const minWeekStart = addDays(todayStart, -14); // 2 weeks ago
+  const canPrev = weekStart.getTime() > minWeekStart.getTime();
+
+  // Determine if there are any events after the end of the current week
+  const hasMoreFutureEvents = events.some((ev) => {
+    // apply simple search + tag filters so navigation respects current filters
+    if (searchTerm) {
+      const q = searchTerm.toLowerCase();
+      const matchesName = ev.name && ev.name.toLowerCase().includes(q);
+      const matchesDesc = ev.description && ev.description.toLowerCase().includes(q);
+      if (!matchesName && !matchesDesc) return false;
+    }
+    if (filters.selected_tags && filters.selected_tags.length > 0) {
+      if (!ev.tags) return false;
+      const eventTags = ev.tags.map((t) => t.toLowerCase());
+      if (!filters.selected_tags.every((t) => eventTags.includes(t.toLowerCase()))) return false;
+    }
+    return ev.date > weekEndIso;
+  });
+  const canNext = hasMoreFutureEvents;
+
   return (
     <div className="flex h-screen overflow-hidden relative" style={{ height: 'calc(100vh - 64px)' }}>
       {/* filter panel */}
@@ -489,8 +565,8 @@ function DailyView() {
             </button>
           </div>
         </div>
-        <p className="text-xs text-gray-500 mb-2 flex-shrink-0 px-6 pt-2">
-          Showing {filteredEvents.length} upcoming events
+        <p className="text-xs text-gray-500 mb-2 flex-shrink-0 px-4 pt-2">
+          Showing {viewMode === 'list' ? weekFilteredEvents.length : filteredEvents.length} upcoming events
         </p>
         <button
           onClick={resetFilters}
@@ -745,6 +821,42 @@ function DailyView() {
               />
               <FaSearch className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400" />
             </div>
+              {/* Week navigation (visible on all sizes; compact on mobile) */}
+              <div className="flex items-center gap-2 ml-0 md:ml-4">
+                <button
+                  onClick={() => canPrev && prevWeek()}
+                  aria-label="Previous week"
+                  disabled={!canPrev}
+                  aria-disabled={!canPrev}
+                  className={`px-2 py-1 md:px-3 md:py-2 rounded text-sm transition-colors ${
+                    canPrev
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-blue-200 text-white cursor-not-allowed opacity-60'
+                  }`}
+                >
+                  ←
+                </button>
+                <button
+                  onClick={goToThisWeek}
+                  aria-label="This week"
+                  className="px-2 py-1 md:px-3 md:py-2 rounded bg-gray-100 text-gray-800 border hover:bg-gray-200 text-sm"
+                >
+                  This Week
+                </button>
+                <button
+                  onClick={() => canNext && nextWeek()}
+                  aria-label="Next week"
+                  disabled={!canNext}
+                  aria-disabled={!canNext}
+                  className={`px-2 py-1 md:px-3 md:py-2 rounded text-sm transition-colors ${
+                    canNext
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-blue-200 text-white cursor-not-allowed opacity-60'
+                  }`}
+                >
+                  →
+                </button>
+              </div>
             <button
               onClick={toggleMobileSidebar}
               className="ml-4 md:hidden p-2 rounded-md border border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
@@ -761,7 +873,7 @@ function DailyView() {
           {filteredEvents.length > 0 ? (
           <div className="space-y-8">
             {Object.entries(
-              filteredEvents.reduce((groups, event) => {
+              weekFilteredEvents.reduce((groups, event) => {
                 const date = event.date;
                 if (!groups[date]) {
                   groups[date] = [];
@@ -797,7 +909,7 @@ function DailyView() {
           </div>
         ) : (
           <div className="text-center py-16 bg-white rounded-lg shadow">
-            <div className="text-6xl mb-4">📅</div>
+            <div className="text-6xl mb-4"></div>
             <p className="text-gray-500 text-xl mb-2">No upcoming events found</p>
             <p className="text-gray-400 mb-6">
               Try adjusting your filters or check back later
