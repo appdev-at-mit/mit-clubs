@@ -535,10 +535,14 @@ function DailyView() {
           fixed top-16 left-0 bottom-0 z-30 w-full max-w-xs bg-white border-r border-gray-300
           transform transition-transform duration-300 ease-in-out
           ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0 md:sticky md:top-16 md:h-screen md:w-64 flex flex-col
+          flex flex-col pt-6 pb-4 px-6 overflow-y-auto
+          md:relative md:translate-x-0 md:flex-shrink-0 md:flex md:overflow-y-auto
+          md:top-0 md:pt-6 md:bottom-auto md:h-full
+          md:max-w-none
+          md:w-64 lg:w-80
         `}
       >
-        <div className="flex justify-between items-center mb-1 flex-shrink-0 px-6 pt-6">
+        <div className="flex justify-between items-center mb-1 flex-shrink-0">
           <div className="flex items-center gap-2">
             <SlidersHorizontal size={18} className="text-appdev-blue-dark" />
             <span className="text-lg font-bold">Filters</span>
@@ -565,7 +569,7 @@ function DailyView() {
             </button>
           </div>
         </div>
-        <p className="text-xs text-gray-500 mb-2 flex-shrink-0 px-4 pt-2">
+        <p className="text-xs text-gray-500 mb-2 flex-shrink-0">
           Showing {viewMode === 'list' ? weekFilteredEvents.length : filteredEvents.length} upcoming events
         </p>
         <button
@@ -576,11 +580,11 @@ function DailyView() {
             backgroundColor: isHoveringResetAll ? "#E5E7EB" : "#D1D5DB",
             transition: "background-color 0.1s ease",
           }}
-          className="md:hidden px-3 py-1 rounded-md text-xs mb-3 self-start mx-4"
+          className="md:hidden px-3 py-1 rounded-md text-xs mb-3 self-start"
         >
           Reset All
         </button>
-        <div className="flex-grow overflow-y-auto space-y-1 scrollbar-hide px-4">
+        <div className="flex-grow overflow-y-auto space-y-1 scrollbar-hide">
           <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
             <button
               onClick={() => setIsCategorySectionOpen(!isCategorySectionOpen)}
@@ -747,6 +751,7 @@ function DailyView() {
         <div className="mb-6 space-y-4">
           {/* View Mode Toggle */}
           <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-gray-900">Events</h1>
             <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
               <button
                 onClick={() => setViewMode('list')}
@@ -922,7 +927,7 @@ function DailyView() {
           <>
             {/* Calendar Header - Week view only */}
             {calendarMode === 'week' && (
-              <div className="bg-gray-50 py-3 mb-4 border-b-2 flex items-start justify-between" style={{ borderColor: '#5b8fb9' }}>
+              <div className="bg-gray-50 py-3 mb-4 border-b-2 flex items-center justify-between" style={{ borderColor: '#5b8fb9' }}>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
                     {(() => {
