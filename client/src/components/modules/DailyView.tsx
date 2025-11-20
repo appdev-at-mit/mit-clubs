@@ -135,7 +135,7 @@ function DailyView() {
       const startIso = weekStart.toISOString().split('T')[0];
       const endIso = addDays(weekStart, 6).toISOString().split('T')[0];
       result = result.filter((event) => event.date >= startIso && event.date <= endIso);
-    } else {
+    } else if (calendarMode === 'day') {
       const selectedDateStr = selectedDate.toISOString().split('T')[0];
       result = result.filter(event => {
         // Show events that start on this day
