@@ -1,21 +1,43 @@
 import mongoose from "mongoose";
 
-export interface Event{
+export interface Event {
+   event_id: number;
     title: string;
-    organization: string;
-    sender_email?: string;
-    time: string;
-    loc: string;
-    description?: string;
+    organizer: string;
+    date: string; // ISO 8601 DateTime
+    location: string;
+    recievedDate: string; // ISO 8601 DateTime
+    last_modified: string; // ISO 8601 DateTime
+    // Optional fields
+    source?: string;
+    organizer_email?: string;
+    contact_email?: string;
+    end_time?: string; // ISO 8601 DateTime
+    duration?: number;
+    details?: string;
+    fromEmailId?: string;
+    tags?: string[];
+    saveCount?: number;
 }
 
 const EventSchema = new mongoose.Schema({
-    title: {type: String, required:true, sparse: true},
-    organization: {type: String, required:true, sparse:true},
-    sender_email: {type: String},
-    time: {type: String, required:true},
-    loc: {type: String, required:true},
-    description: {type: String},
+    id: { type: Number, required: true, unique: true },
+    title: { type: String, required: true },
+    organizer: { type: String, required: true },
+    date: { type: String, required: true },
+    location: { type: String, required: true },
+    recievedDate: { type: String, required: true },
+    last_modified: { type: String, required: true },
+    // Optional fields
+    source: { type: String },
+    organizer_email: { type: String },
+    contact_email: { type: String },
+    end_time: { type: String },
+    duration: { type: Number },
+    details: { type: String },
+    fromEmailId: { type: String },
+    tags: [{ type: String }],
+    saveCount: { type: Number},
 });
 
 const EventModel = mongoose.model<Event>("event", EventSchema);
