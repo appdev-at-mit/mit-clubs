@@ -48,6 +48,18 @@ function Navbar() {
                   About
                 </NavLink>
                 <NavLink
+                  to="/events"
+                  className={({ isActive }) =>
+                    `no-underline font-semibold ${
+                      isActive
+                        ? "text-appdev-blue-dark"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`
+                  }
+                >
+                  Events
+                </NavLink>
+                <NavLink
                   to="/profile"
                   className={({ isActive }) =>
                     `no-underline font-semibold ${
@@ -159,6 +171,19 @@ function Navbar() {
                   </button>
                 </div>
               )}
+                <NavLink
+                  to="/events"
+                  className={({ isActive }) =>
+                    `no-underline font-semibold py-2 ${
+                      isActive
+                        ? "text-appdev-blue-dark"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`
+                  }
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Events
+                </NavLink>
             </div>
           </div>
         )}

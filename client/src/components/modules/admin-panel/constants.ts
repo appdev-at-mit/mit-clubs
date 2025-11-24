@@ -68,3 +68,8 @@ export const recruitmentCycles = [
   { id: "cycle_spring", value: "Spring Semester", label: "Spring Semester" },
   { id: "cycle_iap", value: "IAP", label: "IAP" },
 ];
+
+export const tagEvents = {
+  "Event Type": ["General Meeting", "Recruitment", "Workshop/Speaker", "Social", "Study Break", "Volunteering", "Performance/Showcase", "Sale", "Other"],
+  "Food/Drinks": ["Free Food", "Meals", "Pizza", "Snacks", "Sweet Treat", "Boba", "Coffee"],
+};

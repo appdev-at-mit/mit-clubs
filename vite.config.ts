@@ -8,10 +8,10 @@ export default defineConfig(({ mode }) => {
   // load env file from root directory
   const env = loadEnv(mode, process.cwd(), '');
   const isProduction = mode === 'production';
-  
+
   return {
     plugins: [
-      react(), 
+      react(),
       svgr(),
       nodePolyfills()
     ],
@@ -34,10 +34,14 @@ export default defineConfig(({ mode }) => {
       }
     },
     server: {
-      port: 5173,
+      host: '0.0.0.0',
+      port: 1250,
+      watch: {
+        usePolling: true,
+      },
       proxy: {
         '/api': {
-          target: env.VITE_API_BASE_URL || "http://localhost:3001",
+          target: env.VITE_API_BASE_URL || "http://mit-clubs-server:1251",
           changeOrigin: true,
         },
       }
