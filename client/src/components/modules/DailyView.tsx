@@ -229,7 +229,7 @@ function DailyView() {
 
   function goToThisWeek() {
     const d = new Date();
-    const day = (d.getDay() + 6) % 7;
+    const day = d.getDay(); // Sunday = 0
     d.setDate(d.getDate() - day);
     d.setHours(0, 0, 0, 0);
     setWeekStart(d);
@@ -410,14 +410,18 @@ function DailyView() {
     (ev) => ev.date >= weekStartIso && ev.date <= weekEndIso
   );
 
+  // human-friendly week label (e.g. "Nov 30 — Dec 6, 2025")
+  const weekEnd = addDays(weekStart, 6);
+  const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} — ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
   // Navigation availability
   const todayStart = getStartOfWeek(new Date());
   const minWeekStart = addDays(todayStart, -14); // 2 weeks ago
   const canPrev = weekStart.getTime() > minWeekStart.getTime();
 
   // Determine if there are any events after the end of the current week
-  const hasMoreFutureEvents = events.some((ev) => {
-    // apply simple search + tag filters so navigation respects current filters
+  // (a) filtered check (kept for reference) — respects current search/filters
+  const hasMoreFutureEventsFiltered = events.some((ev: MockEvent) => {
     if (searchTerm) {
       const q = searchTerm.toLowerCase();
       const matchesName = ev.name && ev.name.toLowerCase().includes(q);
@@ -426,12 +430,17 @@ function DailyView() {
     }
     if (filters.selected_tags && filters.selected_tags.length > 0) {
       if (!ev.tags) return false;
-      const eventTags = ev.tags.map((t) => t.toLowerCase());
-      if (!filters.selected_tags.every((t) => eventTags.includes(t.toLowerCase()))) return false;
+      const eventTags = ev.tags.map((t: string) => t.toLowerCase());
+      if (!filters.selected_tags.every((t: string) => eventTags.includes(t.toLowerCase()))) return false;
     }
     return ev.date > weekEndIso;
   });
-  const canNext = hasMoreFutureEvents;
+
+  // (b) global check — any event in the future regardless of filters
+  const hasMoreFutureEventsAll = events.some((ev: MockEvent) => ev.date > weekEndIso);
+
+  // Enable Next if there are any events in the future (ignoring filters)
+  const canNext = hasMoreFutureEventsAll;
 
   return (
     <div className="flex h-screen overflow-hidden relative" style={{ height: 'calc(100vh - 64px)' }}>
@@ -757,6 +766,9 @@ function DailyView() {
                 >
                   →
                 </button>
+                <div className="hidden sm:block ml-3 text-sm text-gray-600">
+                  {weekLabel}
+                </div>
               </div>
             <button
               onClick={toggleMobileSidebar}
