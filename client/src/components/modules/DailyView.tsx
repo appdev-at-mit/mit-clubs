@@ -31,8 +31,9 @@ function DailyView() {
 
   // Initialize state from URL parameters or use defaults
   const [viewMode, setViewMode] = useState<DailyViewMode>(() => {
-    const view = searchParams.get('view');
-    return (view === 'list' || view === 'calendar') ? view : 'list';
+  // Only read from URL params if explicitly set, otherwise default to list
+  const view = searchParams.get('view');
+  return view === 'calendar' ? 'calendar' : 'list';
   });
 
   const [calendarMode, setCalendarMode] = useState<CalendarMode>(() => {
@@ -97,6 +98,15 @@ function DailyView() {
   const [loading, setLoading] = useState<boolean>(true);
   const [isHoveringResetAll, setIsHoveringResetAll] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Reset to list view when component mounts
+    setViewMode('list');
+    // Also clear any calendar-related URL params
+    const newParams = new URLSearchParams();
+    newParams.set('view', 'list');
+    setSearchParams(newParams, { replace: true });
+  }, []);
 
   useEffect(() => {
     const checkIsMobile = () => {
