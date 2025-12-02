@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import React, { useContext, useState } from "react";
 import { UserContext } from "../App";
 import { redirectToLogin } from "../../auth/auth";
@@ -8,6 +8,8 @@ import logo from "../../assets/logo.png";
 function Navbar() {
   const userContext = useContext(UserContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   if (!userContext) {
     throw new Error("Navbar must be used within UserContext");
@@ -18,6 +20,11 @@ function Navbar() {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleEventsClick = (e: React.MouseEvent) => {
+  e.preventDefault();
+  window.location.href = '/events?view=list';
   };
 
   return (
@@ -47,18 +54,16 @@ function Navbar() {
                 >
                   About
                 </NavLink>
-                <NavLink
-                  to="/events"
-                  className={({ isActive }) =>
-                    `no-underline font-semibold ${
-                      isActive
-                        ? "text-appdev-blue-dark"
-                        : "text-gray-600 hover:text-gray-900"
-                    }`
-                  }
+                <button
+                  onClick={handleEventsClick}
+                  className={`no-underline font-semibold cursor-pointer ${
+                    location.pathname === '/events'
+                      ? "text-appdev-blue-dark"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
                 >
                   Events
-                </NavLink>
+                </button>
                 <NavLink
                   to="/profile"
                   className={({ isActive }) =>
@@ -135,6 +140,19 @@ function Navbar() {
               </NavLink>
               {isAuth ? (
                 <>
+                  <button
+                    onClick={() => {
+                      handleEventsClick({} as React.MouseEvent);
+                      setIsMenuOpen(false);
+                    }}
+                    className={`no-underline font-semibold py-2 cursor-pointer text-left ${
+                      location.pathname === '/events'
+                        ? "text-appdev-blue-dark"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    Events
+                  </button>
                   <NavLink
                     to="/events"
                     className={({ isActive }) =>

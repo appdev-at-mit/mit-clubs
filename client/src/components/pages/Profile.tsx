@@ -24,9 +24,10 @@ function Profile() {
 
   const { userId, userEmail } = userContext;
   const [savedClubs, setSavedClubs] = useState<ExtendedClub[]>([]);
+  const [savedEvents, setSavedEvents] = useState<Event[]>([]);
   const [memberClubs, setMemberClubs] = useState<ExtendedClub[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<"saved" | "member">("saved");
+  const [activeTab, setActiveTab] = useState<"saved-clubs" | "saved-events" | "member">("saved-clubs");
 
   useEffect(() => {
     async function fetchUserData() {
@@ -142,6 +143,61 @@ function Profile() {
     );
   }
 
+  function renderEventList(events: Event[]) {
+    if (events.length === 0) {
+      return (
+        <div className="bg-gray-50 rounded-lg p-8 text-center">
+          <p className="text-gray-600">
+            You haven't saved any events yet. Browse events and click the bookmark icon to save them for later!
+          </p>
+        </div>
+      );
+    }
+
+  // NOT YET IMPLEMENTABLE (renders events)
+  //   return (
+  //     <div className="space-y-3">
+  //       {events.map((event) => (
+  //         <Link
+  //           key={event.event_id}
+  //           to={`/events/${event.event_id}`}
+  //           className="block bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+  //         >
+  //           <div className="flex items-start p-4">
+  //             <div className="flex-grow">
+  //               <h3 className="font-semibold text-appdev-blue-dark">
+  //                 {event.title}
+  //               </h3>
+
+  //               {event.club_name && (
+  //                 <p className="text-sm text-gray-600 mt-1">
+  //                   {event.club_name}
+  //                 </p>
+  //               )}
+
+  //               <div className="flex items-center text-xs text-gray-500 mt-2">
+  //                 <Calendar size={14} className="mr-1" />
+  //                 <span>
+  //                   {new Date(event.start_time).toLocaleDateString()} at{" "}
+  //                   {new Date(event.start_time).toLocaleTimeString([], {
+  //                     hour: "2-digit",
+  //                     minute: "2-digit",
+  //                   })}
+  //                 </span>
+  //               </div>
+  //             </div>
+
+  //             <div className="flex items-center text-sm text-appdev-blue hover:text-appdev-blue-dark">
+  //               <span className="mr-1">View</span>
+  //               <ExternalLink size={14} />
+  //             </div>
+  //           </div>
+  //         </Link>
+  //       ))}
+  //     </div>
+  //   );
+  }
+
   return (
     <>
       <Navbar />
@@ -167,7 +223,11 @@ function Profile() {
                   <div className="flex justify-between mt-6 text-center">
                     <div>
                       <p className="font-bold text-xl">{savedClubs.length}</p>
-                      <p className="text-gray-600 text-sm">Saved</p>
+                      <p className="text-gray-600 text-sm">Saved Clubs</p>
+                    </div>
+                    <div>
+                      <p className="font-bold text-xl">{savedEvents.length}</p>
+                      <p className="text-gray-600 text-sm">Saved Events</p>
                     </div>
                     <div>
                       <p className="font-bold text-xl">{memberClubs.length}</p>
@@ -198,14 +258,25 @@ function Profile() {
                 <div className="flex border-b border-gray-200">
                   <button
                     className={`px-4 py-3 flex items-center gap-2 text-sm font-medium ${
-                      activeTab === "saved"
+                      activeTab === "saved-clubs"
                         ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
                         : "text-gray-500 hover:text-gray-700"
                     }`}
-                    onClick={() => setActiveTab("saved")}
+                    onClick={() => setActiveTab("saved-clubs")}
                   >
                     <Bookmark size={16} />
                     <span>Saved Clubs</span>
+                  </button>
+                  <button
+                    className={`px-4 py-3 flex items-center gap-2 text-sm font-medium ${
+                      activeTab === "saved-events"
+                        ? "text-appdev-blue-dark border-b-2 border-appdev-blue-dark"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                    onClick={() => setActiveTab("saved-events")}
+                  >
+                    <Bookmark size={16} />
+                    <span>Saved Events</span>
                   </button>
                   <button
                     className={`px-4 py-3 flex items-center gap-2 text-sm font-medium ${
@@ -227,8 +298,10 @@ function Profile() {
                     </div>
                   ) : (
                     <>
-                      {activeTab === "saved" &&
+                      {activeTab === "saved-clubs" &&
                         renderClubList(savedClubs, "saved")}
+                      {activeTab === "saved-events" &&
+                        renderEventList(savedEvents)}
                       {activeTab === "member" &&
                         renderClubList(memberClubs, "member")}
                     </>

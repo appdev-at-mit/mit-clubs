@@ -35,7 +35,7 @@ function Events() {
       <Navbar />
       <div className="pt-16 flex-grow">
         {/* Daily view */}
-        <DailyView />
+        <DailyView key="reset-view" />
       </div>
     </div>
   );
