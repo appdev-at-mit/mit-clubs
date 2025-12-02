@@ -23,7 +23,7 @@ const mockEvents: MockEvent[] = [
     event_id: "evt-001",
     name: "Tech Talk: AI in Modern Development",
     description: "Join us for an exciting discussion about the latest trends in AI and machine learning, and how they're shaping modern software development.",
-    date: "2025-11-05",
+    date: "2025-12-05",
     startTime: "6:00 PM",
     endTime: "8:00 PM",
     location: "Engineering Building Room 301",
