@@ -841,7 +841,6 @@ function DailyView() {
             {/* Right side: Date Navigation */}
             <div className="flex items-center gap-2 h-[44px]">
               {viewMode === 'list' ? (
-                // List View: Week range with arrow navigation only
                 <>
                   <button
                     onClick={prevWeek}
@@ -850,9 +849,26 @@ function DailyView() {
                   >
                     ←
                   </button>
-                  <div className="px-4 py-2 h-[44px] min-w-[220px] flex items-center justify-start text-left border border-gray-300 rounded-md bg-white text-sm">
-                    {weekStart.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })} - {addDays(weekStart, 6).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
-                  </div>
+
+                  {/* LIST VIEW DATE PICKER */}
+                  <input
+                    type="date"
+                    value={weekStart.toISOString().split("T")[0]}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value) {
+                        const picked = new Date(value + "T00:00:00");
+                        if (!isNaN(picked.getTime())) {
+                          const newWeekStart = new Date(picked);
+                          newWeekStart.setDate(picked.getDate() - picked.getDay());
+                          newWeekStart.setHours(0, 0, 0, 0);
+                          setWeekStart(newWeekStart);
+                        }
+                      }
+                    }}
+                    className="h-[44px] min-w-[220px] border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark text-sm px-4 py-2 bg-white"
+                  />
+
                   <button
                     onClick={nextWeek}
                     className="p-2 h-[44px] w-[44px] flex items-center justify-center border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
@@ -867,7 +883,7 @@ function DailyView() {
                   <button
                     onClick={() => {
                       const newDate = new Date(selectedDate);
-                      newDate.setDate(selectedDate.getDate() - 7);
+                      newDate.setDate(newDate.getDate() - 7);
                       setSelectedDate(newDate);
                     }}
                     className="p-2 h-[44px] w-[44px] flex items-center justify-center border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
@@ -875,19 +891,27 @@ function DailyView() {
                   >
                     ←
                   </button>
-                  <div className="px-4 py-2 h-[44px] min-w-[220px] flex items-center justify-start text-left border border-gray-300 rounded-md bg-white text-sm">
-                    {(() => {
-                      const weekStart = new Date(selectedDate);
-                      weekStart.setDate(selectedDate.getDate() - selectedDate.getDay());
-                      const weekEnd = new Date(weekStart);
-                      weekEnd.setDate(weekStart.getDate() + 6);
-                      return `${weekStart.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}`;
-                    })()}
-                  </div>
+
+                  {/* Replace week range label with date picker */}
+                  <input
+                    type="date"
+                    value={selectedDate.toISOString().split('T')[0]}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value) {
+                        const newDate = new Date(value + "T00:00:00");
+                        if (!isNaN(newDate.getTime())) {
+                          setSelectedDate(newDate);
+                        }
+                      }
+                    }}
+                    className="h-[44px] min-w-[220px] border border-gray-300 rounded-md focus:ring-appdev-blue-dark focus:border-appdev-blue-dark text-sm px-4 py-2 bg-white"
+                  />
+
                   <button
                     onClick={() => {
                       const newDate = new Date(selectedDate);
-                      newDate.setDate(selectedDate.getDate() + 7);
+                      newDate.setDate(newDate.getDate() + 7);
                       setSelectedDate(newDate);
                     }}
                     className="p-2 h-[44px] w-[44px] flex items-center justify-center border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"

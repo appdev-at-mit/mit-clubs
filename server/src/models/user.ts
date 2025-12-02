@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Club } from "./Club";
+import { Event } from "./event";
 
 export interface UserClubMembership {
   club_id: string;
@@ -14,6 +15,7 @@ export interface User {
   isAdmin?: boolean;
   memberOf?: UserClubMembership[];
   savedClubs?: Club[];
+  savedEvents?: Event[];
 }
 
 const UserClubMembershipSchema = new mongoose.Schema({
@@ -29,6 +31,7 @@ const UserSchema = new mongoose.Schema({
   isAdmin: { type: Boolean, default: false },
   memberOf: [UserClubMembershipSchema],
   savedClubs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'club' }],
+  savedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'event' }],
 });
 
 const UserModel = mongoose.model<User>("user", UserSchema);
