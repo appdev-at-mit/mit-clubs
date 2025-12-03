@@ -71,6 +71,69 @@ userRouter.get(
 );
 
 /**
+ * GET /api/saved-events
+ *
+ * Returns a JSON array of events saved by the authenticated user
+ */
+userRouter.get(
+  "/saved-events",
+  ensureLoggedIn,
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) {
+      res.status(401).json({ error: "unauthorized" });
+      return;
+    }
+
+    const user_id = req.user._id;
+
+    try {
+      const user = await User.findById(user_id).populate("savedEvents");
+      if (!user || !user.savedEvents || user.savedEvents.length === 0) {
+        res.json([]);
+        return;
+      }
+      res.status(200).json(user.savedEvents);
+    } catch (error) {
+      console.error("error fetching saved events:", error);
+      res.status(500).json({ error: "error fetching saved events" });
+    }
+  }
+);
+
+/**
+ * GET /api/saved-event-ids
+ *
+ * Returns a JSON array of event IDs saved by the authenticated user
+ */
+userRouter.get(
+  "/saved-event-ids",
+  ensureLoggedIn,
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) {
+      res.status(401).json({ error: "unauthorized" });
+      return;
+    }
+
+    const user_id = req.user._id;
+
+    try {
+      const user = await User.findById(user_id).populate("savedEvents");
+      if (!user || !user.savedEvents) {
+        res.json([]);
+        return;
+      }
+      const savedEventIds = user.savedEvents.map((event: any) => ({
+        event_id: event.event_id,
+      }));
+      res.status(200).json(savedEventIds);
+    } catch (error) {
+      console.error("error fetching saved event ids:", error);
+      res.status(500).json({ error: "error fetching saved event ids" });
+    }
+  }
+);
+
+/**
  * GET /api/users/clubs
  *
  * Returns a JSON array of clubs where the user is a member
@@ -140,7 +203,9 @@ userRouter.get(
     const user_id = req.user._id;
 
     try {
-      const user = await User.findById(user_id).populate("savedClubs");
+      const user = await User.findById(user_id)
+        .populate("savedClubs")
+        .populate("savedEvents");
       if (!user) {
         res.status(404).json({ error: "User not found" });
         return;
@@ -158,6 +223,7 @@ userRouter.get(
         res.json({
           memberClubs: [],
           savedClubs: [],
+          savedEvents: [],
         });
         return;
       }
@@ -190,10 +256,12 @@ userRouter.get(
       }
 
       const savedClubs = user.savedClubs || [];
+      const savedEvents = user.savedEvents || [];
 
       res.json({
         savedClubs,
         memberClubs,
+        savedEvents,
       });
     } catch (error) {
       console.error("error fetching user data:", error);

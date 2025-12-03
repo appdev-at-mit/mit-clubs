@@ -16,6 +16,7 @@ import { userRouter } from "./api/users";
 import { adminRouter } from "./api/admin";
 import { populateCurrentUser } from "./auth/auth";
 import cookieParser from "cookie-parser";
+import { eventRouter } from "./api/events";
 
 // validator runs some basic checks to make sure you've set everything up correctly
 checkSetup();
@@ -69,6 +70,7 @@ app.use("/api", apiRouter);
 app.use("/api", clubRouter);
 app.use("/api", userRouter);
 app.use("/api", adminRouter);
+app.use("/api", eventRouter)
 
 // catch-all for unmatched API routes
 app.all("/api/*", (_req: Request, res: Response) => {

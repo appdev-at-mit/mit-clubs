@@ -6,11 +6,12 @@ import { UserContext } from "../App";
 function Events() {
   const [currentView, setCurrentView] = useState<'daily' | 'weekly'>('daily');
   const userContext = useContext(UserContext);
-  const { userId, userEmail } = userContext;
 
   if (!userContext) {
     throw new Error("Profile must be used within UserContext");
   }
+
+  const { userId, userEmail } = userContext;
 
   if (!userId) {
     return (

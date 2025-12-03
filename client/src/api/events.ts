@@ -1,11 +1,25 @@
 import { get, post, put, del } from "../utilities";
-// define Event type!!!
+import { Event } from "../types";
 
 /**
  * Save a event to the user's saved event list
  */
 export async function saveEvent(eventId: string): Promise<Event> {
   return post("/api/save-event", { event_id: eventId });
+}
+
+/**
+ * Get a event by ID (alternative function name for compatibility)
+ */
+export async function getID(eventId: string): Promise<Event> {
+  return get(`/api/events/${eventId}`);
+}
+
+/**
+ * Get all clubs
+ */
+export async function getAllEvents(): Promise<Event[]> {
+  return get("/api/events");
 }
 
 /**

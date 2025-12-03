@@ -1,33 +1,70 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getMockEvents, MockEvent } from "../../api/mock-events";
+import { getMockEvents } from "../../api/mock-events";
+import { MockEvent } from "../../types";
 import NotFound from "./NotFound";
 import Navbar from "../modules/Navbar";
 import defaultImage from "../../assets/default.png";
 import { ArrowLeft, MapPin, Clock, Users } from "lucide-react";
+import {
+  getID,
+  saveEvent,
+  unsaveEvent,
+  getSavedEventIds,
+} from "../../api/events";
 
-
-
-
-
+import {
+  FaRegBookmark,
+  FaBookmark,
+} from "react-icons/fa";
+import { UserContext } from "../App";
 
 
 
 function EventDetails() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
+  const userContext = useContext(UserContext);
+
+  if (!userContext) {
+    throw new Error("EventDetails must be used within UserContext");
+  }
+
+  const {userId, userEmail} = userContext;
   const [event, setEvent] = useState<MockEvent | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [isHoveringSave, setIsHoveringSave] = useState<boolean>(false);
+  const [notFound, setNotFound] = useState<boolean>(false);
 
   useEffect(() => {
     async function load() {
+
+      if (!eventId) return;
+
       setLoading(true);
       try {
-        const all = getMockEvents();
-        const found = all.find((e) => e.event_id === eventId) || null;
-        setEvent(found);
-      } catch (err) {
-        console.error("Failed to load event details:", err);
+        // fetch event details
+        const eventResponse = await getID(eventId);
+        setEvent(eventResponse);
+        // fetch users saved events if logged in
+        if (userId) {
+            const savedIdsResponse = await getSavedEventIds();
+            if (savedIdsResponse && Array.isArray(savedIdsResponse)) {
+              setIsSaved(
+                savedIdsResponse.some(
+                  (saved: { event_id: string }) => saved.event_id === eventId
+                )
+            );
+          }
+        } else {
+          setIsSaved(false);
+        }
+      } catch (err: any) {
+        console.error("Failed to load event details or save status:", err);
+        if (err.response?.status===404){
+          setNotFound(true);
+        }
         setEvent(null);
       } finally {
         setLoading(false);
@@ -35,9 +72,64 @@ function EventDetails() {
     }
 
     load();
-  }, [eventId]);
+  }, [eventId,userId,userEmail]);
 
-  if (loading) {
+
+  async function handleToggleSave(){
+    if (!eventId) return;
+    setIsSaved(!isSaved);
+    
+    try {
+      let response;
+      if (!isSaved) {
+        response = await saveEvent(eventId);
+      } else {
+        response = await unsaveEvent(eventId);
+        setEvent((prev) => 
+      prev
+        ? {
+            ...prev,
+            saveCount: !isSaved
+              ? (prev.saveCount || 0) - 1
+              : (prev.saveCount || 0) + 1,
+          }
+        : null
+    );
+      }
+
+      if (response){
+        setEvent(response);
+      }
+    } catch (error: any) {
+      console.error("Failed to save/unsave event:", error);
+      setIsSaved(isSaved);
+    }
+  }
+
+  const tagList =
+    event && typeof event.tags === "string"
+      ? event.tags.split(/,\s*/).filter((tag: string) => tag)
+      : event && Array.isArray(event.tags)
+      ? event.tags
+      : [];
+
+  /*
+    // function to handle image errors
+  function handleImageError(e: React.SyntheticEvent<HTMLImageElement>) {
+    e.currentTarget.src = defaultImage;
+  }
+
+  let fullImageUrl = defaultImage;
+  if (event && typeof event.image_url === "string") {
+    if (event.image_url.startsWith("/")) {
+      fullImageUrl = `https://engage.mit.edu${club.image_url}`;
+    } else if (event.image_url) {
+      fullImageUrl = event.image_url;
+    }
+  }
+*/
+
+    if (loading) {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
@@ -48,19 +140,22 @@ function EventDetails() {
     );
   }
 
-  if (!event) {
+  if (notFound) {
     return <NotFound />;
   }
 
-  const image = event.imageUrl || defaultImage;
-  const tagList =
-    event && typeof event.tags === "string"
-      ? event.tags.split(/,\s*/).filter((tag: string) => tag)
-      : event && Array.isArray(event.tags)
-      ? event.tags
-      : [];
-
-
+  if (!event) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <div className="flex-grow flex items-center justify-center">
+          <p className="text-center text-xl text-appdev-red">
+            Could not load event details.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -97,6 +192,31 @@ function EventDetails() {
                 </div>
               </div>
             </div>
+            <div className="w-full lg:w-1/4 space-y-6">
+                        <div className="flex items-center justify-start gap-3">
+                          <button
+                            onClick={handleToggleSave}
+                            onMouseEnter={() => setIsHoveringSave(true)}
+                            onMouseLeave={() => setIsHoveringSave(false)}
+                            className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          >
+                            {isSaved ? (
+                              <FaBookmark
+                                className={`text-xl transition-colors duration-300 ease-in-out ${
+                                  isHoveringSave
+                                    ? "text-appdev-blue-dark"
+                                    : "text-appdev-blue"
+                                }`}
+                              />
+                            ) : isHoveringSave ? (
+                              <FaBookmark className="text-appdev-blue text-xl transition-colors duration-300 ease-in-out" />
+                            ) : (
+                              <FaRegBookmark className="text-appdev-blue-dark text-xl transition-colors duration-300 ease-in-out" />
+                            )}
+                            <span className="ml-1">{event ? event.saveCount || 0 : 0}</span>
+                          </button>
+                        </div>
+                        </div>
             <div className="bg-white p-6 rounded-lg border border-gray-200">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Event Description

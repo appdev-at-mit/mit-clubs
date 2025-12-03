@@ -7,8 +7,8 @@ import {
   getUserMemberships,
   getUserData,
 } from "../../api/clubs";
-import { Bookmark, Users, ExternalLink, Clock } from "lucide-react";
-import { Club } from "../../types";
+import { Bookmark, Users, ExternalLink, Clock, Calendar } from "lucide-react";
+import { Club, MockEvent } from "../../types";
 
 interface ExtendedClub extends Club {
   role?: string;
@@ -24,7 +24,7 @@ function Profile() {
 
   const { userId, userEmail } = userContext;
   const [savedClubs, setSavedClubs] = useState<ExtendedClub[]>([]);
-  const [savedEvents, setSavedEvents] = useState<Event[]>([]);
+  const [savedEvents, setSavedEvents] = useState<MockEvent[]>([]);
   const [memberClubs, setMemberClubs] = useState<ExtendedClub[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<"saved-clubs" | "saved-events" | "member">("saved-clubs");
@@ -36,6 +36,7 @@ function Profile() {
         const response = await getUserData();
         setSavedClubs(response.data.savedClubs || []);
         setMemberClubs(response.data.memberClubs || []);
+        setSavedEvents(response.data.savedEvents || []);
       } catch (err) {
         console.error("Error fetching user data:", err);
 
@@ -143,7 +144,7 @@ function Profile() {
     );
   }
 
-  function renderEventList(events: Event[]) {
+  function renderEventList(events: MockEvent[]) {
     if (events.length === 0) {
       return (
         <div className="bg-gray-50 rounded-lg p-8 text-center">
@@ -154,48 +155,41 @@ function Profile() {
       );
     }
 
-  // NOT YET IMPLEMENTABLE (renders events)
-  //   return (
-  //     <div className="space-y-3">
-  //       {events.map((event) => (
-  //         <Link
-  //           key={event.event_id}
-  //           to={`/events/${event.event_id}`}
-  //           className="block bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
-  //         >
-  //           <div className="flex items-start p-4">
-  //             <div className="flex-grow">
-  //               <h3 className="font-semibold text-appdev-blue-dark">
-  //                 {event.title}
-  //               </h3>
+    return (
+      <div className="space-y-3">
+        {events.map((event) => (
+          <Link
+            key={event.event_id}
+            to={`/events/${event.event_id}`}
+            className="block bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-start p-4">
+              <div className="flex-grow">
+                <h3 className="font-semibold text-appdev-blue-dark">
+                  {event.name}
+                </h3>
 
-  //               {event.club_name && (
-  //                 <p className="text-sm text-gray-600 mt-1">
-  //                   {event.club_name}
-  //                 </p>
-  //               )}
+                <p className="text-sm text-gray-600 mt-1">
+                  {event.category}
+                </p>
 
-  //               <div className="flex items-center text-xs text-gray-500 mt-2">
-  //                 <Calendar size={14} className="mr-1" />
-  //                 <span>
-  //                   {new Date(event.start_time).toLocaleDateString()} at{" "}
-  //                   {new Date(event.start_time).toLocaleTimeString([], {
-  //                     hour: "2-digit",
-  //                     minute: "2-digit",
-  //                   })}
-  //                 </span>
-  //               </div>
-  //             </div>
+                <div className="flex items-center text-xs text-gray-500 mt-2">
+                  <Clock size={14} className="mr-1" />
+                  <span>
+                    {event.date} at {event.startTime}
+                  </span>
+                </div>
+              </div>
 
-  //             <div className="flex items-center text-sm text-appdev-blue hover:text-appdev-blue-dark">
-  //               <span className="mr-1">View</span>
-  //               <ExternalLink size={14} />
-  //             </div>
-  //           </div>
-  //         </Link>
-  //       ))}
-  //     </div>
-  //   );
+              <div className="flex items-center text-sm text-appdev-blue hover:text-appdev-blue-dark">
+                <span className="mr-1">View</span>
+                <ExternalLink size={14} />
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    );
   }
 
   return (
