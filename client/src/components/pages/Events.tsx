@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import Navbar from "../modules/Navbar";
-import DailyView from "../modules/DailyView";
+import DailyView from "../modules/events/DailyView";
 import { UserContext } from "../App";
 
 function Events() {
