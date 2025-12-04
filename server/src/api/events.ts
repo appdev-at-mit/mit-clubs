@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import EventModel from '../models/event';
 
 const router = express.Router();
+const isDate = (value: unknown): value is Date => value instanceof Date;
 
 /**
  * GET /api/events
@@ -57,13 +58,15 @@ router.get('/events', async (req: Request, res: Response) => {
 
     // Convert MongoDB Dates to ISO strings for frontend
     const eventsFormatted = events.map(event => ({
-      ...event,
-      _id: event._id.toString(),
-      date: event.date instanceof Date ? event.date.toISOString() : event.date,
-      recievedDate: event.recievedDate instanceof Date ? event.recievedDate.toISOString() : event.recievedDate,
-      last_modified: event.last_modified instanceof Date ? event.last_modified.toISOString() : event.last_modified,
-      end_time: event.end_time ? (event.end_time instanceof Date ? event.end_time.toISOString() : event.end_time) : undefined,
-    }));
+    ...event,
+    _id: event._id.toString(),
+    date: isDate(event.date) ? event.date.toISOString() : event.date,
+    recievedDate: isDate(event.recievedDate) ? event.recievedDate.toISOString() : event.recievedDate,
+    last_modified: isDate(event.last_modified) ? event.last_modified.toISOString() : event.last_modified,
+    end_time: event.end_time
+      ? (isDate(event.end_time) ? event.end_time.toISOString() : event.end_time)
+      : undefined,
+  }));
 
     res.json({
       status: 'success',
@@ -99,13 +102,16 @@ router.get('/events/:id', async (req: Request, res: Response) => {
 
     // Convert MongoDB Dates to ISO strings
     const eventFormatted = {
-      ...event,
-      _id: event._id.toString(),
-      date: event.date instanceof Date ? event.date.toISOString() : event.date,
-      recievedDate: event.recievedDate instanceof Date ? event.recievedDate.toISOString() : event.recievedDate,
-      last_modified: event.last_modified instanceof Date ? event.last_modified.toISOString() : event.last_modified,
-      end_time: event.end_time ? (event.end_time instanceof Date ? event.end_time.toISOString() : event.end_time) : undefined,
-    };
+    ...event,
+    _id: event._id.toString(),
+    date: isDate(event.date) ? event.date.toISOString() : event.date,
+    recievedDate: isDate(event.recievedDate) ? event.recievedDate.toISOString() : event.recievedDate,
+    last_modified: isDate(event.last_modified) ? event.last_modified.toISOString() : event.last_modified,
+    end_time: event.end_time
+      ? (isDate(event.end_time) ? event.end_time.toISOString() : event.end_time)
+      : undefined,
+  };
+
 
     res.json({
       status: 'success',
