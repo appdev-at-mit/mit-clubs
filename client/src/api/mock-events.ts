@@ -41,83 +41,84 @@ export function formatDate(isoDateTime: string): string {
 
 const MOCK_EVENTS: Event[] = [
   {
+    _id: "event-1",
     title: "Tech Talk: AI in Modern Development",
     organizer: "Computer Science Club",
     organizer_email: "csclub@mit.edu",
     contact_email: "csclub@mit.edu",
-    date: "2025-12-06T18:00:00.000Z",          // this week
+    date: "2025-12-06T18:00:00.000Z",
     location: "Engineering Building Room 301",
     recievedDate: "2025-11-28T18:00:00.000Z",
     last_modified: "2025-12-01T18:00:00.000Z",
-
     end_time: "2025-12-06T20:00:00.000Z",
     duration: 120,
     details: "Join us for an exciting discussion about the latest trends in AI.",
-    tags: [{ name: "tech" }, { name: "ai" }, { name: "workshop" }],
+    tags: ["tech", "ai", "workshop"],
   },
 
   {
+    _id: "event-2",
     title: "Fall Networking Mixer",
     organizer: "Business Club",
     organizer_email: "business@mit.edu",
     contact_email: "business@mit.edu",
-    date: "2025-11-10T17:30:00.000Z",          // still November
+    date: "2025-11-10T17:30:00.000Z",
     location: "Student Union Ballroom",
     recievedDate: "2025-11-06T18:00:00.000Z",
     last_modified: "2025-11-10T17:30:00.000Z",
-
     source: "DORMSPAM",
     end_time: "2025-11-10T19:30:00.000Z",
     duration: 120,
     details: "Connect with fellow students and industry professionals.",
     fromEmailId: "<NETWORKING-FALL@mit.edu>",
-    tags: [{ name: "networking" }, { name: "career" }, { name: "social" }],
+    tags: ["networking", "career", "social"],
   },
 
   {
+    _id: "event-3",
     title: "Weekly Game Night",
     organizer: "Gaming Society",
     organizer_email: "gaming@mit.edu",
     contact_email: "gaming@mit.edu",
-    date: "2025-12-02T19:00:00.000Z",          // yesterday
+    date: "2025-12-02T19:00:00.000Z",
     location: "Recreation Center Game Room",
     recievedDate: "2025-11-30T18:00:00.000Z",
     last_modified: "2025-12-02T19:00:00.000Z",
-
     source: "DORMSPAM",
   },
 
   {
+    _id: "event-4",
     title: "Environmental Cleanup Drive",
     organizer: "Green Initiative",
     organizer_email: "green@mit.edu",
     contact_email: "green@mit.edu",
-    date: "2025-12-10T09:00:00.000Z",          // next week
+    date: "2025-12-10T09:00:00.000Z",
     location: "Campus Quad (Meet at fountain)",
     recievedDate: "2025-11-25T18:00:00.000Z",
     last_modified: "2025-11-30T18:00:00.000Z",
-
     details: "Help make our campus greener!",
     fromEmailId: "<CLEANUP-2025@mit.edu>",
-    tags: [{ name: "community-service" }, { name: "environment" }],
+    tags: ["community-service", "environment"],
   },
 
   {
+    _id: "event-5",
     title: "Intro to React Workshop",
     organizer: "Computer Science Club",
     organizer_email: "csclub@mit.edu",
     contact_email: "csclub@mit.edu",
-    date: "2025-12-12T14:00:00.000Z",          // next week
+    date: "2025-12-12T14:00:00.000Z",
     location: "Computer Lab B",
     recievedDate: "2025-11-27T18:00:00.000Z",
     last_modified: "2025-12-01T18:00:00.000Z",
-
     duration: 180,
     details: "Learn the basics of React.js in this hands-on workshop.",
-    tags: [{ name: "tech" }, { name: "workshop" }],
+    tags: ["tech", "workshop"],
   },
 
   {
+    _id: "event-6",
     title: "Open Mic Night",
     organizer: "Arts & Performance Club",
     organizer_email: "arts@mit.edu",
@@ -126,7 +127,6 @@ const MOCK_EVENTS: Event[] = [
     location: "Campus Coffee House",
     recievedDate: "2025-11-23T18:00:00.000Z",
     last_modified: "2025-11-28T18:00:00.000Z",
-
     source: "DORMSPAM",
     end_time: "2025-12-15T23:00:00.000Z",
     duration: 180,
@@ -135,6 +135,7 @@ const MOCK_EVENTS: Event[] = [
   },
 
   {
+    _id: "event-7",
     title: "Startup Pitch Competition",
     organizer: "Entrepreneurship Club",
     organizer_email: "entrepreneur@mit.edu",
@@ -143,29 +144,26 @@ const MOCK_EVENTS: Event[] = [
     location: "Innovation Hub Auditorium",
     recievedDate: "2025-11-21T18:00:00.000Z",
     last_modified: "2025-11-29T18:00:00.000Z",
-
     source: "DORMSPAM",
     end_time: "2025-12-18T19:00:00.000Z",
     duration: 180,
-    tags: [
-      { name: "entrepreneurship" },
-      { name: "competition" },
-      { name: "startup" },
-    ],
+    tags: ["entrepreneurship", "competition", "startup"],
   },
 
   {
+    _id: "event-8",
     title: "Meditation & Mindfulness Session",
     organizer: "Wellness Club",
     organizer_email: "wellness@mit.edu",
     contact_email: "wellness@mit.edu",
-    date: "2025-12-03T12:00:00.000Z",         // today
+    date: "2025-12-03T12:00:00.000Z",
     location: "Wellness Center Room 202",
     recievedDate: "2025-12-01T18:00:00.000Z",
     last_modified: "2025-12-02T18:00:00.000Z",
   },
 
   {
+    _id: "event-9",
     title: "HackMIT 2025: 24-Hour Hackathon",
     organizer: "HackMIT",
     organizer_email: "team@hackmit.org",
@@ -174,28 +172,28 @@ const MOCK_EVENTS: Event[] = [
     location: "Engineering Building",
     recievedDate: "2025-11-18T18:00:00.000Z",
     last_modified: "2025-11-28T18:00:00.000Z",
-
     source: "DORMSPAM",
     duration: 1440,
     details: "24-hour coding marathon!",
-    tags: [{ name: "tech" }, { name: "coding" }, { name: "competition" }],
+    tags: ["tech", "coding", "competition"],
   },
 
   {
+    _id: "event-10",
     title: "Career Fair Prep Workshop",
     organizer: "Business Club",
     organizer_email: "business@mit.edu",
     contact_email: "business@mit.edu",
-    date: "2025-12-03T15:00:00.000Z",         // today
+    date: "2025-12-03T15:00:00.000Z",
     location: "Career Center Main Room",
     recievedDate: "2025-11-29T18:00:00.000Z",
     last_modified: "2025-12-02T18:00:00.000Z",
-
     source: "DORMSPAM",
     details: "Learn how to network and perfect your elevator pitch.",
   },
 
   {
+    _id: "event-11",
     title: "Study Abroad Info Session",
     organizer: "International Students Association",
     organizer_email: "isa@mit.edu",
@@ -204,31 +202,27 @@ const MOCK_EVENTS: Event[] = [
     location: "International House",
     recievedDate: "2025-11-26T18:00:00.000Z",
     last_modified: "2025-11-30T18:00:00.000Z",
-
     end_time: "2025-12-11T20:00:00.000Z",
     duration: 90,
-    tags: [
-      { name: "education" },
-      { name: "international" },
-      { name: "travel" },
-    ],
+    tags: ["education", "international", "travel"],
   },
 
   {
+    _id: "event-12",
     title: "Photography Walk",
     organizer: "Photography Club",
     organizer_email: "photo@mit.edu",
     contact_email: "photo@mit.edu",
-    date: "2025-12-09T17:00:00.000Z",         // next week
+    date: "2025-12-09T17:00:00.000Z",
     location: "Meet at Campus Center",
     recievedDate: "2025-11-28T18:00:00.000Z",
     last_modified: "2025-12-01T18:00:00.000Z",
-
     end_time: "2025-12-09T19:00:00.000Z",
     details: "Join us for a sunset photography walk!",
     fromEmailId: "<PHOTO-WALK@mit.edu>",
   },
 ];
+
 
 
 /**

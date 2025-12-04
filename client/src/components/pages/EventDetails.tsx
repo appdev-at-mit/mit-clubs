@@ -1,35 +1,54 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getEvent } from "../../api/events";
+import { getEvent, saveEvent, unsaveEvent, getSavedEventIds } from "../../api/events";
 import { formatTime, formatDate } from "../../api/mock-events";
 import { Event } from "../../types";
 import NotFound from "./NotFound";
 import Navbar from "../modules/Navbar";
+import LoginModal from "../modules/LoginModal";
 import defaultImage from "../../assets/default.png";
 import { ArrowLeft, MapPin, Clock, Users, Mail } from "lucide-react";
+import { FaRegBookmark, FaBookmark } from "react-icons/fa";
+import { UserContext } from "../App";
 
 function EventDetails() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
+  const userContext = useContext(UserContext);
+
+  if (!userContext) {
+    throw new Error("EventDetails must be used within UserContext");
+  }
+
+  const { userId } = userContext;
+
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [isHoveringSave, setIsHoveringSave] = useState<boolean>(false);
   const [notFound, setNotFound] = useState<boolean>(false);
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
 
   useEffect(() => {
     async function load() {
-
       if (!eventId) return;
 
       setLoading(true);
       try {
-        if (!eventId) {
-          setEvent(null);
-          return;
-        }
         const found = await getEvent(eventId);
         setEvent(found);
+
+        // Fetch user's saved events IF logged in
+        if (userId) {
+          const savedIds = await getSavedEventIds();
+          if (savedIds && Array.isArray(savedIds)) {
+            // Use the actual _id from the loaded event for comparison
+            const actualEventId = found._id || eventId;
+            setIsSaved(savedIds.includes(actualEventId));
+          }
+        } else {
+          setIsSaved(false);
+        }
       } catch (err) {
         console.error("Failed to load event details:", err);
         setEvent(null);
@@ -39,9 +58,51 @@ function EventDetails() {
     }
 
     load();
-  }, [eventId]);
+  }, [eventId, userId]);
 
-    if (loading) {
+  // Toggle save function
+  async function handleToggleSave() {
+    if (!userId) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    if (!event || !event._id) return;
+
+    // Use the MongoDB _id for save/unsave operations
+    const actualEventId = event._id;
+
+    try {
+      if (!isSaved) {
+        await saveEvent(actualEventId);
+        // Increment save count
+        setEvent((prev) =>
+          prev
+            ? {
+                ...prev,
+                saveCount: (prev.saveCount || 0) + 1,
+              }
+            : null
+        );
+      } else {
+        await unsaveEvent(actualEventId);
+        // Decrement save count
+        setEvent((prev) =>
+          prev
+            ? {
+                ...prev,
+                saveCount: Math.max((prev.saveCount || 0) - 1, 0),
+              }
+            : null
+        );
+      }
+      setIsSaved(!isSaved);
+    } catch (error: any) {
+      console.error("Failed to save/unsave event:", error);
+    }
+  }
+
+  if (loading) {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
@@ -52,7 +113,7 @@ function EventDetails() {
     );
   }
 
-  if (notFound) {
+  if (notFound || !event) {
     return <NotFound />;
   }
 
@@ -126,6 +187,31 @@ function EventDetails() {
           </div>
 
           <div className="w-full lg:w-1/4 space-y-6">
+            {/* Bookmark Button */}
+            <div className="flex items-center justify-start">
+              <button
+                onClick={handleToggleSave}
+                onMouseEnter={() => setIsHoveringSave(true)}
+                onMouseLeave={() => setIsHoveringSave(false)}
+                className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                {isSaved ? (
+                  <FaBookmark
+                    className={`text-xl transition-colors duration-300 ease-in-out ${
+                      isHoveringSave
+                        ? "text-appdev-blue-dark"
+                        : "text-appdev-blue"
+                    }`}
+                  />
+                ) : isHoveringSave ? (
+                  <FaBookmark className="text-appdev-blue text-xl transition-colors duration-300 ease-in-out" />
+                ) : (
+                  <FaRegBookmark className="text-appdev-blue-dark text-xl transition-colors duration-300 ease-in-out" />
+                )}
+                <span className="ml-1">{event.saveCount || 0}</span>
+              </button>
+            </div>
+
             <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
@@ -208,6 +294,11 @@ function EventDetails() {
           </div>
         </div>
       </div>
+
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </div>
   );
 }

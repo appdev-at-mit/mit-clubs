@@ -17,6 +17,11 @@ function delay(ms: number): Promise<void> {
 let mockSavedEventIds: string[] = [];
 
 /**
+ * Mock event save counts (stored in memory during development)
+ */
+let mockEventSaveCounts: Map<string, number> = new Map();
+
+/**
  * Get events with optional filtering
  */
 export async function getEvents(params?: {
@@ -28,6 +33,13 @@ export async function getEvents(params?: {
   if (USE_MOCK_DATA) {
     await delay(300);
     let events = getMockEvents();
+
+    // Apply mock save counts
+    events = events.map(event => {
+      const eventKey = event._id || event.title;
+      const saveCount = mockEventSaveCounts.get(eventKey) ?? event.saveCount ?? 0;
+      return { ...event, saveCount };
+    });
 
     // Apply filters to mock data
     if (params?.from_date) {
@@ -107,7 +119,10 @@ export async function getEvent(eventId: string): Promise<Event> {
       throw new Error(`Event with ID ${eventId} not found`);
     }
 
-    return event;
+    // Apply mock save count
+    const eventKey = event._id || event.title;
+    const saveCount = mockEventSaveCounts.get(eventKey) ?? event.saveCount ?? 0;
+    return { ...event, saveCount };
   }
 
   const response = await get(`/api/events/${eventId}`);
@@ -127,6 +142,10 @@ export async function saveEvent(eventId: string): Promise<Event> {
     // Add to mock saved events
     if (!mockSavedEventIds.includes(eventId)) {
       mockSavedEventIds.push(eventId);
+
+      // Increment save count
+      const currentCount = mockEventSaveCounts.get(eventId) ?? 0;
+      mockEventSaveCounts.set(eventId, currentCount + 1);
     }
 
     // Return the updated event
@@ -144,7 +163,13 @@ export async function unsaveEvent(eventId: string): Promise<Event> {
     await delay(150);
 
     // Remove from mock saved events
-    mockSavedEventIds = mockSavedEventIds.filter(id => id !== eventId);
+    if (mockSavedEventIds.includes(eventId)) {
+      mockSavedEventIds = mockSavedEventIds.filter(id => id !== eventId);
+
+      // Decrement save count
+      const currentCount = mockEventSaveCounts.get(eventId) ?? 0;
+      mockEventSaveCounts.set(eventId, Math.max(currentCount - 1, 0));
+    }
 
     // Return the updated event
     return await getEvent(eventId);
@@ -160,10 +185,17 @@ export async function getSavedEvents(): Promise<Event[]> {
   if (USE_MOCK_DATA) {
     await delay(250);
     const allEvents = getMockEvents();
-    return allEvents.filter(event =>
+    const savedEvents = allEvents.filter(event =>
       mockSavedEventIds.includes(event._id || '') ||
       mockSavedEventIds.includes(event.title)
     );
+
+    // Apply mock save counts
+    return savedEvents.map(event => {
+      const eventKey = event._id || event.title;
+      const saveCount = mockEventSaveCounts.get(eventKey) ?? event.saveCount ?? 0;
+      return { ...event, saveCount };
+    });
   }
 
   return get("/api/saved-events");
@@ -178,14 +210,35 @@ export async function getSavedEventIds(): Promise<string[]> {
     return mockSavedEventIds;
   }
 
-  const result = await get<{ event_id: string }[]>("/api/saved-event-ids");
-  return result.map(item => item.event_id);
+  const result = await get("/api/saved-event-ids");
+
+  // Handle different response formats
+  if (Array.isArray(result)) {
+    // If it's an array of objects with event_id property
+    if (result.length > 0 && typeof result[0] === 'object' && 'event_id' in result[0]) {
+      return result.map(item => item.event_id);
+    }
+    // If it's already an array of strings
+    if (result.length > 0 && typeof result[0] === 'string') {
+      return result;
+    }
+    // Empty array
+    return [];
+  }
+
+  // Fallback
+  console.error('Unexpected getSavedEventIds response format:', result);
+  return [];
 }
 
 // Development helpers (only work in mock mode)
 export const devHelpers = USE_MOCK_DATA ? {
   getStats: getMockEventStats,
-  resetSavedEvents: () => { mockSavedEventIds = []; },
+  resetSavedEvents: () => {
+    mockSavedEventIds = [];
+    mockEventSaveCounts.clear();
+  },
   addEvent: createMockEvent,
   getSavedIds: () => [...mockSavedEventIds],
+  getSaveCounts: () => new Map(mockEventSaveCounts),
 } : null;

@@ -82,6 +82,8 @@ export interface Event {
   // app-specific fields (not from DormSpam, added by our app)
   attendeeCount?: number;
   maxAttendees?: number;
+  saveCount: { type: Number, default: 0 },
+  savedByUsers: [{ type: String }]  // Array of user IDs who saved this event
 
   // mongoDB fields (when using real backend)
   _id?: string;

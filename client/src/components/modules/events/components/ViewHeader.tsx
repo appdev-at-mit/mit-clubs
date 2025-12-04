@@ -16,6 +16,8 @@ interface ViewHeaderProps {
   setSelectedDate: (date: Date) => void;
   weekStart: Date;
   setWeekStart: (date: Date) => void;
+  displayDate: Date;
+  setDisplayDate: (date: Date) => void;
   prevWeek: () => void;
   nextWeek: () => void;
 }
@@ -33,6 +35,8 @@ export function ViewHeader({
   setSelectedDate,
   weekStart,
   setWeekStart,
+  displayDate,
+  setDisplayDate,
   prevWeek,
   nextWeek,
 }: ViewHeaderProps) {
@@ -136,12 +140,15 @@ export function ViewHeader({
 
               <input
                 type="date"
-                value={weekStart.toISOString().split("T")[0]}
+                value={displayDate.toISOString().split("T")[0]}
                 onChange={(e) => {
                   const value = e.target.value;
                   if (value) {
                     const picked = new Date(value + "T00:00:00");
                     if (!isNaN(picked.getTime())) {
+                      // Update display date to the picked date
+                      setDisplayDate(picked);
+                      // Calculate and update week start (Sunday of that week)
                       const newWeekStart = new Date(picked);
                       newWeekStart.setDate(picked.getDate() - picked.getDay());
                       newWeekStart.setHours(0, 0, 0, 0);
@@ -167,6 +174,7 @@ export function ViewHeader({
                   const newDate = new Date(selectedDate);
                   newDate.setDate(newDate.getDate() - 7);
                   setSelectedDate(newDate);
+                  setDisplayDate(new Date(newDate));
                 }}
                 className="p-2 h-[44px] w-[44px] flex items-center justify-center border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
                 aria-label="Previous week"
@@ -183,6 +191,7 @@ export function ViewHeader({
                     const newDate = new Date(value + "T00:00:00");
                     if (!isNaN(newDate.getTime())) {
                       setSelectedDate(newDate);
+                      setDisplayDate(new Date(newDate));
                     }
                   }
                 }}
@@ -194,6 +203,7 @@ export function ViewHeader({
                   const newDate = new Date(selectedDate);
                   newDate.setDate(newDate.getDate() + 7);
                   setSelectedDate(newDate);
+                  setDisplayDate(new Date(newDate));
                 }}
                 className="p-2 h-[44px] w-[44px] flex items-center justify-center border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
                 aria-label="Next week"
@@ -208,6 +218,7 @@ export function ViewHeader({
                   const newDate = new Date(selectedDate);
                   newDate.setDate(selectedDate.getDate() - 1);
                   setSelectedDate(newDate);
+                  setDisplayDate(new Date(newDate));
                 }}
                 className="p-2 h-[44px] w-[44px] flex items-center justify-center border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
                 aria-label="Previous day"
@@ -223,6 +234,7 @@ export function ViewHeader({
                     const newDate = new Date(inputValue + 'T00:00:00');
                     if (!isNaN(newDate.getTime())) {
                       setSelectedDate(newDate);
+                      setDisplayDate(new Date(newDate));
                     }
                   }
                 }}
@@ -233,6 +245,7 @@ export function ViewHeader({
                   const newDate = new Date(selectedDate);
                   newDate.setDate(selectedDate.getDate() + 1);
                   setSelectedDate(newDate);
+                  setDisplayDate(new Date(newDate));
                 }}
                 className="p-2 h-[44px] w-[44px] flex items-center justify-center border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
                 aria-label="Next day"

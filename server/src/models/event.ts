@@ -37,7 +37,7 @@ const EventSchema = new mongoose.Schema({
     details: { type: String },
     fromEmailId: { type: String },
     tags: [{ type: String }],
-    saveCount: { type: Number},
+    saveCount: { type: Number, default: 0 },
 });
 
 const EventModel = mongoose.model<Event>("event", EventSchema);

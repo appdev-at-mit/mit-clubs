@@ -33,6 +33,13 @@ export function useDailyViewState() {
     return d;
   });
 
+  // Display date for the date picker (defaults to today, not week start)
+  const [displayDate, setDisplayDate] = useState<Date>(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  });
+
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -57,22 +64,41 @@ export function useDailyViewState() {
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
 
+  // Sync selectedDate with displayDate when switching to calendar view
+  useEffect(() => {
+    if (viewMode === "calendar") {
+      // When switching to calendar, set selectedDate to displayDate
+      if (selectedDate.toISOString().split('T')[0] !== displayDate.toISOString().split('T')[0]) {
+        setSelectedDate(new Date(displayDate));
+      }
+    }
+  }, [viewMode]);
+
+  // Sync displayDate with selectedDate when in calendar mode and date changes
+  useEffect(() => {
+    if (viewMode === "calendar") {
+      if (displayDate.toISOString().split('T')[0] !== selectedDate.toISOString().split('T')[0]) {
+        setDisplayDate(new Date(selectedDate));
+      }
+    }
+  }, [selectedDate, viewMode]);
+
   // Sync weekStart with selectedDate when switching to list view
   useEffect(() => {
     if (viewMode === "list") {
-      const newWeekStart = getStartOfWeek(selectedDate);
+      const newWeekStart = getStartOfWeek(displayDate);
       if (weekStart.getTime() !== newWeekStart.getTime()) {
         setWeekStart(newWeekStart);
       }
     }
-  }, [viewMode, selectedDate]);
+  }, [viewMode, displayDate]);
 
   // Sync selectedDate with weekStart when switching from list view to calendar
   useEffect(() => {
     if (viewMode === "calendar") {
-      const currentWeekStart = getStartOfWeek(selectedDate);
+      const currentWeekStart = getStartOfWeek(displayDate);
       if (currentWeekStart.getTime() !== weekStart.getTime()) {
-        setSelectedDate(new Date(weekStart));
+        setSelectedDate(new Date(displayDate));
       }
     }
   }, [viewMode, weekStart]);
@@ -107,6 +133,8 @@ export function useDailyViewState() {
     setSelectedDate,
     weekStart,
     setWeekStart,
+    displayDate,
+    setDisplayDate,
     isMobileSidebarOpen,
     setIsMobileSidebarOpen,
     toggleMobileSidebar,

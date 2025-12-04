@@ -32,6 +32,8 @@ function DailyView() {
     setSelectedDate,
     weekStart,
     setWeekStart,
+    displayDate,
+    setDisplayDate,
     isMobileSidebarOpen,
     toggleMobileSidebar,
     isMobileView,
@@ -56,11 +58,17 @@ function DailyView() {
 
   // Navigation helpers
   function prevWeek() {
-    setWeekStart((s: Date) => addDays(s, -7));
+    const newWeekStart = addDays(weekStart, -7);
+    setWeekStart(newWeekStart);
+    // Update display date to stay in sync (move back 7 days)
+    setDisplayDate(addDays(displayDate, -7));
   }
 
   function nextWeek() {
-    setWeekStart((s: Date) => addDays(s, 7));
+    const newWeekStart = addDays(weekStart, 7);
+    setWeekStart(newWeekStart);
+    // Update display date to stay in sync (move forward 7 days)
+    setDisplayDate(addDays(displayDate, 7));
   }
 
   // Calculate data for calendar views
@@ -132,6 +140,8 @@ function DailyView() {
           setSelectedDate={setSelectedDate}
           weekStart={weekStart}
           setWeekStart={setWeekStart}
+          displayDate={displayDate}
+          setDisplayDate={setDisplayDate}
           prevWeek={prevWeek}
           nextWeek={nextWeek}
         />

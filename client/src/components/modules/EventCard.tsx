@@ -15,8 +15,11 @@ export default function EventCard({ event, isSaved, onToggleSave }: Props) {
   const navigate = useNavigate();
 
   function handleClick() {
-    const eventId = event._id || event.title;
-    navigate(`/events/${eventId}`);
+    if (!event._id) {
+      console.warn('Cannot navigate - event missing _id');
+      return;
+    }
+    navigate(`/events/${event._id}`);
   }
 
   const image = event.imageUrl || defaultImage;

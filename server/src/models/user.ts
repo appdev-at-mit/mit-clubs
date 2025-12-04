@@ -14,8 +14,8 @@ export interface User {
   mitId: string | undefined;
   isAdmin?: boolean;
   memberOf?: UserClubMembership[];
-  savedClubs?: Club[];
-  savedEvents?: Event[];
+  savedClubs?: Club[]; // Array of full Club objects
+  savedEvents?: Event[]; // Array of full Event objects (matching clubs)
 }
 
 const UserClubMembershipSchema = new mongoose.Schema({
@@ -30,8 +30,8 @@ const UserSchema = new mongoose.Schema({
   mitId: { type: String, unique: true, sparse: true },
   isAdmin: { type: Boolean, default: false },
   memberOf: [UserClubMembershipSchema],
-  savedClubs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'club' }],
-  savedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'event' }],
+  savedClubs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'club' }], // References to Club documents
+  savedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'event' }], // References to Event documents (matching clubs)
 });
 
 const UserModel = mongoose.model<User>("user", UserSchema);

@@ -66,21 +66,24 @@ export function ListView({
             </div>
 
             {/* events for this date */}
-            {dateEvents.length > 0 && (
-              <div className="space-y-4">
-                {dateEvents.map((event) => {
-                  const eventId = event._id || event.title;
-                  return (
-                    <EventCard
-                      key={eventId}
-                      event={event}
-                      isSaved={savedEventIds.includes(eventId)}
-                      onToggleSave={() => toggleSave(eventId)}
-                    />
-                  );
-                })}
-              </div>
-            )}
+            <div className="space-y-4">
+              {dateEvents.map((event) => {
+                // Skip events without _id
+                if (!event._id) {
+                  console.warn('Event missing _id:', event.title);
+                  return null;
+                }
+
+                return (
+                  <EventCard
+                    key={event._id}
+                    event={event}
+                    isSaved={savedEventIds.includes(event._id)}
+                    onToggleSave={() => toggleSave(event._id)}
+                  />
+                );
+              })}
+            </div>
           </div>
         );
       })}
