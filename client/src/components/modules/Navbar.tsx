@@ -140,19 +140,6 @@ function Navbar() {
               </NavLink>
               {isAuth ? (
                 <>
-                  <button
-                    onClick={() => {
-                      handleEventsClick({} as React.MouseEvent);
-                      setIsMenuOpen(false);
-                    }}
-                    className={`no-underline font-semibold py-2 cursor-pointer text-left ${
-                      location.pathname === '/events'
-                        ? "text-appdev-blue-dark"
-                        : "text-gray-600 hover:text-gray-900"
-                    }`}
-                  >
-                    Events
-                  </button>
                   <NavLink
                     to="/events"
                     className={({ isActive }) =>

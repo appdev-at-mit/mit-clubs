@@ -12,7 +12,6 @@ import {
   tagCategories,
   tagEvents,
 } from "./admin-panel/constants";
-import { getAllEvents } from "../../api/events";
 
 type FilterState = {
   selected_tags: string[];
