@@ -78,7 +78,7 @@ export async function put(endpoint: string, params = {}): Promise<any> {
 
 // Helper code to make a delete request.
 // Returns a Promise to a JSON Object.
-export async function del(endpoint: string): Promise<any> {
+export async function del(endpoint: string, p0: { event_id: string; }): Promise<any> {
   return fetch(endpoint, {
     method: "delete",
     headers: { "Content-type": "application/json" },

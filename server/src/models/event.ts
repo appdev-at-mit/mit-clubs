@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+/*
 export interface Event {
    event_id: number;
     title: string;
@@ -39,6 +40,48 @@ const EventSchema = new mongoose.Schema({
     tags: [{ type: String }],
     saveCount: { type: Number},
 });
+*/
+
+export interface Event {
+  event_id: string;
+  name: string;
+  description: string;
+  date: string; // YYYY-MM-DD
+  startTime: string; // HH:MM
+  endTime: string; // HH:MM
+  location: string;
+  organizerId: string;
+  organizerName: string;
+  attendeeCount: number;
+  maxAttendees?: number;
+  imageUrl?: string;
+  tags: string[];
+  category: string;
+  isRegistered?: boolean;
+  isSavedInitially?: boolean;
+  saveCount?: number;
+}
+
+const EventSchema = new mongoose.Schema({
+  event_id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  date: { type: String, required: true },
+  startTime: { type: String, required: true },
+  endTime: { type: String, required: true },
+  location: { type: String, required: true },
+  organizerId: { type: String, required: true },
+  organizerName: { type: String, required: true },
+  attendeeCount: { type: Number, required: true },
+  maxAttendees: { type: Number },
+  imageUrl: { type: String },
+  tags: [{ type: String }],
+  category: { type: String, required: true },
+  isRegistered: { type: Boolean, default: false },
+  isSavedInitially: { type: Boolean, default: false },
+  saveCount: { type: Number, default: 0 },
+});
+
 
 const EventModel = mongoose.model<Event>("event", EventSchema);
 

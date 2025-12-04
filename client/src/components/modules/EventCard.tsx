@@ -1,34 +1,67 @@
 import React from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import defaultImage from "../../assets/default.png";
-import { MockEvent } from "../../api/mock-events";
+import { MockEvent } from "../../types";
+import {
+  FaRegBookmark,
+  FaBookmark,
+  FaUsers,
+  FaClipboardCheck,
+  FaCheckCircle,
+  FaTimesCircle,
+} from "react-icons/fa";
+import { saveEvent, unsaveEvent, getSavedEventIds } from "../../api/events";
 
 type Props = {
   event: MockEvent;
 };
 
 export default function EventCard({ event }: Props) {
+  const [isSaved, setIsSaved] = useState<boolean>(event.isSavedInitially || false);
+  const [isHovering, setIsHovering] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  function handleClick() {
+  // Sync bookmark state with backend
+  React.useEffect(() => {
+    async function syncSavedState() {
+      try {
+        const savedIds = await getSavedEventIds();
+        setIsSaved(savedIds.some((saved: { event_id: string }) => saved.event_id === event.event_id));
+      } catch {
+        setIsSaved(event.isSavedInitially || false);
+      }
+    }
+    syncSavedState();
+  }, [event.event_id]);
+
+  function handleClick(): void {
     navigate(`/events/${event.event_id}`);
   }
 
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleClick();
-    }
-  }
-
   const image = event.imageUrl || defaultImage;
+
+  async function toggleSave(e: React.MouseEvent): Promise<void> {
+      try {
+        if (!isSaved) {
+          await saveEvent(event.event_id);
+        } else {
+          await unsaveEvent(event.event_id);
+        }
+        setIsSaved(!isSaved);
+      } catch (error: any) {
+        const errorMessage =
+          (error.response && error.response.data && error.response.data.error) ||
+          "Failed to update save status.";
+        alert(errorMessage);
+      }
+    }
 
   return (
     <div
       role="button"
       tabIndex={0}
       onClick={handleClick}
-      onKeyDown={handleKeyDown}
       className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 flex gap-6 cursor-pointer focus:outline-none focus:ring-2 focus:ring-appdev-blue"
     >
       {/* Time Badge - with custom colors */}
@@ -53,6 +86,27 @@ export default function EventCard({ event }: Props) {
               {event.category}
             </span>
           )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleSave(e);
+            }}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+            className="flex-shrink-0 ml-2"
+          >
+            {isSaved ? (
+              <FaBookmark
+                className={`text-2xl transition-colors duration-300 ease-in-out ${
+                  isHovering ? "text-appdev-blue-dark" : "text-appdev-blue"
+                }`}
+              />
+            ) : isHovering ? (
+              <FaBookmark className="text-appdev-blue text-2xl transition-colors duration-300 ease-in-out" />
+            ) : (
+              <FaRegBookmark className="text-appdev-blue-dark text-2xl transition-colors duration-300 ease-in-out" />
+            )}
+          </button>
         </div>
 
         <div className="space-y-2 mb-3">

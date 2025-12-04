@@ -1,5 +1,6 @@
 import { get, post, put, del } from "../utilities";
 import { Club, ClubMember } from "../types";
+import { Event } from "../types";
 
 /**
  * Save a club to the user's saved clubs list
@@ -110,7 +111,7 @@ export async function getUserMemberships(): Promise<{ data: Club[] }> {
  * Get all user data including memberships and saved clubs
  */
 export async function getUserData(): Promise<{
-  data: { savedClubs: Club[]; memberClubs: Club[] };
+  data: { savedClubs: Club[]; memberClubs: Club[], savedEvents: Event[]};
 }> {
   const result = await get("/api/users/data");
   return { data: result };

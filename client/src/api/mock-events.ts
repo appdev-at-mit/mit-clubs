@@ -1,41 +1,7 @@
 // SIMPLE MOCK EVENTS FOR FRONTEND DEVELOPMENT
-
-export interface MockEvent {
-  event_id: string;
-  name: string;
-  description: string;
-  date: string; // YYYY-MM-DD
-  startTime: string; // HH:MM
-  endTime: string; // HH:MM
-  location: string;
-  organizerId: string;
-  organizerName: string;
-  attendeeCount: number;
-  maxAttendees?: number;
-  imageUrl?: string;
-  tags: string[];
-  category: string;
-  isRegistered?: boolean;
-}
+import { MockEvent } from "../types";
 
 const mockEvents: MockEvent[] = [
-  {
-    event_id: "evt-001",
-    name: "Tech Talk: AI in Modern Development",
-    description: "Join us for an exciting discussion about the latest trends in AI and machine learning, and how they're shaping modern software development.",
-    date: "2025-12-05",
-    startTime: "6:00 PM",
-    endTime: "8:00 PM",
-    location: "Engineering Building Room 301",
-    organizerId: "club-cs",
-    organizerName: "Computer Science Club",
-    attendeeCount: 45,
-    maxAttendees: 60,
-    imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800",
-    tags: ["tech", "ai", "workshop", "career"],
-    category: "Workshop",
-    isRegistered: false
-  },
   {
     event_id: "evt-002",
     name: "Fall Networking Mixer",
@@ -67,7 +33,8 @@ const mockEvents: MockEvent[] = [
     imageUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800",
     tags: ["gaming", "social", "recurring", "entertainment"],
     category: "Social",
-    isRegistered: false
+    isRegistered: false,
+    isSavedInitially: false
   },
   {
     event_id: "evt-004",
@@ -101,7 +68,8 @@ const mockEvents: MockEvent[] = [
     imageUrl: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800",
     tags: ["tech", "workshop", "coding", "web-development"],
     category: "Workshop",
-    isRegistered: false
+    isRegistered: false,
+    isSavedInitially: false
   },
   {
     event_id: "evt-006",
@@ -118,7 +86,8 @@ const mockEvents: MockEvent[] = [
     imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800",
     tags: ["arts", "performance", "social", "music"],
     category: "Arts & Culture",
-    isRegistered: false
+    isRegistered: false,
+    isSavedInitially: false
   },
   {
     event_id: "evt-007",
@@ -152,7 +121,8 @@ const mockEvents: MockEvent[] = [
     imageUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800",
     tags: ["wellness", "health", "relaxation", "mental-health"],
     category: "Wellness",
-    isRegistered: false
+    isRegistered: false,
+    isSavedInitially: false
   },
   {
     event_id: "evt-009",
@@ -169,7 +139,8 @@ const mockEvents: MockEvent[] = [
     imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
     tags: ["tech", "coding", "competition", "hackathon"],
     category: "Competition",
-    isRegistered: false
+    isRegistered: false,
+    isSavedInitially: false
   },
   {
     event_id: "evt-010",
@@ -202,7 +173,8 @@ const mockEvents: MockEvent[] = [
     imageUrl: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800",
     tags: ["education", "international", "travel", "workshop"],
     category: "Educational",
-    isRegistered: false
+    isRegistered: false,
+    isSavedInitially: false
   },
   {
     event_id: "evt-012",
@@ -219,7 +191,8 @@ const mockEvents: MockEvent[] = [
     imageUrl: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800",
     tags: ["arts", "outdoor", "social", "photography"],
     category: "Arts & Culture",
-    isRegistered: false
+    isRegistered: false,
+    isSavedInitially: false
   }
 ];
 

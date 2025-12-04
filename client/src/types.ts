@@ -59,20 +59,43 @@ export type ClubMember = {
   permissions: "Owner" | "Officer" | "Member";
   joined_date: Date;
 };
-
+/*
 export type Event = {
   _id: string;
   event_id: string;
   club_id: string;
   title: string;
+  organizer: string;
   description: string;
   date: Date;
   end_date?: Date;
   location: string;
-  is_recruiting_event: boolean;
-  created_at: Date;
-  updated_at: Date;
-};
+  is_recruiting_event?: boolean;
+  created_at?: Date;
+  updated_at?: Date;
+  recievedDate?: string;
+  last_modified?: string;
+};*/
+
+export type Event = {
+  event_id: string;
+  name: string;
+  description: string;
+  date: string; // YYYY-MM-DD
+  startTime: string; // HH:MM
+  endTime: string; // HH:MM
+  location: string;
+  organizerId: string;
+  organizerName: string;
+  attendeeCount: number;
+  maxAttendees?: number;
+  imageUrl?: string;
+  tags: string[];
+  category: string;
+  isRegistered?: boolean;
+  isSavedInitially?: boolean;
+  saveCount?: number;
+}
 
 export type MockEvent = {
   event_id: string;
@@ -90,6 +113,8 @@ export type MockEvent = {
   tags: string[];
   category: string;
   isRegistered?: boolean;
+  isSavedInitially?: boolean;
+  saveCount?: number;
 };
 
 export type SavedClub = {
