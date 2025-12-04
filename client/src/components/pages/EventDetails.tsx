@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getMockEvents, MockEvent } from "../../api/mock-events";
+import { getEvent } from "../../api/events";
+import { formatTime, formatDate } from "../../api/mock-events";
+import { Event } from "../../types";
 import NotFound from "./NotFound";
 import Navbar from "../modules/Navbar";
 import defaultImage from "../../assets/default.png";
-import { ArrowLeft, MapPin, Clock, Users } from "lucide-react";
-
-
-
-
-
-
-
+import { ArrowLeft, MapPin, Clock, Users, Mail } from "lucide-react";
 
 function EventDetails() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
-  const [event, setEvent] = useState<MockEvent | null>(null);
+  const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-        const all = getMockEvents();
-        const found = all.find((e) => e.event_id === eventId) || null;
+        if (!eventId) {
+          setEvent(null);
+          return;
+        }
+        const found = await getEvent(eventId);
         setEvent(found);
       } catch (err) {
         console.error("Failed to load event details:", err);
@@ -53,14 +51,17 @@ function EventDetails() {
   }
 
   const image = event.imageUrl || defaultImage;
-  const tagList =
-    event && typeof event.tags === "string"
-      ? event.tags.split(/,\s*/).filter((tag: string) => tag)
-      : event && Array.isArray(event.tags)
-      ? event.tags
-      : [];
 
-
+  // Format date and time
+  const eventDate = new Date(event.date);
+  const formattedDate = eventDate.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+  const startTime = formatTime(event.date);
+  const endTime = event.end_time ? formatTime(event.end_time) : null;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -75,37 +76,49 @@ function EventDetails() {
             <span className="font-light text-md">Back to Events</span>
           </button>
         </div>
+
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-3/4 space-y-8">
             <div className="bg-white p-6 rounded-lg border border-gray-200">
               <div className="flex flex-col sm:flex-row items-start gap-6">
                 <div className="flex-grow overflow-hidden">
                   <h1 className="text-3xl font-bold text-gray-900 break-words hyphens-auto overflow-wrap-anywhere">
-                    {event.name}
+                    {event.title}
                   </h1>
-                  <p className="text-gray-600 mt-2">{event.organizerName}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {tagList.map((tag: string, index: number) => (
-                      <span
-                        key={index}
-                        className="text-sm bg-appdev-blue/20 text-appdev-blue-dark font-medium rounded-full px-3 py-1"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="text-gray-600 mt-2">{event.organizer}</p>
+                  {event.organizer_email && (
+                    <p className="text-gray-500 text-sm mt-1">
+                      <a href={`mailto:${event.organizer_email}`} className="hover:text-appdev-blue">
+                        {event.organizer_email}
+                      </a>
+                    </p>
+                  )}
+                  {event.tags && event.tags.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {event.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="text-sm bg-appdev-blue/20 text-appdev-blue-dark font-medium rounded-full px-3 py-1"
+                        >
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
+
             <div className="bg-white p-6 rounded-lg border border-gray-200">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Event Description
               </h2>
               <p className="text-gray-700 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
-                {event.description || "No description provided."}
+                {event.details || "No description provided."}
               </p>
             </div>
           </div>
+
           <div className="w-full lg:w-1/4 space-y-6">
             <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4">
               <div>
@@ -116,44 +129,81 @@ function EventDetails() {
                   <div className="flex items-start gap-3">
                     <Clock size={18} className="text-appdev-blue flex-shrink-0 mt-0.5" />
                     <div>
-                      <div className="font-medium">{event.date}</div>
-                      <div className="text-gray-600">{event.startTime} — {event.endTime}</div>
+                      <div className="font-medium">{formattedDate}</div>
+                      <div className="text-gray-600">
+                        {startTime}
+                        {endTime && ` — ${endTime}`}
+                        {event.duration && <span className="text-gray-500"> ({event.duration} min)</span>}
+                      </div>
                     </div>
                   </div>
+
                   <div className="flex items-start gap-3">
                     <MapPin size={18} className="text-appdev-blue flex-shrink-0 mt-0.5" />
                     <div className="text-gray-700">{event.location}</div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <Users size={18} className="text-appdev-blue flex-shrink-0 mt-0.5" />
-                    <div>
-                      <div className="text-gray-700">
-                        {event.attendeeCount}
-                        {event.maxAttendees ? ` / ${event.maxAttendees}` : ''} attendees
+
+                  {event.contact_email && (
+                    <div className="flex items-start gap-3">
+                      <Mail size={18} className="text-appdev-blue flex-shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-gray-700">Contact</div>
+                        <a
+                          href={`mailto:${event.contact_email}`}
+                          className="text-blue-600 hover:text-blue-700 text-xs break-all"
+                        >
+                          {event.contact_email}
+                        </a>
                       </div>
                     </div>
-                  </div>
+                  )}
+
+                  {event.source && (
+                    <div className="flex items-start gap-3">
+                      <Users size={18} className="text-appdev-blue flex-shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-gray-700">Source</div>
+                        <div className="text-gray-600 text-xs">{event.source}</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
+
               <div className="pt-2">
-                {event.isRegistered ? (
-                  <span className="inline-flex items-center gap-2 px-3 py-2 bg-green-100 text-green-700 rounded">
-                    ✓ Registered
-                  </span>
-                ) : (
-                  <button className="w-full px-3 py-2 bg-appdev-blue text-white rounded-md hover:bg-blue-700 transition-colors">
-                    Register
-                  </button>
-                )}
+                <button className="w-full px-3 py-2 bg-appdev-blue text-white rounded-md hover:bg-blue-700 transition-colors">
+                  Register for Event
+                </button>
               </div>
             </div>
+
+            {/* Event Metadata */}
+            {(event.recievedDate || event.last_modified) && (
+              <div className="bg-white p-6 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+                  Event Info
+                </h3>
+                <div className="space-y-2 text-sm text-gray-600">
+                  {event.recievedDate && (
+                    <div>
+                      <span className="font-medium">Posted:</span>{" "}
+                      {new Date(event.recievedDate).toLocaleDateString()}
+                    </div>
+                  )}
+                  {event.last_modified && (
+                    <div>
+                      <span className="font-medium">Updated:</span>{" "}
+                      {new Date(event.last_modified).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
-
-
 }
 
 export default EventDetails;

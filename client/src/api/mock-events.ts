@@ -1,232 +1,283 @@
-// SIMPLE MOCK EVENTS FOR FRONTEND DEVELOPMENT
+import { Event } from "../types";
 
-export interface MockEvent {
-  event_id: string;
-  name: string;
-  description: string;
-  date: string; // YYYY-MM-DD
-  startTime: string; // HH:MM
-  endTime: string; // HH:MM
-  location: string;
-  organizerId: string;
-  organizerName: string;
-  attendeeCount: number;
-  maxAttendees?: number;
-  imageUrl?: string;
-  tags: string[];
-  category: string;
-  isRegistered?: boolean;
+/**
+ * Generate a date/time for testing (days from now)
+ */
+function generateDate(daysAhead: number, hour: number = 18, minute: number = 0): string {
+  const date = new Date();
+  date.setDate(date.getDate() + daysAhead);
+  date.setHours(hour, minute, 0, 0);
+  return date.toISOString();
 }
 
-const mockEvents: MockEvent[] = [
+/**
+ * Generate end time from start time and duration
+ */
+function generateEndTime(startDate: string, durationMinutes: number): string {
+  const date = new Date(startDate);
+  date.setMinutes(date.getMinutes() + durationMinutes);
+  return date.toISOString();
+}
+
+/**
+ * Helper to format time for display (6:00 PM)
+ */
+export function formatTime(isoDateTime: string): string {
+  const date = new Date(isoDateTime);
+  return date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+
+/**
+ * Helper to extract date (YYYY-MM-DD)
+ */
+export function formatDate(isoDateTime: string): string {
+  const date = new Date(isoDateTime);
+  return date.toISOString().split('T')[0];
+}
+
+const MOCK_EVENTS: Event[] = [
   {
-    event_id: "evt-001",
-    name: "Tech Talk: AI in Modern Development",
-    description: "Join us for an exciting discussion about the latest trends in AI and machine learning, and how they're shaping modern software development.",
-    date: "2025-12-05",
-    startTime: "6:00 PM",
-    endTime: "8:00 PM",
+    title: "Tech Talk: AI in Modern Development",
+    organizer: "Computer Science Club",
+    organizer_email: "csclub@mit.edu",
+    contact_email: "csclub@mit.edu",
+    date: "2025-12-06T18:00:00.000Z",          // this week
     location: "Engineering Building Room 301",
-    organizerId: "club-cs",
-    organizerName: "Computer Science Club",
-    attendeeCount: 45,
-    maxAttendees: 60,
-    imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800",
-    tags: ["tech", "ai", "workshop", "career"],
-    category: "Workshop",
-    isRegistered: false
+    recievedDate: "2025-11-28T18:00:00.000Z",
+    last_modified: "2025-12-01T18:00:00.000Z",
+
+    end_time: "2025-12-06T20:00:00.000Z",
+    duration: 120,
+    details: "Join us for an exciting discussion about the latest trends in AI.",
+    tags: [{ name: "tech" }, { name: "ai" }, { name: "workshop" }],
   },
+
   {
-    event_id: "evt-002",
-    name: "Fall Networking Mixer",
-    description: "Connect with fellow students and industry professionals at our annual fall networking event. Food and refreshments provided!",
-    date: "2025-11-08",
-    startTime: "5:30 PM",
-    endTime: "7:30 PM",
+    title: "Fall Networking Mixer",
+    organizer: "Business Club",
+    organizer_email: "business@mit.edu",
+    contact_email: "business@mit.edu",
+    date: "2025-11-10T17:30:00.000Z",          // still November
     location: "Student Union Ballroom",
-    organizerId: "club-business",
-    organizerName: "Business Club",
-    attendeeCount: 78,
-    maxAttendees: 100,
-    imageUrl: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800",
-    tags: ["networking", "career", "social", "professional"],
-    category: "Networking",
-    isRegistered: true
+    recievedDate: "2025-11-06T18:00:00.000Z",
+    last_modified: "2025-11-10T17:30:00.000Z",
+
+    source: "DORMSPAM",
+    end_time: "2025-11-10T19:30:00.000Z",
+    duration: 120,
+    details: "Connect with fellow students and industry professionals.",
+    fromEmailId: "<NETWORKING-FALL@mit.edu>",
+    tags: [{ name: "networking" }, { name: "career" }, { name: "social" }],
   },
+
   {
-    event_id: "evt-003",
-    name: "Weekly Game Night",
-    description: "Bring your competitive spirit! Board games, video games, and lots of fun. Beginners welcome.",
-    date: "2025-11-02",
-    startTime: "7:00 PM",
-    endTime: "10:00 PM",
+    title: "Weekly Game Night",
+    organizer: "Gaming Society",
+    organizer_email: "gaming@mit.edu",
+    contact_email: "gaming@mit.edu",
+    date: "2025-12-02T19:00:00.000Z",          // yesterday
     location: "Recreation Center Game Room",
-    organizerId: "club-gaming",
-    organizerName: "Gaming Society",
-    attendeeCount: 32,
-    imageUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800",
-    tags: ["gaming", "social", "recurring", "entertainment"],
-    category: "Social",
-    isRegistered: false
+    recievedDate: "2025-11-30T18:00:00.000Z",
+    last_modified: "2025-12-02T19:00:00.000Z",
+
+    source: "DORMSPAM",
   },
+
   {
-    event_id: "evt-004",
-    name: "Environmental Cleanup Drive",
-    description: "Help make our campus greener! Join us for a morning of community service and environmental action.",
-    date: "2025-11-10",
-    startTime: "9:00 AM",
-    endTime: "12:00 PM",
+    title: "Environmental Cleanup Drive",
+    organizer: "Green Initiative",
+    organizer_email: "green@mit.edu",
+    contact_email: "green@mit.edu",
+    date: "2025-12-10T09:00:00.000Z",          // next week
     location: "Campus Quad (Meet at fountain)",
-    organizerId: "club-green",
-    organizerName: "Green Initiative",
-    attendeeCount: 23,
-    maxAttendees: 50,
-    imageUrl: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800",
-    tags: ["community-service", "environment", "outdoor", "volunteer"],
-    category: "Community Service",
-    isRegistered: true
+    recievedDate: "2025-11-25T18:00:00.000Z",
+    last_modified: "2025-11-30T18:00:00.000Z",
+
+    details: "Help make our campus greener!",
+    fromEmailId: "<CLEANUP-2025@mit.edu>",
+    tags: [{ name: "community-service" }, { name: "environment" }],
   },
+
   {
-    event_id: "evt-005",
-    name: "Intro to React Workshop",
-    description: "Learn the basics of React.js in this hands-on workshop. Bring your laptop! No prior React experience needed.",
-    date: "2025-11-12",
-    startTime: "2:00 PM",
-    endTime: "5:00 PM",
+    title: "Intro to React Workshop",
+    organizer: "Computer Science Club",
+    organizer_email: "csclub@mit.edu",
+    contact_email: "csclub@mit.edu",
+    date: "2025-12-12T14:00:00.000Z",          // next week
     location: "Computer Lab B",
-    organizerId: "club-cs",
-    organizerName: "Computer Science Club",
-    attendeeCount: 28,
-    maxAttendees: 35,
-    imageUrl: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800",
-    tags: ["tech", "workshop", "coding", "web-development"],
-    category: "Workshop",
-    isRegistered: false
+    recievedDate: "2025-11-27T18:00:00.000Z",
+    last_modified: "2025-12-01T18:00:00.000Z",
+
+    duration: 180,
+    details: "Learn the basics of React.js in this hands-on workshop.",
+    tags: [{ name: "tech" }, { name: "workshop" }],
   },
+
   {
-    event_id: "evt-006",
-    name: "Open Mic Night",
-    description: "Showcase your talent or just enjoy the show! Poetry, music, comedy - all welcome.",
-    date: "2025-11-15",
-    startTime: "8:00 PM",
-    endTime: "11:00 PM",
+    title: "Open Mic Night",
+    organizer: "Arts & Performance Club",
+    organizer_email: "arts@mit.edu",
+    contact_email: "arts@mit.edu",
+    date: "2025-12-15T20:00:00.000Z",
     location: "Campus Coffee House",
-    organizerId: "club-arts",
-    organizerName: "Arts & Performance Club",
-    attendeeCount: 56,
-    maxAttendees: 80,
-    imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800",
-    tags: ["arts", "performance", "social", "music"],
-    category: "Arts & Culture",
-    isRegistered: false
+    recievedDate: "2025-11-23T18:00:00.000Z",
+    last_modified: "2025-11-28T18:00:00.000Z",
+
+    source: "DORMSPAM",
+    end_time: "2025-12-15T23:00:00.000Z",
+    duration: 180,
+    details: "Showcase your talent—poetry, music, comedy and more!",
+    fromEmailId: "<OPEN-MIC@mit.edu>",
   },
+
   {
-    event_id: "evt-007",
-    name: "Startup Pitch Competition",
-    description: "Watch student entrepreneurs pitch their innovative ideas. $5000 in prizes!",
-    date: "2025-11-18",
-    startTime: "4:00 PM",
-    endTime: "7:00 PM",
+    title: "Startup Pitch Competition",
+    organizer: "Entrepreneurship Club",
+    organizer_email: "entrepreneur@mit.edu",
+    contact_email: "entrepreneur@mit.edu",
+    date: "2025-12-18T16:00:00.000Z",
     location: "Innovation Hub Auditorium",
-    organizerId: "club-entrepreneur",
-    organizerName: "Entrepreneurship Club",
-    attendeeCount: 92,
-    maxAttendees: 150,
-    imageUrl: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800",
-    tags: ["entrepreneurship", "competition", "career", "startup"],
-    category: "Competition",
-    isRegistered: true
+    recievedDate: "2025-11-21T18:00:00.000Z",
+    last_modified: "2025-11-29T18:00:00.000Z",
+
+    source: "DORMSPAM",
+    end_time: "2025-12-18T19:00:00.000Z",
+    duration: 180,
+    tags: [
+      { name: "entrepreneurship" },
+      { name: "competition" },
+      { name: "startup" },
+    ],
   },
+
   {
-    event_id: "evt-008",
-    name: "Meditation & Mindfulness Session",
-    description: "De-stress with guided meditation and mindfulness exercises. All levels welcome.",
-    date: "2025-11-06",
-    startTime: "12:00 PM",
-    endTime: "1:00 PM",
+    title: "Meditation & Mindfulness Session",
+    organizer: "Wellness Club",
+    organizer_email: "wellness@mit.edu",
+    contact_email: "wellness@mit.edu",
+    date: "2025-12-03T12:00:00.000Z",         // today
     location: "Wellness Center Room 202",
-    organizerId: "club-wellness",
-    organizerName: "Wellness Club",
-    attendeeCount: 15,
-    maxAttendees: 25,
-    imageUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800",
-    tags: ["wellness", "health", "relaxation", "mental-health"],
-    category: "Wellness",
-    isRegistered: false
+    recievedDate: "2025-12-01T18:00:00.000Z",
+    last_modified: "2025-12-02T18:00:00.000Z",
   },
+
   {
-    event_id: "evt-009",
-    name: "Hackathon 2025",
-    description: "24-hour coding marathon! Build something amazing, win prizes, and connect with fellow developers.",
-    date: "2025-11-20",
-    startTime: "9:00 AM",
-    endTime: "9:00 AM",
+    title: "HackMIT 2025: 24-Hour Hackathon",
+    organizer: "HackMIT",
+    organizer_email: "team@hackmit.org",
+    contact_email: "team@hackmit.org",
+    date: "2025-12-20T09:00:00.000Z",
     location: "Engineering Building",
-    organizerId: "club-cs",
-    organizerName: "Computer Science Club",
-    attendeeCount: 67,
-    maxAttendees: 100,
-    imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
-    tags: ["tech", "coding", "competition", "hackathon"],
-    category: "Competition",
-    isRegistered: false
+    recievedDate: "2025-11-18T18:00:00.000Z",
+    last_modified: "2025-11-28T18:00:00.000Z",
+
+    source: "DORMSPAM",
+    duration: 1440,
+    details: "24-hour coding marathon!",
+    tags: [{ name: "tech" }, { name: "coding" }, { name: "competition" }],
   },
+
   {
-    event_id: "evt-010",
-    name: "Career Fair Prep Workshop",
-    description: "Get ready for the upcoming career fair! Learn how to network effectively and perfect your elevator pitch.",
-    date: "2025-11-03",
-    startTime: "3:00 PM",
-    endTime: "4:30 PM",
+    title: "Career Fair Prep Workshop",
+    organizer: "Business Club",
+    organizer_email: "business@mit.edu",
+    contact_email: "business@mit.edu",
+    date: "2025-12-03T15:00:00.000Z",         // today
     location: "Career Center Main Room",
-    organizerId: "club-business",
-    organizerName: "Business Club",
-    attendeeCount: 41,
-    maxAttendees: 60,
-    imageUrl: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800",
-    tags: ["career", "networking", "workshop", "professional"],
-    category: "Workshop",
-    isRegistered: true
+    recievedDate: "2025-11-29T18:00:00.000Z",
+    last_modified: "2025-12-02T18:00:00.000Z",
+
+    source: "DORMSPAM",
+    details: "Learn how to network and perfect your elevator pitch.",
   },
+
   {
-    event_id: "evt-011",
-    name: "Study Abroad Info Session",
-    description: "Interested in studying abroad? Learn about programs, scholarships, and application processes.",
-    date: "2025-11-13",
-    startTime: "6:30 PM",
-    endTime: "8:00 PM",
+    title: "Study Abroad Info Session",
+    organizer: "International Students Association",
+    organizer_email: "isa@mit.edu",
+    contact_email: "isa@mit.edu",
+    date: "2025-12-11T18:30:00.000Z",
     location: "International House",
-    organizerId: "club-international",
-    organizerName: "International Students Association",
-    attendeeCount: 38,
-    imageUrl: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800",
-    tags: ["education", "international", "travel", "workshop"],
-    category: "Educational",
-    isRegistered: false
+    recievedDate: "2025-11-26T18:00:00.000Z",
+    last_modified: "2025-11-30T18:00:00.000Z",
+
+    end_time: "2025-12-11T20:00:00.000Z",
+    duration: 90,
+    tags: [
+      { name: "education" },
+      { name: "international" },
+      { name: "travel" },
+    ],
   },
+
   {
-    event_id: "evt-012",
-    name: "Photography Walk",
-    description: "Join us for a sunset photography walk around campus! All skill levels and camera types welcome.",
-    date: "2025-11-09",
-    startTime: "5:00 PM",
-    endTime: "7:00 PM",
+    title: "Photography Walk",
+    organizer: "Photography Club",
+    organizer_email: "photo@mit.edu",
+    contact_email: "photo@mit.edu",
+    date: "2025-12-09T17:00:00.000Z",         // next week
     location: "Meet at Campus Center",
-    organizerId: "club-photo",
-    organizerName: "Photography Club",
-    attendeeCount: 19,
-    maxAttendees: 30,
-    imageUrl: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800",
-    tags: ["arts", "outdoor", "social", "photography"],
-    category: "Arts & Culture",
-    isRegistered: false
-  }
+    recievedDate: "2025-11-28T18:00:00.000Z",
+    last_modified: "2025-12-01T18:00:00.000Z",
+
+    end_time: "2025-12-09T19:00:00.000Z",
+    details: "Join us for a sunset photography walk!",
+    fromEmailId: "<PHOTO-WALK@mit.edu>",
+  },
 ];
+
 
 /**
  * Get all mock events
- * Use this in your components until the backend is ready!
  */
-export function getMockEvents(): MockEvent[] {
-  return mockEvents;
+export function getMockEvents(): Event[] {
+  return MOCK_EVENTS;
+}
+
+/**
+ * Get statistics about mock events (for testing)
+ */
+export function getMockEventStats() {
+  const now = new Date();
+  return {
+    total: MOCK_EVENTS.length,
+    past: MOCK_EVENTS.filter(e => new Date(e.date) < now).length,
+    upcoming: MOCK_EVENTS.filter(e => new Date(e.date) >= now).length,
+    today: MOCK_EVENTS.filter(e => formatDate(e.date) === formatDate(now.toISOString())).length,
+  };
+}
+
+/**
+ * Create a new mock event (for testing)
+ */
+export function createMockEvent(eventData: Partial<Event>): Event {
+  const now = new Date().toISOString();
+
+  const newEvent: Event = {
+    // required fields
+    title: eventData.title || "New Event",
+    organizer: eventData.organizer || "Unknown Organizer",
+    organizer_email: eventData.organizer_email || "organizer@mit.edu",
+    contact_email: eventData.contact_email || "contact@mit.edu",
+    date: eventData.date || generateDate(1),
+    location: eventData.location || "TBD",
+    recievedDate: eventData.recievedDate || now,
+    last_modified: now,
+
+    // optional fields - only add if provided
+    ...(eventData.source && { source: eventData.source }),
+    ...(eventData.end_time && { end_time: eventData.end_time }),
+    ...(eventData.duration && { duration: eventData.duration }),
+    ...(eventData.details && { details: eventData.details }),
+    ...(eventData.fromEmailId && { fromEmailId: eventData.fromEmailId }),
+    ...(eventData.tags && { tags: eventData.tags }),
+    ...(eventData.imageUrl && { imageUrl: eventData.imageUrl }),
+  };
+
+  MOCK_EVENTS.push(newEvent);
+  return newEvent;
 }

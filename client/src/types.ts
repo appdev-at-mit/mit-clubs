@@ -60,19 +60,33 @@ export type ClubMember = {
   joined_date: Date;
 };
 
-export type Event = {
-  _id: string;
-  event_id: string;
-  club_id: string;
+export interface Event {
+  // required fields
   title: string;
-  description: string;
-  date: Date;
-  end_date?: Date;
+  organizer: string;
+  organizer_email: string;
+  contact_email: string;
+  date: string; // ISO 8601
   location: string;
-  is_recruiting_event: boolean;
-  created_at: Date;
-  updated_at: Date;
-};
+  recievedDate: string; // ISO 8601
+  last_modified: string; // ISO 8601
+
+  // optional fields
+  source?: string;
+  end_time?: string; // ISO 8601
+  duration?: number;
+  details?: string;
+  fromEmailId?: string;
+  tags?: Array<{ name: string }>;
+
+  // app-specific fields (not from DormSpam, added by our app)
+  attendeeCount?: number;
+  maxAttendees?: number;
+
+  // mongoDB fields (when using real backend)
+  _id?: string;
+  dormspamId?: number;
+}
 
 export type MockEvent = {
   event_id: string;

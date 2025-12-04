@@ -3,9 +3,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaSearch, FaChevronDown, FaBookmark } from "react-icons/fa";
 import { SlidersHorizontal, X } from "lucide-react";
 import { UserContext } from "../App";
-import { getMockEvents } from '../../api/mock-events';
 import EventCard from './EventCard';
-import { MockEvent } from "../../types";
+import { getEvents } from '../../api/events';
+import { formatTime, formatDate } from '../../api/mock-events';
+import { getSavedEventIds, saveEvent, unsaveEvent } from "../../api/events";
+import { Event } from "../../types";
 import {
   tagCategories,
   tagEvents,
@@ -35,6 +37,8 @@ function DailyView() {
   const view = searchParams.get('view');
   return view === 'calendar' ? 'calendar' : 'list';
   });
+
+  const [savedEventIds, setSavedEventIds] = useState<string[]>([]);
 
   const [calendarMode, setCalendarMode] = useState<CalendarMode>(() => {
     const mode = searchParams.get('mode');
@@ -92,8 +96,8 @@ function DailyView() {
   const [isCategorySectionOpen, setIsCategorySectionOpen] = useState<boolean>(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
 
-  const [events, setEvents] = useState<MockEvent[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<MockEvent[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [isHoveringResetAll, setIsHoveringResetAll] = useState<boolean>(false);
@@ -140,9 +144,9 @@ function DailyView() {
     async function loadData() {
       try {
         setLoading(true);
-        const mockEventsData = getMockEvents();
-        setEvents(mockEventsData);
-        applyFilters(mockEventsData, filters);
+        const eventsData = await getEvents();
+        setEvents(eventsData);
+        applyFilters(eventsData, filters);
       } catch (error) {
         console.error("Error loading events:", error);
         setEvents([]);
@@ -154,8 +158,39 @@ function DailyView() {
     loadData();
   }, []);
 
+  useEffect(() => {
+  async function loadSaved() {
+    try {
+      const ids = await getSavedEventIds();
+      setSavedEventIds(ids);
+    } catch (err) {
+      console.error("Error loading saved events:", err);
+    }
+  }
+
+  loadSaved();
+}, []);
+
+async function toggleSave(eventId: string) {
+  try {
+    let updated;
+    if (savedEventIds.includes(eventId)) {
+      updated = savedEventIds.filter(id => id !== eventId);
+      await unsaveEvent(eventId);
+    } else {
+      updated = [...savedEventIds, eventId];
+      await saveEvent(eventId);
+    }
+    setSavedEventIds(updated);
+  } catch (err) {
+    console.error("Error saving/unsaving event:", err);
+  }
+}
+
+
+
   function applyFilters(
-    eventsList: MockEvent[] = events,
+    eventsList: Event[] = events,
     currentFilters: FilterState = filters,
     currentSearchTerm: string = searchTerm
   ) {
@@ -167,17 +202,20 @@ function DailyView() {
       // List view: show events in the currently selected week (Monday - Sunday)
       const startIso = weekStart.toISOString().split('T')[0];
       const endIso = addDays(weekStart, 6).toISOString().split('T')[0];
-      result = result.filter((event) => event.date >= startIso && event.date <= endIso);
+      result = result.filter((event) => {
+        const eventDate = formatDate(event.date);
+        return eventDate >= startIso && eventDate <= endIso;
+      });
     } else if (calendarMode === 'day') {
       const selectedDateStr = selectedDate.toISOString().split('T')[0];
       result = result.filter(event => {
         // Show events that start on this day
-        if (event.date === selectedDateStr) return true;
+        const eventDate = formatDate(event.date);
+        if (eventDate === selectedDateStr) return true;
 
         // Check if this is a multi-day event that continues into this day
-        const eventDate = new Date(event.date + 'T00:00:00');
-        const eventStartMinutes = timeToMinutes(event.startTime);
-        const eventEndMinutes = timeToMinutes(event.endTime);
+        const eventStartMinutes = timeToMinutes(event.date);
+        const eventEndMinutes = event.end_time ? timeToMinutes(event.end_time) : eventStartMinutes + (event.duration || 60);
 
         let duration = eventEndMinutes - eventStartMinutes;
         if (duration === 0) duration = 24 * 60; // 24-hour event
@@ -207,12 +245,13 @@ function DailyView() {
 
       result = result.filter(event => {
         // Show events that start within this week
-        if (event.date >= weekStartStr && event.date <= weekEndStr) return true;
+        const eventDateStr = formatDate(event.date); // ← Changed from eventDate to eventDateStr
+        if (eventDateStr >= weekStartStr && eventDateStr <= weekEndStr) return true;
 
         // Check if this is a multi-day event that continues into this week
-        const eventDate = new Date(event.date + 'T00:00:00');
-        const eventStartMinutes = timeToMinutes(event.startTime);
-        const eventEndMinutes = timeToMinutes(event.endTime);
+        const eventDateObj = new Date(event.date); // ← Changed from eventDate to eventDateObj (and removed 'T00:00:00')
+        const eventStartMinutes = timeToMinutes(event.date);
+        const eventEndMinutes = event.end_time ? timeToMinutes(event.end_time) : eventStartMinutes + (event.duration || 60);
 
         let duration = eventEndMinutes - eventStartMinutes;
         if (duration === 0) duration = 24 * 60; // 24-hour event
@@ -220,7 +259,7 @@ function DailyView() {
 
         // Calculate if event extends into this week
         if (eventStartMinutes + duration > 24 * 60) {
-          const nextDay = new Date(eventDate);
+          const nextDay = new Date(eventDateObj); // ← Changed from eventDate to eventDateObj
           nextDay.setDate(nextDay.getDate() + 1);
           const nextDayStr = nextDay.toISOString().split('T')[0];
           return nextDayStr >= weekStartStr && nextDayStr <= weekEndStr;
@@ -234,8 +273,9 @@ function DailyView() {
       const lowerSearchTerm = currentSearchTerm.toLowerCase();
       result = result.filter(
         (event) =>
-          (event.name && event.name.toLowerCase().includes(lowerSearchTerm)) ||
-          (event.description && event.description.toLowerCase().includes(lowerSearchTerm))
+          (event.title && event.title.toLowerCase().includes(lowerSearchTerm)) ||
+          (event.details && event.details.toLowerCase().includes(lowerSearchTerm)) ||
+          (event.organizer && event.organizer.toLowerCase().includes(lowerSearchTerm))
       );
     }
 
@@ -245,7 +285,8 @@ function DailyView() {
     ) {
       result = result.filter((event) => {
         if (!event.tags) return false;
-        const eventTags = event.tags.map((tag) => tag.toLowerCase());
+        if (!event.tags || event.tags.length === 0) return false;
+        const eventTags = event.tags.map((tag) => tag.name.toLowerCase());
         return currentFilters.selected_tags.every((selectedTag) =>
           eventTags.includes(selectedTag.toLowerCase())
         );
@@ -254,9 +295,7 @@ function DailyView() {
 
     // sort by date and time (chronological order)
     result.sort((a, b) => {
-      const dateCompare = a.date.localeCompare(b.date);
-      if (dateCompare !== 0) return dateCompare;
-      return a.startTime.localeCompare(b.startTime);
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
     });
 
     setFilteredEvents(result);
@@ -341,32 +380,15 @@ function DailyView() {
   }
 
   // Convert time string (HH:MM or HH:MM AM/PM) to minutes from midnight
-  function timeToMinutes(time: string): number {
-    // Handle AM/PM format
-    const timeLower = time.toLowerCase();
-    const isPM = timeLower.includes('pm');
-    const isAM = timeLower.includes('am');
-
-    // Remove AM/PM and trim
-    const timeOnly = time.replace(/\s*(am|pm)/gi, '').trim();
-    const timeParts = timeOnly.split(':').map(Number);
-    const hours = timeParts[0] || 0;
-    const minutes = timeParts[1] || 0;
-
-    let adjustedHours = hours;
-    if (isPM && hours !== 12) {
-      adjustedHours = hours + 12;
-    } else if (isAM && hours === 12) {
-      adjustedHours = 0; // 12 AM is midnight
-    }
-
-    return adjustedHours * 60 + minutes;
+  function timeToMinutes(isoDateTime: string): number {
+    const date = new Date(isoDateTime);
+    return date.getHours() * 60 + date.getMinutes();
   }
 
   // Calculate position and height for timeline
-  function getEventStyles(event: MockEvent, isCurrentDay: boolean = true) {
-    const startMinutes = timeToMinutes(event.startTime);
-    let endMinutes = timeToMinutes(event.endTime);
+  function getEventStyles(event: Event, isCurrentDay: boolean = true) {
+    const startMinutes = timeToMinutes(event.date);
+    const endMinutes = event.end_time ? timeToMinutes(event.end_time) : startMinutes + (event.duration || 60);
 
     const calendarStart = 0; // 12:00 AM (midnight)
     const calendarEnd = 24 * 60; // 12:00 AM next day (midnight)
@@ -383,7 +405,7 @@ function DailyView() {
 
     // Check if this event started on a previous day (continuation event)
     const selectedDateStr = selectedDate.toISOString().split('T')[0];
-    const eventDate = event.date;
+    const eventDate = formatDate(event.date);
     const isContinuation = eventDate !== selectedDateStr;
 
     let top, height;
@@ -426,31 +448,34 @@ function DailyView() {
   }
 
   // Calculate overlapping events and their positions
-  function calculateEventLayout(events: MockEvent[]) {
+  function calculateEventLayout(events: Event[]) {
     const selectedDateStr = selectedDate.toISOString().split('T')[0];
 
     // Sort events, accounting for continuation events starting at midnight
     const sortedEvents = [...events].sort((a, b) => {
-      const aIsContinuation = a.date !== selectedDateStr;
-      const bIsContinuation = b.date !== selectedDateStr;
+    const aDate = formatDate(a.date);
+    const bDate = formatDate(b.date);
+    const aIsContinuation = aDate !== selectedDateStr;
+    const bIsContinuation = bDate !== selectedDateStr;
+    const aStart = aIsContinuation ? 0 : timeToMinutes(a.date);
+    const bStart = bIsContinuation ? 0 : timeToMinutes(b.date);
 
-      const aStart = aIsContinuation ? 0 : timeToMinutes(a.startTime);
-      const bStart = bIsContinuation ? 0 : timeToMinutes(b.startTime);
+    if (aStart !== bStart) return aStart - bStart;
 
-      if (aStart !== bStart) return aStart - bStart;
+    // For events starting at same time, prioritize longer events
+    const aEnd = a.end_time ? timeToMinutes(a.end_time) : aStart + (a.duration || 60);
+    const bEnd = b.end_time ? timeToMinutes(b.end_time) : bStart + (b.duration || 60);
+    return bEnd - aEnd;
+  });
 
-      // For events starting at same time, prioritize longer events
-      const aEnd = aIsContinuation ? timeToMinutes(a.endTime) : timeToMinutes(a.endTime);
-      const bEnd = bIsContinuation ? timeToMinutes(b.endTime) : timeToMinutes(b.endTime);
-      return bEnd - aEnd;
-    });
+    const columns: Event[][] = [];
 
-    const columns: MockEvent[][] = [];
 
     sortedEvents.forEach(event => {
-      const isContinuation = event.date !== selectedDateStr;
-      const eventStart = isContinuation ? 0 : timeToMinutes(event.startTime);
-      let eventEnd = timeToMinutes(event.endTime);
+      const eventDate = formatDate(event.date);
+      const isContinuation = eventDate !== selectedDateStr;
+      const eventStart = isContinuation ? 0 : timeToMinutes(event.date);
+      let eventEnd = event.end_time ? timeToMinutes(event.end_time) : eventStart + (event.duration || 60);
 
       // Handle 24-hour events and events spanning past midnight
       if (eventEnd === eventStart && !isContinuation) {
@@ -467,11 +492,10 @@ function DailyView() {
       for (let i = 0; i < columns.length; i++) {
         const column = columns[i];
         const lastEventInColumn = column[column.length - 1];
-        const lastIsContinuation = lastEventInColumn.date !== selectedDateStr;
-
-        // Calculate the end time of the last event in this column
-        let lastEventEnd = timeToMinutes(lastEventInColumn.endTime);
-        const lastEventStart = lastIsContinuation ? 0 : timeToMinutes(lastEventInColumn.startTime);
+        const lastDate = formatDate(lastEventInColumn.date);
+        const lastIsContinuation = lastDate !== selectedDateStr;
+        const lastEventStart = lastIsContinuation ? 0 : timeToMinutes(lastEventInColumn.date);
+        let lastEventEnd = lastEventInColumn.end_time ? timeToMinutes(lastEventInColumn.end_time) : lastEventStart + (lastEventInColumn.duration || 60);
 
         // Handle 24-hour events and events spanning past midnight for the last event
         if (lastEventEnd === lastEventStart && !lastIsContinuation) {
@@ -501,7 +525,8 @@ function DailyView() {
 
     columns.forEach((column, columnIndex) => {
       column.forEach(event => {
-        eventPositions.set(event.event_id, {
+        const eventId = event._id || event.title;
+        eventPositions.set(eventId, {
           column: columnIndex,
           totalColumns: columns.length
         });
@@ -529,7 +554,10 @@ function DailyView() {
   const weekStartIso = weekStart.toISOString().split('T')[0];
   const weekEndIso = addDays(weekStart, 6).toISOString().split('T')[0];
   const weekFilteredEvents = filteredEvents.filter(
-    (ev) => ev.date >= weekStartIso && ev.date <= weekEndIso
+    (ev) => {
+      const evDate = formatDate(ev.date);
+      return evDate >= weekStartIso && evDate <= weekEndIso;
+    }
   );
 
   return (
@@ -974,13 +1002,13 @@ function DailyView() {
             {(() => {
               // Group events by date
               const eventsByDate = weekFilteredEvents.reduce((groups, event) => {
-                const date = event.date;
+                const date = formatDate(event.date);
                 if (!groups[date]) {
                   groups[date] = [];
                 }
                 groups[date].push(event);
                 return groups;
-              }, {} as Record<string, MockEvent[]>);
+              }, {} as Record<string, Event[]>);
 
               // Generate all dates in the week range (including days with no events)
               const allDatesInWeek: string[] = [];
@@ -1011,9 +1039,17 @@ function DailyView() {
                     {/* events for this date */}
                     {dateEvents.length > 0 && (
                       <div className="space-y-4">
-                        {dateEvents.map((event) => (
-                          <EventCard key={event.event_id} event={event} />
-                        ))}
+                        {dateEvents.map((event) => {
+                        const eventId = event._id || event.title;
+                        return (
+                          <EventCard
+                            key={eventId}
+                            event={event}
+                            isSaved={savedEventIds.includes(eventId)}
+                            onToggleSave={() => toggleSave(eventId)}
+                          />
+                        );
+                      })}
                       </div>
                     )}
                   </div>
@@ -1093,8 +1129,9 @@ function DailyView() {
 
                   {/* Events */}
                   {filteredEvents.map((event) => {
+                      const eventId = event._id || event.title;
                       const { top, height } = getEventStyles(event);
-                      const layout = eventLayout.get(event.event_id);
+                      const layout = eventLayout.get(eventId);
                       const column = layout?.column ?? 0;
                       const totalColumns = layout?.totalColumns ?? 1;
 
@@ -1102,13 +1139,13 @@ function DailyView() {
                       const widthPercent = 100 / totalColumns;
                       const leftPercent = (column * widthPercent);
 
-                      const bgColor = event.isRegistered ? '#fecdd3' : '#dbe9f4';
-                      const borderColor = event.isRegistered ? '#db2777' : '#5b8fb9';
+                      const bgColor = '#dbe9f4';
+                      const borderColor = '#5b8fb9';
 
                       return (
                         <div
-                          key={event.event_id}
-                          onClick={() => handleEventClick(event.event_id)}
+                          key={eventId}
+                          onClick={() => handleEventClick(eventId)}
                           className="absolute border-l-4 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
                           style={{
                             top: `${top}px`,
@@ -1122,13 +1159,13 @@ function DailyView() {
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-grow min-w-0">
                               <h3 className="font-semibold text-gray-900 text-sm truncate">
-                                {event.name}
+                                {event.title}
                               </h3>
                               <p className="text-xs text-gray-600 truncate">
-                                {event.organizerName}
+                                {event.organizer}
                               </p>
                               <p className="text-xs text-gray-500 mt-1">
-                                {event.startTime} - {event.endTime}
+                                {formatTime(event.date)} - {event.end_time ? formatTime(event.end_time) : 'TBD'}
                               </p>
                               {height > 100 && (
                                 <p className="text-xs text-gray-600 mt-2 line-clamp-2">
@@ -1215,15 +1252,13 @@ function DailyView() {
                       // Filter events for this specific day (including multi-day events)
                       const dayEvents = filteredEvents.filter(event => {
                         // Show events that start on this day
-                        if (event.date === dayStr) return true;
-
-                        // Check if this is a multi-day event that continues into this day
-                        const eventDate = new Date(event.date + 'T00:00:00');
-                        const eventStartMinutes = timeToMinutes(event.startTime);
-                        const eventEndMinutes = timeToMinutes(event.endTime);
+                        const eventDate = formatDate(event.date);
+                        if (eventDate === dayStr) return true;
+                        const eventStartMinutes = timeToMinutes(event.date);
+                        const eventEndMinutes = event.end_time ? timeToMinutes(event.end_time) : eventStartMinutes + (event.duration || 60);
 
                         let duration = eventEndMinutes - eventStartMinutes;
-                        if (duration === 0) duration = 24 * 60; // 24-hour event
+                        if (duration === 0) duration = event.duration || 24 * 60; // 24-hour event
                         else if (duration < 0) duration += 24 * 60; // Spans past midnight
 
                         // Calculate if event extends to this day
@@ -1255,12 +1290,11 @@ function DailyView() {
                             {/* Events */}
                             {dayEvents.map((event) => {
                               // Calculate event styles for this specific day
-                              const startMinutes = timeToMinutes(event.startTime);
-                              let endMinutes = timeToMinutes(event.endTime);
-                              const hourHeight = 80;
-
-                              // Check if this is a continuation event (started on a previous day)
-                              const isContinuation = event.date !== dayStr;
+                              const hourHeight = 80; // Add this line
+                              const eventDate = formatDate(event.date);
+                              const startMinutes = timeToMinutes(event.date);
+                              let endMinutes = event.end_time ? timeToMinutes(event.end_time) : startMinutes + (event.duration || 60);
+                              const isContinuation = eventDate !== dayStr;
 
                               let top, height;
                               if (isContinuation) {
@@ -1268,7 +1302,7 @@ function DailyView() {
                                 top = 0;
                                 const totalDuration = endMinutes - startMinutes;
                                 const remainingDuration = (startMinutes + (totalDuration === 0 ? 24 * 60 : totalDuration > 0 ? totalDuration : totalDuration + 24 * 60)) - 24 * 60;
-                                height = (Math.min(remainingDuration, 24 * 60) / 60) * hourHeight;
+                                height = (Math.min(remainingDuration, 24 * 60) / 60) * hourHeight;  // ← ADD THIS LINE
                               } else {
                                 // Event starts today
                                 top = (startMinutes / 60) * hourHeight;
@@ -1285,20 +1319,21 @@ function DailyView() {
                                 height = (duration / 60) * hourHeight;
                               }
 
-                              const layout = dayEventLayout.get(event.event_id);
+                              const eventId = event._id || event.title;
+                              const layout = dayEventLayout.get(eventId);
                               const column = layout?.column ?? 0;
                               const totalColumns = layout?.totalColumns ?? 1;
 
                               const widthPercent = 100 / totalColumns;
                               const leftPercent = (column * widthPercent);
 
-                              const bgColor = event.isRegistered ? '#fecdd3' : '#dbe9f4';
-                              const borderColor = event.isRegistered ? '#db2777' : '#5b8fb9';
+                              const bgColor = '#dbe9f4';
+                              const borderColor = '#5b8fb9';
 
                               return (
                                 <div
-                                  key={event.event_id}
-                                  onClick={() => handleEventClick(event.event_id)}
+                                  key={eventId}
+                                  onClick={() => handleEventClick(eventId)}
                                   className="absolute border-l-4 rounded-lg p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
                                   style={{
                                     top: `${top}px`,
@@ -1312,13 +1347,13 @@ function DailyView() {
                                   <div className="flex items-start justify-between gap-2">
                                     <div className="flex-grow min-w-0">
                                       <h3 className="font-semibold text-gray-900 text-sm truncate">
-                                        {event.name}
+                                        {event.title}
                                       </h3>
                                       <p className="text-xs text-gray-600 truncate">
-                                        {event.organizerName}
+                                        {event.organizer}
                                       </p>
                                       <p className="text-xs text-gray-500 mt-1">
-                                        {event.startTime} - {event.endTime}
+                                        {formatTime(event.date)} - {event.end_time ? formatTime(event.end_time) : 'TBD'}
                                       </p>
                                       {height > 100 && (
                                         <p className="text-xs text-gray-600 mt-2 line-clamp-2">

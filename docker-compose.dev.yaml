@@ -17,6 +17,7 @@ services:
     command: npm run dev
     environment:
       - VITE_API_BASE_URL=http://mit-clubs-server:1251
+      - VITE_USE_MOCK=true
     env_file:
       - ./.env
 

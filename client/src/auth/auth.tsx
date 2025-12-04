@@ -86,7 +86,7 @@ function OidcResponseHandler() {
   //Validate the state parameter we get back is what we generated on client side
   if (state === localStorage.getItem(AUTH_CONFIG.state_localstorage_name)) {
     initialMsg =
-      "Please wait while the server completes your login - do not reload the page"; //User logged in to OIDC page, but still needs to be logged
+      "Please wait while the server completes your login. Do not reload the page."; //User logged in to OIDC page, but still needs to be logged
     //into our backend system.
   } else {
     initialMsg = "Login failed. Please try again.";
@@ -161,7 +161,7 @@ function OidcResponseHandler() {
     sendCode();
   }, [navigate, code, auth]);
 
-  const statusMessages = ["almost done"];
+  const statusMessages = ["Almost done"];
   const randomMessage =
     statusMessages[Math.floor(Math.random() * statusMessages.length)];
 

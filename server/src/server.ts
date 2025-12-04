@@ -14,8 +14,10 @@ import apiRouter from "./api";
 import { clubRouter } from "./api/clubs";
 import { userRouter } from "./api/users";
 import { adminRouter } from "./api/admin";
+import eventRouter from "./api/events";
 import { populateCurrentUser } from "./auth/auth";
 import cookieParser from "cookie-parser";
+import { dormspamSyncService } from "./services/dormspamSync";
 
 // validator runs some basic checks to make sure you've set everything up correctly
 checkSetup();
@@ -33,7 +35,12 @@ mongoose
   .connect(mongoConnectionURL, {
     dbName: databaseName,
   })
-  .then(() => console.log("Connected to MongoDB"))
+  .then(() => {
+    console.log("Connected to MongoDB");
+
+    // start DormSpam sync service after DB connection
+    dormspamSyncService.start();
+  })
   .catch((err: any) => console.log(`Error connecting to MongoDB: ${err}`));
 
 const app = express();
@@ -65,6 +72,7 @@ app.use(
   })
 );
 app.use(populateCurrentUser);
+app.use("/api", eventRouter);
 app.use("/api", apiRouter);
 app.use("/api", clubRouter);
 app.use("/api", userRouter);
@@ -114,4 +122,17 @@ const server = new http.Server(app);
 
 server.listen(port, () => {
   console.log(`Server running on port: ${port}`);
+});
+
+// shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  dormspamSyncService.stop();
+  server.close(() => {
+    console.log('HTTP server closed');
+    mongoose.connection.close().then(() => {
+      console.log('MongoDB connection closed');
+      process.exit(0);
+    });
+  });
 });
