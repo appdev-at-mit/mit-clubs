@@ -104,6 +104,8 @@ export type MockEvent = {
   tags: string[];
   category: string;
   isRegistered?: boolean;
+  isSavedInitially?: boolean;
+  saveCount?: number;
 };
 
 export type SavedClub = {

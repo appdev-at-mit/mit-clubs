@@ -1,7 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "../auth/authProvider";
-
 import "../utilities.css";
 import { get, post } from "../utilities";
 import { AuthContextType, User } from "../types";

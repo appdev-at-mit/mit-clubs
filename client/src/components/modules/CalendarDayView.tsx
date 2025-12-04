@@ -8,6 +8,7 @@ import {
   tagCategories,
   tagEvents,
 } from "./admin-panel/constants";
+import { getAllEvents } from "../../api/events";
 
 type FilterState = {
   selected_tags: string[];
@@ -57,7 +58,7 @@ function CalendarDayView() {
     async function loadData() {
       try {
         setLoading(true);
-        const mockEventsData = getMockEvents();
+        const mockEventsData = await getAllEvents();
         setEvents(mockEventsData);
         applyFilters(mockEventsData, filters);
       } catch (error) {

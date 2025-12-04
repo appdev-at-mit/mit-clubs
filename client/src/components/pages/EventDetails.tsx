@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEvent } from "../../api/events";
 import { formatTime, formatDate } from "../../api/mock-events";
@@ -13,9 +13,15 @@ function EventDetails() {
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [isHoveringSave, setIsHoveringSave] = useState<boolean>(false);
+  const [notFound, setNotFound] = useState<boolean>(false);
 
   useEffect(() => {
     async function load() {
+
+      if (!eventId) return;
+
       setLoading(true);
       try {
         if (!eventId) {
@@ -35,7 +41,7 @@ function EventDetails() {
     load();
   }, [eventId]);
 
-  if (loading) {
+    if (loading) {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
@@ -46,7 +52,7 @@ function EventDetails() {
     );
   }
 
-  if (!event) {
+  if (notFound) {
     return <NotFound />;
   }
 

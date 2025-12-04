@@ -77,6 +77,7 @@ app.use("/api", apiRouter);
 app.use("/api", clubRouter);
 app.use("/api", userRouter);
 app.use("/api", adminRouter);
+app.use("/api", eventRouter)
 
 // catch-all for unmatched API routes
 app.all("/api/*", (_req: Request, res: Response) => {

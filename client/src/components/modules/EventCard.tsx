@@ -1,4 +1,5 @@
 import React from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import defaultImage from "../../assets/default.png";
 import { Event } from "../../types";
@@ -21,13 +22,6 @@ export default function EventCard({ event, isSaved, onToggleSave }: Props) {
     navigate(`/events/${eventId}`);
   }
 
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleClick();
-    }
-  }
-
   const image = event.imageUrl || defaultImage;
 
   // Format times - handle both ISO datetime and already formatted times
@@ -39,7 +33,6 @@ export default function EventCard({ event, isSaved, onToggleSave }: Props) {
       role="button"
       tabIndex={0}
       onClick={handleClick}
-      onKeyDown={handleKeyDown}
       className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 flex gap-6 cursor-pointer focus:outline-none focus:ring-2 focus:ring-appdev-blue"
     >
       {/* Time Badge - with custom colors */}
@@ -85,6 +78,27 @@ export default function EventCard({ event, isSaved, onToggleSave }: Props) {
               {event.source}
             </span>
           )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleSave(e);
+            }}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+            className="flex-shrink-0 ml-2"
+          >
+            {isSaved ? (
+              <FaBookmark
+                className={`text-2xl transition-colors duration-300 ease-in-out ${
+                  isHovering ? "text-appdev-blue-dark" : "text-appdev-blue"
+                }`}
+              />
+            ) : isHovering ? (
+              <FaBookmark className="text-appdev-blue text-2xl transition-colors duration-300 ease-in-out" />
+            ) : (
+              <FaRegBookmark className="text-appdev-blue-dark text-2xl transition-colors duration-300 ease-in-out" />
+            )}
+          </button>
         </div>
       </div>
 
