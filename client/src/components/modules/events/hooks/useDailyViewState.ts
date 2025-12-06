@@ -44,13 +44,35 @@ export function useDailyViewState() {
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  // Reset to list view when component mounts
+  // Sync state with URL params when browser navigation occurs
   useEffect(() => {
-    setViewMode("list");
-    const newParams = new URLSearchParams();
-    newParams.set("view", "list");
-    setSearchParams(newParams, { replace: true });
-  }, []);
+    const view = searchParams.get("view");
+    const newViewMode = view === "calendar" ? "calendar" : "list";
+
+    if (newViewMode !== viewMode) {
+      setViewMode(newViewMode);
+    }
+
+    if (newViewMode === "calendar") {
+      const mode = searchParams.get("mode");
+      const newCalendarMode = mode === "day" || mode === "week" ? mode : "day";
+
+      if (newCalendarMode !== calendarMode) {
+        setCalendarMode(newCalendarMode);
+      }
+
+      const dateParam = searchParams.get("date");
+      if (dateParam) {
+        const parsedDate = new Date(dateParam + "T00:00:00");
+        if (!isNaN(parsedDate.getTime())) {
+          const currentDateStr = selectedDate.toISOString().split("T")[0];
+          if (dateParam !== currentDateStr) {
+            setSelectedDate(parsedDate);
+          }
+        }
+      }
+    }
+  }, [searchParams]);
 
   // Check for mobile view
   useEffect(() => {
@@ -105,19 +127,33 @@ export function useDailyViewState() {
 
   // Update URL when view mode, calendar mode, or selected date changes
   useEffect(() => {
-    const newParams = new URLSearchParams(searchParams);
+    const currentView = searchParams.get("view");
+    const currentMode = searchParams.get("mode");
+    const currentDate = searchParams.get("date");
 
-    newParams.set("view", viewMode);
+    // Check if URL already matches current state
+    const urlMatchesState =
+      currentView === viewMode &&
+      (viewMode === "list" ||
+        (currentMode === calendarMode &&
+         currentDate === selectedDate.toISOString().split("T")[0]));
 
-    if (viewMode === "calendar") {
-      newParams.set("mode", calendarMode);
-      newParams.set("date", selectedDate.toISOString().split("T")[0]);
-    } else {
-      newParams.delete("mode");
-      newParams.delete("date");
+    // Only update URL if it doesn't match current state
+    if (!urlMatchesState) {
+      const newParams = new URLSearchParams(searchParams);
+
+      newParams.set("view", viewMode);
+
+      if (viewMode === "calendar") {
+        newParams.set("mode", calendarMode);
+        newParams.set("date", selectedDate.toISOString().split("T")[0]);
+      } else {
+        newParams.delete("mode");
+        newParams.delete("date");
+      }
+
+      setSearchParams(newParams);
     }
-
-    setSearchParams(newParams, { replace: true });
   }, [viewMode, calendarMode, selectedDate]);
 
   function toggleMobileSidebar() {
