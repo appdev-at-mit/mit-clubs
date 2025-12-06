@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { FaBookmark } from "react-icons/fa";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { Event } from "../../../../types";
 import { formatTime } from "../../../../api/mock-events";
 import { HourLabel, EventLayoutPosition } from "../types";
@@ -11,6 +11,8 @@ interface DayCalendarProps {
   filteredEvents: Event[];
   hourLabels: HourLabel[];
   eventLayout: Map<string, EventLayoutPosition>;
+  savedEventIds: string[];
+  toggleSave: (eventId: string) => void;
 }
 
 export function DayCalendar({
@@ -18,6 +20,8 @@ export function DayCalendar({
   filteredEvents,
   hourLabels,
   eventLayout,
+  savedEventIds,
+  toggleSave,
 }: DayCalendarProps) {
   const navigate = useNavigate();
 
@@ -85,6 +89,7 @@ export function DayCalendar({
 
               const bgColor = '#dbe9f4';
               const borderColor = '#5b8fb9';
+              const isSaved = savedEventIds.includes(eventId);
 
               return (
                 <div
@@ -117,9 +122,19 @@ export function DayCalendar({
                         </p>
                       )}
                     </div>
-                    {event.isRegistered && (
-                      <FaBookmark className="text-pink-600 flex-shrink-0" size={12} />
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSave(eventId);
+                      }}
+                      className="flex-shrink-0"
+                    >
+                      {isSaved ? (
+                        <FaBookmark className="text-appdev-blue" size={16} />
+                      ) : (
+                        <FaRegBookmark className="text-appdev-blue-dark" size={16} />
+                      )}
+                    </button>
                   </div>
                 </div>
               );
