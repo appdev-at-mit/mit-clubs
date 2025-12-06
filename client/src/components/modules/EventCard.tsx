@@ -24,7 +24,6 @@ export default function EventCard({ event, isSaved, onToggleSave }: Props) {
 
   const image = event.imageUrl || defaultImage;
   const startTime = event.date ? formatTime(event.date) : "TBD";
-  const endTime = event.end_time ? formatTime(event.end_time) : "TBD";
 
   return (
     <div
@@ -33,97 +32,85 @@ export default function EventCard({ event, isSaved, onToggleSave }: Props) {
       onClick={handleClick}
       className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 flex gap-6 cursor-pointer focus:outline-none focus:ring-2 focus:ring-appdev-blue"
     >
-      {/* Time Badge */}
+      {/* Time Badge - Standardized Width */}
       <div
-        className="flex-shrink-0 flex flex-col justify-center text-center rounded-lg p-4 min-w-[100px]"
+        className="flex-shrink-0 flex flex-col justify-center text-center rounded-lg p-4 w-[100px]"
         style={{ backgroundColor: "#dbe9f4" }}
       >
         <div className="text-2xl font-bold" style={{ color: "#2c5f7f" }}>
           {startTime}
         </div>
-        {event.duration && (
-          <div className="text-xs text-gray-500 mt-1">{event.duration} min</div>
-        )}
-        {event.end_time && (
-          <>
-            <div className="text-xs text-gray-500 mt-1">to</div>
-            <div className="text-lg font-semibold" style={{ color: "#2c5f7f" }}>
-              {endTime}
-            </div>
-          </>
-        )}
       </div>
 
       {/* Content */}
       <div className="flex-grow">
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="text-2xl font-semibold text-gray-900">
-            {event.title}
-          </h3>
+        <div className="flex items-start justify-between">
+          <div className="flex-grow pr-4">
+            {/* Title with Location */}
+            <h3 className="text-2xl font-bold text-gray-900 mb-2 flex items-baseline gap-2">
+              <span>{event.title}</span>
+              <span className="text-base font-light italic text-gray-500">
+                {event.location}
+              </span>
+            </h3>
 
-          <div className="flex items-center gap-2">
-            {/* Simple save button */}
+            {/* Organizer */}
+            <p className="text-gray-600 mb-1">
+              {event.organizer}
+            </p>
+
+            {/* Contact Email */}
+            {event.contact_email && (
+              <p className="text-gray-500 text-sm mb-3">
+                <a
+                  href={`mailto:${event.contact_email}`}
+                  className="hover:text-appdev-blue"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {event.contact_email}
+                </a>
+              </p>
+            )}
+
+            {/* Tags */}
+            {event.tags && event.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {event.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="text-sm bg-appdev-blue/20 text-appdev-blue-dark font-medium rounded-full px-3 py-1"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Event source tag - appears before bookmark */}
+            {event.source && (
+              <span className="px-2 py-1 text-xs font-semibold rounded-full" style={{ color: "#2c5f7f", backgroundColor: "#dbe9f4" }}>
+                {event.source}
+              </span>
+            )}
+
+            {/* Simple save button - always in the same position */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleSave();
               }}
-              className="flex-shrink-0 ml-2"
+              className="flex-shrink-0"
             >
               {isSaved ? (
-                <FaBookmark className="text-appdev-blue text-2xl" />
+                <FaBookmark className="text-appdev-blue text-xl" />
               ) : (
-                <FaRegBookmark className="text-appdev-blue-dark text-2xl" />
+                <FaRegBookmark className="text-appdev-blue-dark text-xl" />
               )}
             </button>
-
-            {/* Event source tag */}
-            {event.source && (
-              <span className="px-3 py-1 text-xs font-semibold text-blue-600 bg-blue-100 rounded-full">
-                {event.source}
-              </span>
-            )}
           </div>
         </div>
-
-        {/* Details */}
-        <div className="space-y-2 mb-3">
-          <p className="text-sm text-gray-600 flex items-center gap-2">
-            <span className="font-medium">📍</span>
-            <span>{event.location}</span>
-          </p>
-
-          <p className="text-sm text-gray-600 flex items-center gap-2">
-            <span className="font-medium">👥</span>
-            <span>Organized by {event.organizer}</span>
-          </p>
-
-          {event.contact_email && (
-            <p className="text-sm text-gray-600 flex items-center gap-2">
-              <span className="font-medium">✉️</span>
-              <a
-                href={`mailto:${event.contact_email}`}
-                className="text-blue-600 hover:text-blue-700"
-              >
-                {event.contact_email}
-              </a>
-            </p>
-          )}
-        </div>
-
-        {/* Tags */}
-        {event.tags && event.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {event.tags.map((tag, index) => (
-              <span
-                key={index}
-                className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded"
-              >
-                {tag.name}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

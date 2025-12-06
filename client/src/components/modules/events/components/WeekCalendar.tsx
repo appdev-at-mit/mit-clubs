@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { FaBookmark } from "react-icons/fa";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { Event } from "../../../../types";
 import { formatTime, formatDate } from "../../../../api/mock-events";
 import { HourLabel } from "../types";
@@ -11,12 +11,16 @@ interface WeekCalendarProps {
   selectedDate: Date;
   filteredEvents: Event[];
   hourLabels: HourLabel[];
+  savedEventIds: string[];
+  toggleSave: (eventId: string) => void;
 }
 
 export function WeekCalendar({
   selectedDate,
   filteredEvents,
   hourLabels,
+  savedEventIds,
+  toggleSave,
 }: WeekCalendarProps) {
   const navigate = useNavigate();
 
@@ -189,6 +193,7 @@ export function WeekCalendar({
 
                         const bgColor = '#dbe9f4';
                         const borderColor = '#5b8fb9';
+                        const isSaved = savedEventIds.includes(eventId);
 
                         return (
                           <div
@@ -221,9 +226,19 @@ export function WeekCalendar({
                                   </p>
                                 )}
                               </div>
-                              {event.isRegistered && (
-                                <FaBookmark className="text-pink-600 flex-shrink-0" size={12} />
-                              )}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleSave(eventId);
+                                }}
+                                className="flex-shrink-0"
+                              >
+                                {isSaved ? (
+                                  <FaBookmark className="text-appdev-blue" size={12} />
+                                ) : (
+                                  <FaRegBookmark className="text-appdev-blue-dark" size={12} />
+                                )}
+                              </button>
                             </div>
                           </div>
                         );
