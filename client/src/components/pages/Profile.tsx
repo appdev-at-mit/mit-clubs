@@ -7,8 +7,8 @@ import {
   getUserMemberships,
   getUserData,
 } from "../../api/clubs";
-import { Bookmark, Users, ExternalLink, Clock, Calendar } from "lucide-react";
-import { Club, MockEvent } from "../../types";
+import { Bookmark, Users, ExternalLink, Pin, Clock, Calendar } from "lucide-react";
+import { Club, Event } from "../../types";
 
 interface ExtendedClub extends Club {
   role?: string;
@@ -24,7 +24,7 @@ function Profile() {
 
   const { userId, userEmail } = userContext;
   const [savedClubs, setSavedClubs] = useState<ExtendedClub[]>([]);
-  const [savedEvents, setSavedEvents] = useState<MockEvent[]>([]);
+  const [savedEvents, setSavedEvents] = useState<Event[]>([]);
   const [memberClubs, setMemberClubs] = useState<ExtendedClub[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<"saved-clubs" | "saved-events" | "member">("saved-clubs");
@@ -144,39 +144,58 @@ function Profile() {
     );
   }
 
-  function renderEventList(events: MockEvent[]) {
-    if (events.length === 0) {
-      return (
-        <div className="bg-gray-50 rounded-lg p-8 text-center">
-          <p className="text-gray-600">
-            You haven't saved any events yet. Browse events and click the bookmark icon to save them for later!
-          </p>
-        </div>
-      );
-    }
-
+  function renderEventList(events: Event[]) {
+  if (events.length === 0) {
     return (
-      <div className="space-y-3">
-        {events.map((event) => (
+      <div className="bg-gray-50 rounded-lg p-8 text-center">
+        <p className="text-gray-600">
+          You haven't saved any events yet. Browse events and click the bookmark icon to save them for later!
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {events.map((event) => {
+        const eventId = event._id || event.id?.toString();
+        if (!eventId) return null;
+
+        return (
           <Link
-            key={event.event_id}
-            to={`/events/${event.event_id}`}
+            key={eventId}
+            to={`/events/${eventId}`}
             className="block bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
           >
             <div className="flex items-start p-4">
               <div className="flex-grow">
-                <h3 className="font-semibold text-appdev-blue-dark">
-                  {event.name}
-                </h3>
 
                 <p className="text-sm text-gray-600 mt-1">
-                  {event.category}
+                  {event.organizer}
                 </p>
 
                 <div className="flex items-center text-xs text-gray-500 mt-2">
                   <Clock size={14} className="mr-1" />
                   <span>
-                    {event.date} at {event.startTime}
+                    {new Date(event.date).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })} at {new Date(event.date).toLocaleTimeString('en-US', {
+                      hour: 'numeric',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                </div>
+
+                <div className="flex items-center text-xs text-gray-500 mt-2">
+                  <Pin size={14} className="mr-1" />
+                  <span>
+                    {event.location && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {event.location}
+                    </p>
+                  )}
                   </span>
                 </div>
               </div>
@@ -187,10 +206,11 @@ function Profile() {
               </div>
             </div>
           </Link>
-        ))}
-      </div>
-    );
-  }
+        );
+      })}
+    </div>
+  );
+}
 
   return (
     <>
