@@ -61,33 +61,43 @@ export type ClubMember = {
 };
 
 export interface Event {
-  // required fields
+  // MongoDB ID
+  _id?: string;
+
+  // Event ID from Dormspam
+  id?: number;
+  event_id?: number;
+  dormspamId?: number;
+
+  // Required fields
   title: string;
   organizer: string;
-  organizer_email: string;
-  contact_email: string;
   date: string; // ISO 8601
   location: string;
   recievedDate: string; // ISO 8601
   last_modified: string; // ISO 8601
 
-  // optional fields
+  // Optional fields
+  organizer_email?: string;
+  contact_email?: string;
   source?: string;
   end_time?: string; // ISO 8601
   duration?: number;
   details?: string;
   fromEmailId?: string;
-  tags?: Array<{ name: string }>;
 
-  // app-specific fields (not from DormSpam, added by our app)
+  tags?: string[]; // Changed from Array<{ name: string }>
+
+  // Image
+  imageUrl?: string;
+
+  // App-specific fields (bookmarking)
+  saveCount?: number;
+  savedByUsers?: string[];
+
+  // Legacy fields
   attendeeCount?: number;
   maxAttendees?: number;
-  saveCount: { type: Number, default: 0 },
-  savedByUsers: [{ type: String }]  // Array of user IDs who saved this event
-
-  // mongoDB fields (when using real backend)
-  _id?: string;
-  dormspamId?: number;
 }
 
 export type MockEvent = {

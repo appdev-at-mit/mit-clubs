@@ -11,6 +11,7 @@ import { useEvents } from "./hooks/useEvents";
 import { useFilters } from "./hooks/useFilters";
 import { addDays, generateHourLabels } from "./utils/dateUtils";
 import { calculateEventLayout } from "./utils/calendarUtils";
+import { extractUniqueTags, categorizeTags } from "./utils/tagUtils"; // ✅ Added
 
 function DailyView() {
   const userContext = useContext(UserContext);
@@ -56,6 +57,9 @@ function DailyView() {
     toggleSubSection,
   } = useFilters(events, viewMode, calendarMode, selectedDate, weekStart, searchTerm);
 
+  const allTags = extractUniqueTags(events);
+  const dynamicTagCategories = categorizeTags(allTags);
+
   // Navigation helpers
   function prevWeek() {
     const newWeekStart = addDays(weekStart, -7);
@@ -77,16 +81,6 @@ function DailyView() {
     ? calculateEventLayout(filteredEvents, selectedDate)
     : new Map();
 
-  // Calculate week filtered events for event count in filter panel
-  const weekStartIso = weekStart.toISOString().split('T')[0];
-  const weekEndIso = addDays(weekStart, 6).toISOString().split('T')[0];
-  const weekFilteredEvents = filteredEvents.filter(
-    (ev) => {
-      const evDate = new Date(ev.date).toISOString().split('T')[0];
-      return evDate >= weekStartIso && evDate <= weekEndIso;
-    }
-  );
-
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -107,13 +101,14 @@ function DailyView() {
         isHoveringResetAll={isHoveringResetAll}
         setIsHoveringResetAll={setIsHoveringResetAll}
         resetFilters={resetFilters}
-        eventCount={viewMode === 'list' ? weekFilteredEvents.length : filteredEvents.length}
+        eventCount={filteredEvents.length}
         isCategorySectionOpen={isCategorySectionOpen}
         setIsCategorySectionOpen={setIsCategorySectionOpen}
         openSections={openSections}
         toggleSubSection={toggleSubSection}
         filters={filters}
         handleTagCheckboxChange={handleTagCheckboxChange}
+        tagCategories={dynamicTagCategories}
       />
 
       {/* Overlay for mobile sidebar */}

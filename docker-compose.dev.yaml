@@ -12,12 +12,12 @@ services:
       - "1250:1250"
     volumes:
       - ./client/src:/usr/local/app/client/src
-      - ./client/index.html:/usr/local/app/client/index.html
+      - ./client/index.html:/usr/local/app/client/index.htmlV
       - /usr/local/app/node_modules
     command: npm run dev
     environment:
       - VITE_API_BASE_URL=http://mit-clubs-server:1251
-      - VITE_USE_MOCK=true
+      - VITE_USE_MOCK=false
     env_file:
       - ./.env
 

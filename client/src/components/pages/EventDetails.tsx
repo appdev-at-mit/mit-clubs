@@ -167,7 +167,7 @@ function EventDetails() {
                           key={index}
                           className="text-sm bg-appdev-blue/20 text-appdev-blue-dark font-medium rounded-full px-3 py-1"
                         >
-                          {tag.name}
+                          {tag}
                         </span>
                       ))}
                     </div>
@@ -260,12 +260,6 @@ function EventDetails() {
                     </div>
                   )}
                 </div>
-              </div>
-
-              <div className="pt-2">
-                <button className="w-full px-3 py-2 bg-appdev-blue text-white rounded-md hover:bg-blue-700 transition-colors">
-                  Register for Event
-                </button>
               </div>
             </div>
 

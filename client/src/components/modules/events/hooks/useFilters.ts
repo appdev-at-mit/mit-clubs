@@ -26,12 +26,9 @@ export function useFilters(
   const [isCategorySectionOpen, setIsCategorySectionOpen] = useState<boolean>(true);
   const [isHoveringResetAll, setIsHoveringResetAll] = useState<boolean>(false);
 
-  function applyFilters(
-    eventsList: Event[] = events,
-    currentFilters: FilterState = filters,
-    currentSearchTerm: string = searchTerm
-  ) {
-    let result = [...eventsList];
+  // Apply filters effect - runs whenever any dependency changes
+  useEffect(() => {
+    let result = [...events];
 
     // Helper to get date string from event
     const getEventDateStr = (event: Event) => {
@@ -39,8 +36,7 @@ export function useFilters(
       return date.toISOString().split('T')[0];
     };
 
-    // For list view: show all upcoming events from today onwards
-    // For calendar view: show events based on calendar mode (day/week)
+    // Date filtering based on view mode
     if (viewMode === 'list') {
       // List view: show events in the currently selected week (Sunday - Saturday)
       const startIso = weekStart.toISOString().split('T')[0];
@@ -49,22 +45,21 @@ export function useFilters(
         const eventDate = getEventDateStr(event);
         return eventDate >= startIso && eventDate <= endIso;
       });
-    } else if (calendarMode === 'day') {
+    } else if (viewMode === 'calendar' && calendarMode === 'day') {
+      // Day view: show events for selected day
       const selectedDateStr = selectedDate.toISOString().split('T')[0];
       result = result.filter(event => {
-        // Show events that start on this day
         const eventDate = getEventDateStr(event);
         if (eventDate === selectedDateStr) return true;
 
-        // Check if this is a multi-day event that continues into this day
+        // Check multi-day events
         const eventStartMinutes = timeToMinutes(event.date);
         const eventEndMinutes = event.end_time ? timeToMinutes(event.end_time) : eventStartMinutes + (event.duration || 60);
 
         let duration = eventEndMinutes - eventStartMinutes;
-        if (duration === 0) duration = 24 * 60; // 24-hour event
-        else if (duration < 0) duration += 24 * 60; // Spans past midnight
+        if (duration === 0) duration = 24 * 60;
+        else if (duration < 0) duration += 24 * 60;
 
-        // Calculate if event extends to the next day
         if (eventStartMinutes + duration > 24 * 60) {
           const nextDay = new Date(event.date);
           nextDay.setDate(nextDay.getDate() + 1);
@@ -74,46 +69,20 @@ export function useFilters(
 
         return false;
       });
-    } else {
-      // Week view: show events for the entire week (Sunday - Saturday)
-      const weekStartDate = new Date(selectedDate);
-      weekStartDate.setDate(selectedDate.getDate() - selectedDate.getDay());
-      weekStartDate.setHours(0, 0, 0, 0);
-      const weekEnd = new Date(weekStartDate);
-      weekEnd.setDate(weekStartDate.getDate() + 6);
-      weekEnd.setHours(23, 59, 59, 999);
+    } else if (viewMode === 'calendar' && calendarMode === 'week') {
+      // Week view: use the SAME week as list view
+      const startIso = weekStart.toISOString().split('T')[0];
+      const endIso = addDays(weekStart, 6).toISOString().split('T')[0];
 
-      const weekStartStr = weekStartDate.toISOString().split('T')[0];
-      const weekEndStr = weekEnd.toISOString().split('T')[0];
-
-      result = result.filter(event => {
-        // Show events that start within this week
-        const eventDateStr = getEventDateStr(event);
-        if (eventDateStr >= weekStartStr && eventDateStr <= weekEndStr) return true;
-
-        // Check if this is a multi-day event that continues into this week
-        const eventDateObj = new Date(event.date);
-        const eventStartMinutes = timeToMinutes(event.date);
-        const eventEndMinutes = event.end_time ? timeToMinutes(event.end_time) : eventStartMinutes + (event.duration || 60);
-
-        let duration = eventEndMinutes - eventStartMinutes;
-        if (duration === 0) duration = 24 * 60; // 24-hour event
-        else if (duration < 0) duration += 24 * 60; // Spans past midnight
-
-        // Calculate if event extends into this week
-        if (eventStartMinutes + duration > 24 * 60) {
-          const nextDay = new Date(eventDateObj);
-          nextDay.setDate(nextDay.getDate() + 1);
-          const nextDayStr = nextDay.toISOString().split('T')[0];
-          return nextDayStr >= weekStartStr && nextDayStr <= weekEndStr;
-        }
-
-        return false;
+      result = result.filter((event) => {
+        const eventDate = getEventDateStr(event);
+        return eventDate >= startIso && eventDate <= endIso;
       });
     }
 
-    if (currentSearchTerm) {
-      const lowerSearchTerm = currentSearchTerm.toLowerCase();
+    // Search filtering
+    if (searchTerm) {
+      const lowerSearchTerm = searchTerm.toLowerCase();
       result = result.filter(
         (event) =>
           (event.title && event.title.toLowerCase().includes(lowerSearchTerm)) ||
@@ -122,33 +91,33 @@ export function useFilters(
       );
     }
 
-    if (
-      currentFilters.selected_tags &&
-      currentFilters.selected_tags.length > 0
-    ) {
+    // Tag filtering
+    if (filters.selected_tags && filters.selected_tags.length > 0) {
       result = result.filter((event) => {
-        if (!event.tags) return false;
         if (!event.tags || event.tags.length === 0) return false;
-        const eventTags = event.tags.map((tag) => tag.name.toLowerCase());
-        return currentFilters.selected_tags.every((selectedTag) =>
+        const eventTags = event.tags.map((tag) => tag.toLowerCase());
+        return filters.selected_tags.some((selectedTag) =>
           eventTags.includes(selectedTag.toLowerCase())
         );
       });
     }
 
-    // sort by date and time (chronological order)
-    result.sort((a, b) => {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
+    // Sort by date
+    result.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     setFilteredEvents(result);
-  }
+  }, [
+    events,
+    viewMode,
+    calendarMode,
+    selectedDate,
+    weekStart,
+    searchTerm,
+    filters.selected_tags,
+  ]);
 
   function resetFilters() {
-    const defaultFilters = {
-      selected_tags: [],
-    };
-    setFilters(defaultFilters);
+    setFilters({ selected_tags: [] });
   }
 
   function handleTagCheckboxChange(tag: string) {
@@ -171,12 +140,6 @@ export function useFilters(
     }));
   }
 
-  useEffect(() => {
-    if (events.length > 0) {
-      applyFilters(events, filters, searchTerm);
-    }
-  }, [filters, searchTerm, events, viewMode, selectedDate, weekStart]);
-
   return {
     filters,
     filteredEvents,
@@ -188,6 +151,5 @@ export function useFilters(
     resetFilters,
     handleTagCheckboxChange,
     toggleSubSection,
-    applyFilters,
   };
 }

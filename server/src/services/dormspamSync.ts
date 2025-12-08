@@ -1,207 +1,119 @@
-import EventModel from '../models/event';
 import axios from 'axios';
+import EventModel from '../models/event';
 
-const DORMSPAM_API_URL = process.env['DORMSPAM_API_URL'] || 'https://dormspam-api.example.com/api/events';
-const POLL_INTERVAL = 30000; // 30 seconds (2 times per minute)
-const ENABLE_SYNC = process.env['ENABLE_DORMSPAM_SYNC'] === 'true';
-
-interface DormSpamEvent {
-  id: number;
-  source?: string;
-  title: string;
-  organizer: string;
-  organizer_email: string;
-  contact_email: string;
-  date: string;
-  location: string;
-  recievedDate: string;
-  last_modified: string;
-  end_time?: string;
-  duration?: number;
-  details?: string;
-  fromEmailId?: string;
-  tags?: Array<{ name: string }>;
-}
-
-interface DormSpamResponse {
-  status: string;
-  total_events: number;
-  returned: number;
-  data: DormSpamEvent[];
-}
-
-class DormSpamSyncService {
-  private isRunning: boolean = false;
-  private lastSyncTimestamp: string | null = null;
-  private pollInterval: NodeJS.Timeout | null = null;
-
-  async start() {
-    if (!ENABLE_SYNC) {
-      console.log('DormSpam sync disabled (set ENABLE_DORMSPAM_SYNC=true to enable)');
-      return;
-    }
-
-    if (this.isRunning) {
-      console.log('DormSpam sync service already running');
-      return;
-    }
-
-    this.isRunning = true;
-    console.log('Starting DormSpam sync service...');
-    console.log(`Polling ${DORMSPAM_API_URL} every ${POLL_INTERVAL / 1000} seconds`);
-
-    // Initial full sync
-    await this.syncEvents();
-
-    // Set up periodic polling
-    this.pollInterval = setInterval(async () => {
-      await this.syncEvents();
-    }, POLL_INTERVAL);
-  }
+class DormspamSyncService {
+  private syncInterval: NodeJS.Timeout | null = null;
+  private readonly SYNC_INTERVAL_MS = 30000; // 30 seconds
+  private readonly DORMSPAM_API_URL = process.env['DORMSPAM_API_URL'];
+  private readonly DORMSPAM_API_KEY = process.env['DORMSPAM_API_KEY'];
+  private lastSyncTime: Date | null = null;
+  private lastSyncStatus: 'success' | 'error' | 'idle' = 'idle';
+  private lastError: string | null = null;
 
   async syncEvents() {
     try {
-      const now = new Date().toISOString();
-      console.log(`[${now}] Polling DormSpam API...`);
+      console.log('Fetching events from Dormspam API...');
 
-      // Build query params
-      const params: any = {};
-      if (this.lastSyncTimestamp) {
-        params.last_updated = this.lastSyncTimestamp;
-        console.log(`Fetching events updated after: ${this.lastSyncTimestamp}`);
-      } else {
-        console.log('Fetching all events (initial sync)');
+      if (!this.DORMSPAM_API_URL) {
+        throw new Error('DORMSPAM_API_URL not configured');
       }
 
-      // Call DormSpam API
-      const response = await axios.get<DormSpamResponse>(DORMSPAM_API_URL, {
-        params,
-        timeout: 10000, // 10 second timeout
+      // Include API key in request header
+      const response = await axios.get(this.DORMSPAM_API_URL, {
+        headers: this.DORMSPAM_API_KEY ? {
+          'Authorization': `Bearer ${this.DORMSPAM_API_KEY}`
+        } : {}
       });
 
-      const { status, returned, data } = response.data;
+      // API returns { events: [...], count: N }
+      const events = response.data.events || response.data;
 
-      if (status !== 'success') {
-        console.error('DormSpam API returned error status:', status);
-        return;
+      if (!Array.isArray(events)) {
+        console.error('Expected array but got:', typeof events);
+        throw new Error('Invalid response format from Dormspam API');
       }
 
-      console.log(`Received ${returned} events from DormSpam`);
-
-      if (returned === 0) {
-        console.log('No new events to sync');
-        return;
+      for (const event of events) {
+        // Upsert each event (update if exists, insert if new)
+        await EventModel.findOneAndUpdate(
+          { id: event.id }, // Match by id
+          {
+            id: event.id,
+            title: event.title,
+            organizer: event.organizer,
+            date: event.date,
+            location: event.location,
+            duration: event.duration,
+            recievedDate: event.recievedDate,
+            last_modified: new Date(),
+            source: event.source || 'DORMSPAM',
+            contact_email: event.contact_email,
+            organizer_email: event.contact_email,
+            details: event.details || event.text,
+            fromEmailId: event.fromEmailId,
+            tags: event.tags || [],
+            saveCount: event.saveCount || 0,
+          },
+          { upsert: true, new: true } // Create if doesn't exist
+        );
       }
 
-      // Process each event
-      let successCount = 0;
-      let errorCount = 0;
-
-      for (const dormspamEvent of data) {
-        try {
-          await this.upsertEvent(dormspamEvent);
-          successCount++;
-        } catch (error) {
-          console.error(`Failed to upsert event ${dormspamEvent.id}:`, error);
-          errorCount++;
-        }
-      }
-
-      console.log(`Sync completed: ${successCount} succeeded, ${errorCount} failed`);
-
-      // Update last sync timestamp to the most recent last_modified
-      if (data.length > 0 && data[0]) {
-        const latestTimestamp = data.reduce((latest, event) => {
-          return new Date(event.last_modified) > new Date(latest)
-            ? event.last_modified
-            : latest;
-        }, data[0].last_modified);
-
-        this.lastSyncTimestamp = latestTimestamp;
-        console.log(`Updated last sync timestamp to: ${this.lastSyncTimestamp}`);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.code === 'ECONNREFUSED') {
-          console.error('Cannot connect to DormSpam API - is it running?');
-        } else if (error.response) {
-          console.error('DormSpam API error:', error.response.status, error.response.data);
-        } else {
-          console.error('DormSpam API request failed:', error.message);
-        }
-      } else {
-        console.error('Sync error:', error);
-      }
+      this.lastSyncTime = new Date();
+      this.lastSyncStatus = 'success';
+      this.lastError = null;
+      console.log(`Synced ${events.length} events from Dormspam`);
+    } catch (error: any) {
+      this.lastSyncStatus = 'error';
+      this.lastError = error.message || 'Unknown error';
+      console.error('Error syncing events from Dormspam:', error);
     }
   }
 
-  private async upsertEvent(dormspamEvent: DormSpamEvent) {
-    try {
-      // Use upsert to either create or update
-      const result = await EventModel.findOneAndUpdate(
-        { dormspamId: dormspamEvent.id }, // Find by DormSpam ID
-        {
-          // Required fields
-          title: dormspamEvent.title,
-          organizer: dormspamEvent.organizer,
-          organizer_email: dormspamEvent.organizer_email,
-          contact_email: dormspamEvent.contact_email,
-          date: new Date(dormspamEvent.date),
-          location: dormspamEvent.location,
-          recievedDate: new Date(dormspamEvent.recievedDate),
-          last_modified: new Date(dormspamEvent.last_modified),
+  startSync() {
+    if (this.syncInterval) {
+      console.log('Sync already running');
+      return;
+    }
 
-          // Optional fields - only set if provided
-          ...(dormspamEvent.source && { source: dormspamEvent.source }),
-          ...(dormspamEvent.end_time && { end_time: new Date(dormspamEvent.end_time) }),
-          ...(dormspamEvent.duration && { duration: dormspamEvent.duration }),
-          ...(dormspamEvent.details && { details: dormspamEvent.details }),
-          ...(dormspamEvent.fromEmailId && { fromEmailId: dormspamEvent.fromEmailId }),
-          ...(dormspamEvent.tags && { tags: dormspamEvent.tags }),
+    if (!this.DORMSPAM_API_URL) {
+      console.log('DormSpam sync disabled (DORMSPAM_API_URL not set)');
+      return;
+    }
 
-          // Track DormSpam ID
-          dormspamId: dormspamEvent.id,
-        },
-        {
-          upsert: true, // Create if doesn't exist
-          new: true, // Return updated document
-          setDefaultsOnInsert: true,
-        }
-      );
+    console.log(`Starting Dormspam sync (every ${this.SYNC_INTERVAL_MS / 1000}s)`);
 
-      console.log(`✓ Upserted: ${dormspamEvent.title} (DormSpam ID: ${dormspamEvent.id}, MongoDB ID: ${result._id})`);
-    } catch (error) {
-      console.error(`✗ Failed to upsert event ${dormspamEvent.id}:`, error);
-      throw error;
+    // Sync immediately
+    this.syncEvents();
+
+    // Then sync every 30 seconds
+    this.syncInterval = setInterval(() => {
+      this.syncEvents();
+    }, this.SYNC_INTERVAL_MS);
+  }
+
+  stopSync() {
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+      this.syncInterval = null;
+      console.log('Stopped Dormspam sync');
     }
   }
 
-  stop() {
-    if (this.pollInterval) {
-      clearInterval(this.pollInterval);
-      this.pollInterval = null;
-    }
-    this.isRunning = false;
-    console.log('DormSpam sync service stopped');
-  }
-
-  // Manual sync trigger (useful for testing)
-  async manualSync() {
-    console.log('Triggering manual sync...');
-    await this.syncEvents();
-  }
-
-  // Get sync status
   getStatus() {
     return {
-      isRunning: this.isRunning,
-      enabled: ENABLE_SYNC,
-      lastSyncTimestamp: this.lastSyncTimestamp,
-      pollInterval: POLL_INTERVAL,
-      apiUrl: DORMSPAM_API_URL,
+      enabled: !!this.DORMSPAM_API_URL,
+      running: this.syncInterval !== null,
+      lastSyncTime: this.lastSyncTime,
+      lastSyncStatus: this.lastSyncStatus,
+      lastError: this.lastError,
+      syncIntervalSeconds: this.SYNC_INTERVAL_MS / 1000,
     };
+  }
+
+  async manualSync() {
+    console.log('Manual sync triggered');
+    await this.syncEvents();
   }
 }
 
-// Export singleton instance
-export const dormspamSyncService = new DormSpamSyncService();
+export const dormspamSyncService = new DormspamSyncService();

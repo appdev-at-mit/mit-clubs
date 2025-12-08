@@ -80,7 +80,7 @@ export default function EventCard({ event, isSaved, onToggleSave }: Props) {
                     key={index}
                     className="text-sm bg-appdev-blue/20 text-appdev-blue-dark font-medium rounded-full px-3 py-1"
                   >
-                    {tag.name}
+                    {tag}
                   </span>
                 ))}
               </div>

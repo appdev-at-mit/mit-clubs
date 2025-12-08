@@ -39,7 +39,7 @@ mongoose
     console.log("Connected to MongoDB");
 
     // start DormSpam sync service after DB connection
-    dormspamSyncService.start();
+    dormspamSyncService.startSync();
   })
   .catch((err: any) => console.log(`Error connecting to MongoDB: ${err}`));
 
@@ -77,7 +77,7 @@ app.use("/api", apiRouter);
 app.use("/api", clubRouter);
 app.use("/api", userRouter);
 app.use("/api", adminRouter);
-app.use("/api", eventRouter)
+// ✅ Removed duplicate: app.use("/api", eventRouter)
 
 // catch-all for unmatched API routes
 app.all("/api/*", (_req: Request, res: Response) => {
@@ -128,7 +128,7 @@ server.listen(port, () => {
 // shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received: closing HTTP server');
-  dormspamSyncService.stop();
+  dormspamSyncService.stopSync();
   server.close(() => {
     console.log('HTTP server closed');
     mongoose.connection.close().then(() => {

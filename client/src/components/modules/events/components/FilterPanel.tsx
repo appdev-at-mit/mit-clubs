@@ -2,7 +2,6 @@ import React from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { SlidersHorizontal, X } from "lucide-react";
 import { FilterState } from "../types";
-import { tagCategories, tagEvents } from "../../admin-panel/constants";
 
 interface FilterPanelProps {
   isMobileSidebarOpen: boolean;
@@ -17,6 +16,7 @@ interface FilterPanelProps {
   toggleSubSection: (sectionName: string) => void;
   filters: FilterState;
   handleTagCheckboxChange: (tag: string) => void;
+  tagCategories: Record<string, string[]>; // Dynamic tags from actual events
 }
 
 export function FilterPanel({
@@ -32,6 +32,7 @@ export function FilterPanel({
   toggleSubSection,
   filters,
   handleTagCheckboxChange,
+  tagCategories,
 }: FilterPanelProps) {
   return (
     <div
@@ -89,12 +90,13 @@ export function FilterPanel({
         Reset All
       </button>
       <div className="flex-grow overflow-y-auto space-y-1 scrollbar-hide">
+        {/* Dynamic tag categories */}
         <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
           <button
             onClick={() => setIsCategorySectionOpen(!isCategorySectionOpen)}
             className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
           >
-            <span>Category</span>
+            <span>Tags</span>
             <FaChevronDown
               size={12}
               className={`transition-transform duration-300 ${
@@ -111,7 +113,7 @@ export function FilterPanel({
           >
             <div className="overflow-hidden">
               <div className="mt-2 pl-3 space-y-1">
-                {Object.entries(tagCategories).map(([category, tags]) => (
+                {tagCategories && Object.entries(tagCategories).map(([category, tags]) => (
                   <div key={category} className="pb-1">
                     <button
                       onClick={() => toggleSubSection(category)}
@@ -156,74 +158,6 @@ export function FilterPanel({
                                 htmlFor={`tag-${tag}`}
                                 className="text-xs"
                               >
-                                {tag}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="border-b border-gray-200 pb-2 mb-2 pr-2">
-          <button
-            onClick={() => toggleSubSection("eventDetails")}
-            className="flex justify-between items-center w-full py-1.5 text-left font-semibold text-gray-600 hover:text-gray-800"
-          >
-            <span>Event Details</span>
-            <FaChevronDown
-              size={12}
-              className={`transition-transform duration-300 ${
-                openSections["eventDetails"] ? "rotate-180" : ""
-              }`}
-            />
-          </button>
-          <div
-            className={`grid transition-all duration-300 ease-in-out ${
-              openSections["eventDetails"]
-                ? "grid-rows-[1fr] opacity-100"
-                : "grid-rows-[0fr] opacity-0"
-            }`}
-          >
-            <div className="overflow-hidden">
-              <div className="mt-2 pl-3 space-y-1">
-                {Object.entries(tagEvents).map(([section, tags]) => (
-                  <div key={section} className="pb-1">
-                    <button
-                      onClick={() => toggleSubSection(section)}
-                      className="flex justify-between items-center w-full py-1 text-left font-medium text-sm text-gray-500 hover:text-gray-700"
-                    >
-                      <span>{section}</span>
-                      <FaChevronDown
-                        size={10}
-                        className={`transition-transform duration-300 ${
-                          openSections[section] ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-                    <div
-                      className={`grid transition-all duration-300 ease-in-out ${
-                        openSections[section]
-                          ? "grid-rows-[1fr] opacity-100"
-                          : "grid-rows-[0fr] opacity-0"
-                      }`}
-                    >
-                      <div className="overflow-hidden">
-                        <div className="mt-1 pl-3 space-y-0.5">
-                          {tags.map((tag) => (
-                            <div key={tag} className="flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                id={`tag-${tag}`}
-                                checked={filters.selected_tags.includes(tag)}
-                                onChange={() => handleTagCheckboxChange(tag)}
-                                className="h-3 w-3 rounded text-appdev-blue-dark focus:ring-appdev-blue-dark"
-                              />
-                              <label htmlFor={`tag-${tag}`} className="text-xs">
                                 {tag}
                               </label>
                             </div>
