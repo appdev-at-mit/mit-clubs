@@ -160,12 +160,16 @@ function DailyView() {
             filteredEvents={filteredEvents}
             hourLabels={hourLabels}
             eventLayout={eventLayout}
+            savedEventIds={savedEventIds}
+            toggleSave={toggleSave}
           />
         ) : (
           <WeekCalendar
             selectedDate={selectedDate}
             filteredEvents={filteredEvents}
             hourLabels={hourLabels}
+            savedEventIds={savedEventIds}
+            toggleSave={toggleSave}
           />
         )}
       </div>
