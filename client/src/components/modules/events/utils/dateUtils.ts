@@ -18,7 +18,9 @@ export function isoDate(d: Date): string {
 }
 
 export function timeToMinutes(isoDateTime: string): number {
-  const date = new Date(isoDateTime);
+  // Remove 'Z' suffix if present to prevent UTC conversion
+  const localDateTime = isoDateTime.replace('Z', '');
+  const date = new Date(localDateTime);
   return date.getHours() * 60 + date.getMinutes();
 }
 

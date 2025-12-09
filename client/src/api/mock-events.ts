@@ -21,9 +21,13 @@ function generateEndTime(startDate: string, durationMinutes: number): string {
 
 /**
  * Helper to format time for display (6:00 PM)
+ * Assumes the datetime is already in local time (EST for MIT events)
  */
 export function formatTime(isoDateTime: string): string {
-  const date = new Date(isoDateTime);
+  // Remove 'Z' suffix if present to prevent UTC conversion
+  // This ensures we interpret the time as local time
+  const localDateTime = isoDateTime.replace('Z', '');
+  const date = new Date(localDateTime);
   return date.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',

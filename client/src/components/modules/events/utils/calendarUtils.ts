@@ -9,94 +9,95 @@ export function calculateEventLayout(
 ): Map<string, EventLayoutPosition> {
   const selectedDateStr = selectedDate.toISOString().split("T")[0];
 
-  // Sort events, accounting for continuation events starting at midnight
-  const sortedEvents = [...events].sort((a, b) => {
-    const aDate = formatDate(a.date);
-    const bDate = formatDate(b.date);
-    const aIsContinuation = aDate !== selectedDateStr;
-    const bIsContinuation = bDate !== selectedDateStr;
-    const aStart = aIsContinuation ? 0 : timeToMinutes(a.date);
-    const bStart = bIsContinuation ? 0 : timeToMinutes(b.date);
-
-    if (aStart !== bStart) return aStart - bStart;
-
-    // For events starting at same time, prioritize longer events
-    const aEnd = a.end_time
-      ? timeToMinutes(a.end_time)
-      : aStart + (a.duration || 60);
-    const bEnd = b.end_time
-      ? timeToMinutes(b.end_time)
-      : bStart + (b.duration || 60);
-    return bEnd - aEnd;
-  });
-
-  const columns: Event[][] = [];
-
-  sortedEvents.forEach((event) => {
+  // Helper to get event time range
+  const getEventTimeRange = (event: Event) => {
     const eventDate = formatDate(event.date);
     const isContinuation = eventDate !== selectedDateStr;
-    const eventStart = isContinuation ? 0 : timeToMinutes(event.date);
-    let eventEnd = event.end_time
+    const start = isContinuation ? 0 : timeToMinutes(event.date);
+    let end = event.end_time
       ? timeToMinutes(event.end_time)
-      : eventStart + (event.duration || 60);
+      : start + (event.duration || 60);
 
     // Handle 24-hour events and events spanning past midnight
-    if (eventEnd === eventStart && !isContinuation) {
-      eventEnd = 24 * 60; // 24-hour event
-    } else if (eventEnd < eventStart && !isContinuation) {
-      eventEnd += 24 * 60; // Spans past midnight
+    if (end === start && !isContinuation) {
+      end = 24 * 60;
+    } else if (end < start && !isContinuation) {
+      end += 24 * 60;
+    }
+    end = Math.min(end, 24 * 60);
+
+    return { start, end };
+  };
+
+  // Sort events: by start time, then by duration (longest first)
+  const sortedEvents = [...events].sort((a, b) => {
+    const aRange = getEventTimeRange(a);
+    const bRange = getEventTimeRange(b);
+
+    if (aRange.start !== bRange.start) {
+      return aRange.start - bRange.start;
     }
 
-    // Cap at end of day
-    eventEnd = Math.min(eventEnd, 24 * 60);
+    // Same start time: longer events first (will be rendered at bottom)
+    const aDuration = aRange.end - aRange.start;
+    const bDuration = bRange.end - bRange.start;
+    return bDuration - aDuration;
+  });
 
-    // Find the first column where this event doesn't overlap
-    let placed = false;
-    for (let i = 0; i < columns.length; i++) {
-      const column = columns[i];
-      const lastEventInColumn = column[column.length - 1];
-      const lastDate = formatDate(lastEventInColumn.date);
-      const lastIsContinuation = lastDate !== selectedDateStr;
-      const lastEventStart = lastIsContinuation
-        ? 0
-        : timeToMinutes(lastEventInColumn.date);
-      let lastEventEnd = lastEventInColumn.end_time
-        ? timeToMinutes(lastEventInColumn.end_time)
-        : lastEventStart + (lastEventInColumn.duration || 60);
+  // Track which column each event is placed in
+  const eventColumns = new Map<string, number>();
+  const columnEndTimes: number[] = [];
 
-      // Handle 24-hour events and events spanning past midnight for the last event
-      if (lastEventEnd === lastEventStart && !lastIsContinuation) {
-        lastEventEnd = 24 * 60; // 24-hour event
-      } else if (lastEventEnd < lastEventStart && !lastIsContinuation) {
-        lastEventEnd += 24 * 60; // Spans past midnight
-      }
+  sortedEvents.forEach((event) => {
+    const { start, end } = getEventTimeRange(event);
+    const eventId = event._id || event.title;
 
-      // Cap at end of day
-      lastEventEnd = Math.min(lastEventEnd, 24 * 60);
-
-      if (eventStart >= lastEventEnd) {
-        column.push(event);
-        placed = true;
+    // Find the leftmost column where this event doesn't overlap
+    let targetColumn = -1;
+    for (let col = 0; col < columnEndTimes.length; col++) {
+      if (start >= columnEndTimes[col]) {
+        targetColumn = col;
         break;
       }
     }
 
-    // If no suitable column found, create a new one
-    if (!placed) {
-      columns.push([event]);
+    // If no available column, create a new one
+    if (targetColumn === -1) {
+      targetColumn = columnEndTimes.length;
+      columnEndTimes.push(end);
+    } else {
+      columnEndTimes[targetColumn] = end;
     }
+
+    eventColumns.set(eventId, targetColumn);
   });
 
-  // Create a map of event to its position
+  // Calculate totalColumns for each event (how many columns overlap with it)
   const eventPositions = new Map<string, EventLayoutPosition>();
 
-  columns.forEach((column, columnIndex) => {
-    column.forEach((event) => {
-      const eventId = event._id || event.title;
-      eventPositions.set(eventId, {
-        column: columnIndex,
-        totalColumns: columns.length,
-      });
+  sortedEvents.forEach((event) => {
+    const eventId = event._id || event.title;
+    const eventColumn = eventColumns.get(eventId)!;
+    const { start, end } = getEventTimeRange(event);
+
+    // Find the rightmost column that has an overlapping event
+    let maxColumn = eventColumn;
+    sortedEvents.forEach((otherEvent) => {
+      const otherId = otherEvent._id || otherEvent.title;
+      if (otherId === eventId) return;
+
+      const otherColumn = eventColumns.get(otherId)!;
+      const otherRange = getEventTimeRange(otherEvent);
+
+      // Check if there's any time overlap
+      if (start < otherRange.end && end > otherRange.start) {
+        maxColumn = Math.max(maxColumn, otherColumn);
+      }
+    });
+
+    eventPositions.set(eventId, {
+      column: eventColumn,
+      totalColumns: maxColumn + 1,
     });
   });
 
