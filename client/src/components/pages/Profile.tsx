@@ -171,7 +171,7 @@ function Profile() {
               <div className="flex-grow">
 
                 <p className="text-sm text-gray-600 mt-1">
-                  {event.organizer}
+                  {event.title}
                 </p>
 
                 <div className="flex items-center text-xs text-gray-500 mt-2">

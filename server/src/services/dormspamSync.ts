@@ -52,7 +52,6 @@ class DormspamSyncService {
             details: event.details || event.text,
             fromEmailId: event.fromEmailId,
             tags: event.tags || [],
-            saveCount: event.saveCount || 0,
           },
           { upsert: true, new: true } // Create if doesn't exist
         );

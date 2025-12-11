@@ -37,7 +37,7 @@ router.get('/events', async (req: Request, res: Response) => {
 
     if (tags) {
       const tagArray = (tags as string).split(',').map(t => t.trim());
-      query['tags.name'] = { $in: tagArray };
+      query.tags = { $in: tagArray };
     }
 
     if (search) {
@@ -161,7 +161,6 @@ router.post('/save-event', ensureLoggedIn, async (req: Request, res: Response): 
     // Push full event document like clubs does
     user.savedEvents.push(event as any);
     await user.save();
-
     event.saveCount = (event.saveCount || 0) + 1;
     await event.save();
 
